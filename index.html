@@ -47,18 +47,18 @@
         .template-hidden { display: none !important; }
     </style>
 </head>
-<body class="bg-gray-200 p-4 text-gray-800" onload="tarikDataOtomatis()">
+<body class="bg-gray-200 p-4 text-gray-800 font-serif" onload="tarikDataOtomatis()">
 
     <!-- BAGIAN KONTROL & TOMBOL (TIDAK IKUT TERCETAK) -->
-    <div class="no-print max-w-3xl mx-auto bg-white p-6 rounded-lg shadow-md mb-8 border-t-4 border-green-600">
+    <div class="no-print max-w-3xl mx-auto bg-white p-6 rounded-lg shadow-md mb-8 border-t-4 border-green-600 font-sans">
         <h2 class="text-2xl font-bold mb-4 text-center">Aplikasi Cetak Surat MIN 1 Kota Malang</h2>
         
         <!-- Tab Navigasi Jenis Surat -->
         <div class="flex border-b border-gray-200 mb-6">
-            <button id="tab-penawaran" onclick="switchTab('penawaran')" class="flex-1 py-2 px-4 text-center font-semibold border-b-2 border-green-600 text-green-600 bg-green-50 transition">
+            <button id="tab-penawaran" onclick="switchTab('penawaran')" class="flex-1 py-2 px-4 text-center font-semibold border-b-2 border-green-600 text-green-600 bg-green-50 transition text-sm">
                 1. Surat Penawaran & Berita Acara
             </button>
-            <button id="tab-terimakasih" onclick="switchTab('terimakasih')" class="flex-1 py-2 px-4 text-center font-semibold border-b-2 border-transparent text-gray-500 hover:text-gray-700 hover:bg-gray-50 transition">
+            <button id="tab-terimakasih" onclick="switchTab('terimakasih')" class="flex-1 py-2 px-4 text-center font-semibold border-b-2 border-transparent text-gray-500 hover:text-gray-700 hover:bg-gray-50 transition text-sm">
                 2. Surat Ucapan Terima Kasih
             </button>
         </div>
@@ -75,7 +75,7 @@
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                     <label class="font-bold text-sm text-gray-700">Pilih Jenjang Kelas:</label>
-                    <select id="filter-kelas" onchange="filterRombel()" class="border border-gray-300 p-2.5 rounded w-full bg-white mt-1" disabled>
+                    <select id="filter-kelas" onchange="filterRombel()" class="border border-gray-300 p-2.5 rounded w-full bg-white mt-1 text-sm" disabled>
                         <option value="">-- Pilih Kelas (1-6) --</option>
                         <option value="1">Kelas 1</option>
                         <option value="2">Kelas 2</option>
@@ -88,7 +88,7 @@
 
                 <div>
                     <label class="font-bold text-sm text-gray-700">Pilih Rombel:</label>
-                    <select id="filter-rombel" onchange="filterSiswa()" class="border border-gray-300 p-2.5 rounded w-full bg-white mt-1" disabled>
+                    <select id="filter-rombel" onchange="filterSiswa()" class="border border-gray-300 p-2.5 rounded w-full bg-white mt-1 text-sm" disabled>
                         <option value="">-- Pilih Rombel (A-I) --</option>
                     </select>
                 </div>
@@ -97,7 +97,7 @@
             <!-- Pilih Nama Siswa -->
             <div class="flex flex-col gap-2">
                 <label class="font-bold text-sm text-gray-700">Pilih Nama Siswa:</label>
-                <select id="pilih-siswa" onchange="updateSurat()" class="border border-gray-300 p-3 rounded w-full bg-white font-medium" disabled>
+                <select id="pilih-siswa" onchange="updateSurat()" class="border border-gray-300 p-3 rounded w-full bg-white font-medium text-sm" disabled>
                     <option value="">-- Pilih kelas dan rombel terlebih dahulu --</option>
                 </select>
             </div>
@@ -299,8 +299,8 @@
                     <div class="h-24 flex items-center justify-center relative my-1">
                         <img src="https://raw.githubusercontent.com/Blackhawk0243/sponsorship48/main/ttd-ketua.png" alt="TTD Ketua" class="absolute w-28 object-contain z-10 mix-blend-multiply" onerror="this.style.display='none'">
                     </div>
-                    <p class="font-bold underline mb-0">Abdullah, S.Pd., M.Pd.</p>
-                    <p class="text-xs">NIP. 196911212005011001</p>
+                    <p class="font-bold underline mb-0">Ninis Widayanti, S.Pd.I, M.Pd.I.</p>
+                    <p class="text-xs">NIP. 196701211990032001</p>
                 </div>
             </div>
         </div>
@@ -396,12 +396,12 @@
             selectSiswa.disabled = true;
             
             if (tingkat !== "") {
-                // Ambil semua rombel unik yang cocok dengan tingkat (misal angka pertama kelas adalah tingkat)
                 const rombelSet = new Set();
                 dataSiswaGlobal.forEach(s => {
-                    if (s.kelas.startsWith(tingkat)) {
-                        // Ambil huruf rombel di belakang angka (contoh: "1A" -> "A")
-                        const huruf = s.kelas.substring(1).toUpperCase();
+                    let k = s.kelas.toUpperCase();
+                    // Cocokkan jika kelas diawali dengan angka tingkat (contoh: "1A" diawali "1")
+                    if (k.startsWith(tingkat)) {
+                        let huruf = k.substring(tingkat.length).trim();
                         if (huruf) rombelSet.add(huruf);
                     }
                 });
@@ -431,8 +431,7 @@
             selectSiswa.innerHTML = '<option value="">-- Pilih Nama Siswa --</option>';
             
             if (kelasRombel !== "") {
-                dataTerfilterRombel = dataSiswaGlobal.filter(s => s.kelas.toUpperCase() === kelasRombel.toUpperCase());
-                // Urutkan abjad nama siswa
+                dataTerfilterRombel = dataSiswaGlobal.filter(s => s.kelas.toUpperCase().replace(/\s+/g, '') === kelasRombel.toUpperCase());
                 dataTerfilterRombel.sort((a, b) => a.nama_siswa.localeCompare(b.nama_siswa));
 
                 if (dataTerfilterRombel.length > 0) {

@@ -29,7 +29,6 @@
             .page-break { page-break-before: always; }
         }
         
-        /* Tampilan kertas di layar komputer untuk dokumen biasa */
         .print-container {
             background: white; 
             max-width: 210mm; 
@@ -324,7 +323,6 @@
             </div>
             <div class="border-b-[1px] border-black mb-6"></div>
 
-            <!-- PERBAIKAN BUG TANGGAL UCAPAN TERIMA KASIH (Menggunakan whitespace-nowrap) -->
             <div class="flex justify-between items-start text-[15px] mb-8 leading-relaxed">
                 <table class="w-auto">
                     <tr><td class="w-24">Nomor</td><td class="w-3">:</td><td class="whitespace-nowrap">B-806/Mi.13.25.01/PP.00.4/09/2026</td></tr>
@@ -349,26 +347,25 @@
                 <p class="font-bold">Wassalamualaikum Wr. Wb.</p>
             </div>
 
-            <div class="text-[15px] relative mt-16">
-                <div class="flex justify-between">
-                    <div class="text-center relative w-1/2">
-                        <p>Mengetahui</p>
-                        <p>Kepala,</p>
-                        <div class="h-24 flex items-center justify-center relative my-1">
-                            <img src="https://raw.githubusercontent.com/Blackhawk0243/sponsorship48/main/ttd-kepala.png" class="absolute w-36 object-contain z-10 mix-blend-multiply">
-                        </div>
-                        <p class="font-bold underline mb-0">Hj. Siti Aisah, S.Ag., M.Pd</p>
-                        <p class="text-xs">NIP. 197410161997032002</p>
+            <!-- PERBAIKAN TATA LETAK TANDA TANGAN (SEJAJAR BAWAH) -->
+            <div class="flex justify-between items-end mt-16 text-[15px]">
+                <div class="text-center relative w-1/2">
+                    <p>Mengetahui</p>
+                    <p>Kepala,</p>
+                    <div class="h-24 flex items-center justify-center relative my-1">
+                        <img src="https://raw.githubusercontent.com/Blackhawk0243/sponsorship48/main/ttd-kepala.png" class="absolute w-36 object-contain z-10 mix-blend-multiply">
                     </div>
-                    <div class="text-center w-1/2 relative">
-                        <p class="mb-5">&nbsp;</p>
-                        <p>Ketua Pelaksana</p>
-                        <div class="h-24 flex items-center justify-center relative my-1">
-                            <img src="https://raw.githubusercontent.com/Blackhawk0243/sponsorship48/main/ttd-ketua.png" class="absolute w-28 object-contain z-10 mix-blend-multiply" onerror="this.style.display='none'">
-                        </div>
-                        <p class="font-bold underline mb-0">Abdullah, S.Pd., M.Pd.</p>
-                        <p class="text-xs">NIP. 196911212005011001</p>
+                    <p class="font-bold underline mb-0">Hj. Siti Aisah, S.Ag., M.Pd</p>
+                    <p class="text-xs">NIP. 197410161997032002</p>
+                </div>
+                <div class="text-center w-1/2 relative">
+                    <p class="mb-5">&nbsp;</p> <!-- Spasi pengimbang teks 'Mengetahui' di kiri -->
+                    <p>Ketua Pelaksana</p>
+                    <div class="h-24 flex items-center justify-center relative my-1">
+                        <img src="https://raw.githubusercontent.com/Blackhawk0243/sponsorship48/main/ttd-ketua.png" class="absolute w-28 object-contain z-10 mix-blend-multiply" onerror="this.style.display='none'">
                     </div>
+                    <p class="font-bold underline mb-0">Abdullah, S.Pd., M.Pd.</p>
+                    <p class="text-xs">NIP. 196911212005011001</p>
                 </div>
             </div>
         </div>
@@ -496,7 +493,6 @@
         </div>
     </div>
 
-
     <script>
         const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbz8Ah8PwSvWESkiLhWe0v0iK_oyC2rBOUVARSXFSlFA97zQpDi1vpD2QfyaXZOaeTSKOw/exec"; 
         
@@ -565,7 +561,6 @@
                 
                 if (rawData && rawData.length > 0) {
                     dataSiswaGlobal = rawData.map((item, idx) => {
-                        // PERBAIKAN BUG DROP DOWN: Ambil data aslinya dulu, jangan di TitleCase dulu
                         let namaRaw = (item.nama_siswa || item.NAMA || "").toString().trim();
                         let waliRaw = (item.nama_wali || item.Ayah || item.Wali || "").toString().trim();
                         let kelasRaw = (item.kelas || item.KELAS || "").toString().trim();
@@ -575,10 +570,10 @@
                             let temp = kelasRaw; kelasRaw = waliRaw; waliRaw = temp;
                         }
 
-                        // Setelah aman, baru dirapikan (Title Case untuk nama, Upper Case murni untuk kelas)
+                        // Rapikan (Title Case untuk nama, Upper Case murni untuk kelas agar Rombel jalan)
                         let namaBersih = toTitleCase(namaRaw);
                         let waliBersih = toTitleCase(waliRaw);
-                        let kelasBersih = kelasRaw.toUpperCase().replace(/\s+/g, ''); // Dijamin jadi "1A", bukan "1a"
+                        let kelasBersih = kelasRaw.toUpperCase().replace(/\s+/g, ''); 
 
                         return { id: `siswa_${idx}`, nama_siswa: namaBersih, nama_wali: waliBersih, kelas: kelasBersih };
                     }).filter(s => s.nama_siswa !== "");
@@ -682,29 +677,32 @@
         }
 
         /* ==========================================
-           LOGIKA CETAK STIKER (POSISI ABSOLUT)
+           LOGIKA CETAK STIKER (POSISI ABSOLUT & STRING BUFFER)
         ========================================== */
         function loadDaftarStiker() {
             const filterKelas = document.getElementById('stiker-filter-kelas').value;
             const keyword = document.getElementById('stiker-search').value.toLowerCase();
             const container = document.getElementById('daftar-siswa-stiker');
-            container.innerHTML = '';
-
+            
             let dataRender = dataSiswaGlobal.filter(s => {
                 const matchKelas = filterKelas === "ALL" || s.kelas.startsWith(filterKelas);
                 const matchNama = s.nama_siswa.toLowerCase().includes(keyword) || s.nama_wali.toLowerCase().includes(keyword);
                 return matchKelas && matchNama;
             });
 
+            // OPTIMASI ANTI-LAG: Menggunakan string buffer agar render super cepat
+            let htmlBuffer = '';
             dataRender.forEach(s => {
                 const checked = daftarSiswaStikerDipilih.has(s.id) ? 'checked' : '';
-                container.innerHTML += `
+                htmlBuffer += `
                     <label class="flex items-center gap-2 p-1 hover:bg-gray-100 cursor-pointer border-b">
                         <input type="checkbox" class="chk-stiker" value="${s.id}" ${checked} onchange="toggleStikerItem(this)">
                         <span class="flex-1"><strong>${s.nama_siswa}</strong> - Kelas ${s.kelas} <span class="text-gray-500 text-xs">(Wali: ${s.nama_wali})</span></span>
                     </label>
                 `;
             });
+            
+            container.innerHTML = htmlBuffer; // Render sekaligus 1x
             updateLabelCount();
         }
 
@@ -730,8 +728,7 @@
 
         function updatePreviewStiker(isPreview = true) {
             const wadah = document.getElementById('wadah-halaman-stiker');
-            wadah.innerHTML = '';
-
+            
             const pw = parseFloat(document.getElementById('s-pw').value);
             const ph = parseFloat(document.getElementById('s-ph').value);
             const ml = parseFloat(document.getElementById('s-ml').value);
@@ -746,15 +743,16 @@
             const stikerPerHalaman = cols * rows;
             let barisanSiswa = Array.from(daftarSiswaStikerDipilih).map(id => dataSiswaGlobal.find(s => s.id === id));
             
-            // Render dummy stiker jika kosong (agar preview tidak blank)
             if(barisanSiswa.length === 0 && isPreview) {
                 barisanSiswa = [{nama_siswa: "Contoh Nama Siswa", nama_wali: "Bapak/Ibu Contoh Wali", kelas: "1A"}];
             }
 
             const totalHalaman = Math.ceil(barisanSiswa.length / stikerPerHalaman);
             let indexSiswa = 0;
-
             const borderStyle = isPreview ? "border: 1px dashed black;" : "border: none;";
+
+            // OPTIMASI ANTI-LAG PREVIEW: Susun kertas HTML dalam memory terlebih dahulu
+            let allPagesHTML = '';
 
             for (let hal = 0; hal < totalHalaman; hal++) {
                 let kertasHTML = `<div class="kertas-stiker" style="width: ${pw}mm; height: ${ph}mm;">`;
@@ -765,7 +763,6 @@
                         const s = barisanSiswa[indexSiswa];
                         const wali = s.nama_wali || "-";
                         
-                        // Perhitungan MS Word Absolut Posisi
                         const left = ml + (c * hp);
                         const top = mt + (r * vp);
 
@@ -787,8 +784,10 @@
                     }
                 }
                 kertasHTML += `</div>`;
-                wadah.innerHTML += kertasHTML;
+                allPagesHTML += kertasHTML; // Tambahkan kertas ke memory
             }
+            
+            wadah.innerHTML = allPagesHTML; // Munculkan ke layar sekaligus 1x
         }
 
         function cetakPDFStiker() {
@@ -797,7 +796,6 @@
                 return;
             }
             
-            // Set style page ke ukuran MS Word inputan user
             const pw = document.getElementById('s-pw').value;
             const ph = document.getElementById('s-ph').value;
             document.getElementById('dynamic-print-style').innerHTML = `@page { size: ${pw}mm ${ph}mm; margin: 0; }`;
@@ -805,12 +803,10 @@
             document.getElementById('area-dokumen-a4').classList.add('template-hidden');
             document.getElementById('area-cetak-stiker').classList.remove('template-hidden');
             
-            // Hapus border putus-putus sesaat sebelum print
             updatePreviewStiker(false); 
             
             window.print();
             
-            // Kembalikan border setelah dialog print tertutup
             setTimeout(() => { updatePreviewStiker(true); }, 1000); 
         }
     </script>

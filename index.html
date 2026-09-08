@@ -29,6 +29,7 @@
             .page-break { page-break-before: always; }
         }
         
+        /* Tampilan kertas di layar komputer untuk dokumen biasa */
         .print-container {
             background: white; 
             max-width: 210mm; 
@@ -46,6 +47,7 @@
         .kertas-stiker {
             background-color: white;
             box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+            border: 1px solid black;
             margin: 0 auto 20px auto;
             position: relative;
             overflow: hidden;
@@ -55,6 +57,7 @@
             #wadah-halaman-stiker { display: block !important; gap: 0 !important; margin: 0 !important; }
             .kertas-stiker {
                 box-shadow: none !important;
+                border: none !important;
                 margin: 0 !important;
                 page-break-inside: avoid;
                 page-break-after: always; /* Pemisah kertas stiker */
@@ -378,7 +381,6 @@
                 <p class="font-bold">Wassalamualaikum Wr. Wb.</p>
             </div>
 
-            <!-- PERBAIKAN TATA LETAK TANDA TANGAN (SEJAJAR BAWAH) -->
             <div class="flex justify-between items-end mt-16 text-[15px]">
                 <div class="text-center relative w-1/2">
                     <p>Mengetahui</p>
@@ -835,7 +837,8 @@
 
             const totalHalaman = Math.ceil(barisanSiswa.length / stikerPerHalaman);
             let indexSiswa = 0;
-            const borderStyle = isPreview ? "border: 1px dashed black;" : "border: none;";
+            // UPDATE: User wants borders to ALWAYS show for manual cutting
+            const borderStyle = "border: 1px solid black;";
 
             // Hitung skala font dan elemen stiker secara proporsional
             const scaleX = lw / 64;
@@ -1013,7 +1016,8 @@
 
             const totalHalaman = Math.ceil(barisanRekanan.length / stikerPerHalaman);
             let indexRekanan = 0;
-            const borderStyle = isPreview ? "border: 1px dashed black;" : "border: none;";
+            // UPDATE: User wants borders to ALWAYS show for manual cutting
+            const borderStyle = "border: 1px solid black;";
 
             // Hitung skala font dan elemen stiker secara proporsional
             const scaleX = lw / 64;

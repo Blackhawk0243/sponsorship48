@@ -86,7 +86,10 @@
                 3. Penawaran (Rekanan)
             </button>
             <button id="tab-stiker" onclick="switchTab('stiker')" class="flex-1 py-3 px-2 text-center border-b-2 border-transparent text-gray-500 hover:text-gray-700 hover:bg-gray-50 transition">
-                4. Cetak Stiker 103
+                4. Stiker 103 (Wali Murid)
+            </button>
+            <button id="tab-stiker-rekanan" onclick="switchTab('stiker-rekanan')" class="flex-1 py-3 px-2 text-center border-b-2 border-transparent text-gray-500 hover:text-gray-700 hover:bg-gray-50 transition">
+                5. Stiker 103 (Rekanan)
             </button>
         </div>
 
@@ -138,7 +141,7 @@
             </button>
         </div>
 
-        <!-- KONTROL UNTUK TAB 4 (STIKER LABEL) -->
+        <!-- KONTROL UNTUK TAB 4 (STIKER LABEL WALI MURID) -->
         <div id="panel-stiker" class="flex flex-col gap-4 template-hidden">
             <div class="bg-blue-50 p-4 rounded border border-blue-200">
                 <div class="flex justify-between items-end mb-2">
@@ -164,33 +167,58 @@
                     <!-- Daftar checkbox masuk kesini -->
                 </div>
             </div>
+        </div>
 
+        <!-- KONTROL UNTUK TAB 5 (STIKER LABEL REKANAN) -->
+        <div id="panel-stiker-rekanan" class="flex flex-col gap-4 template-hidden">
+            <div class="bg-yellow-50 p-4 rounded border border-yellow-200">
+                <label class="font-bold text-sm text-gray-700 block mb-1">Tambah Nama Perusahaan / Instansi / Donatur:</label>
+                <div class="flex gap-2">
+                    <input type="text" id="input-stiker-perusahaan" placeholder="Contoh: Dian Print" class="border border-gray-400 p-2 rounded w-full bg-white text-sm" onkeypress="if(event.key === 'Enter') tambahStikerRekanan()">
+                    <button onclick="tambahStikerRekanan()" class="bg-blue-600 text-white px-4 py-2 rounded text-sm font-bold hover:bg-blue-700 whitespace-nowrap">Tambah ke Daftar</button>
+                </div>
+                
+                <div class="flex justify-between text-xs font-bold bg-gray-200 p-2 rounded-t mt-4">
+                    <label class="flex items-center gap-2 cursor-pointer">
+                        <input type="checkbox" id="chk-all-stiker-rekanan" onchange="toggleAllStikerRekanan()" checked> Pilih Semua
+                    </label>
+                    <span id="stiker-rekanan-count">0 Terpilih</span>
+                </div>
+                <div id="daftar-rekanan-stiker" class="bg-white border border-t-0 border-gray-300 max-h-48 overflow-y-auto p-2 text-sm rounded-b">
+                    <div class="p-2 text-gray-500 text-center italic">Belum ada daftar perusahaan. Silakan tambah di atas.</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- PENGATURAN LAYOUT STIKER & TOMBOL CETAK (SHARED TABS 4 & 5) -->
+        <div id="panel-stiker-layout" class="flex flex-col gap-4 template-hidden mt-2">
             <!-- Setting MS Word Style Layout 103 -->
             <div class="bg-gray-50 p-4 rounded border border-gray-300">
                 <p class="font-bold text-sm text-gray-800 mb-3 border-b pb-1">Pengaturan Layout Kertas (Ukuran Label 103 / mm)</p>
                 <div class="grid grid-cols-2 md:grid-cols-5 gap-3 text-sm">
-                    <div><label class="block text-xs text-gray-600">Lebar Kertas</label><input type="number" id="s-pw" value="204" class="border p-1 w-full rounded" onchange="updatePreviewStiker()"></div>
-                    <div><label class="block text-xs text-gray-600">Tinggi Kertas</label><input type="number" id="s-ph" value="165" class="border p-1 w-full rounded" onchange="updatePreviewStiker()"></div>
-                    <div><label class="block text-xs text-gray-600">Margin Kiri</label><input type="number" id="s-ml" value="3" class="border p-1 w-full rounded" onchange="updatePreviewStiker()"></div>
-                    <div><label class="block text-xs text-gray-600">Margin Atas</label><input type="number" id="s-mt" value="14" class="border p-1 w-full rounded" onchange="updatePreviewStiker()"></div>
-                    <div><label class="block text-xs text-gray-600">Lebar Label</label><input type="number" id="s-lw" value="64" class="border p-1 w-full rounded" onchange="updatePreviewStiker()"></div>
-                    <div><label class="block text-xs text-gray-600">Tinggi Label</label><input type="number" id="s-lh" value="32" class="border p-1 w-full rounded" onchange="updatePreviewStiker()"></div>
-                    <div><label class="block text-xs text-gray-600">Horiz. Pitch</label><input type="number" id="s-hp" value="66" class="border p-1 w-full rounded" onchange="updatePreviewStiker()"></div>
-                    <div><label class="block text-xs text-gray-600">Vert. Pitch</label><input type="number" id="s-vp" value="34" class="border p-1 w-full rounded" onchange="updatePreviewStiker()"></div>
-                    <div><label class="block text-xs text-gray-600">Jml. Kolom</label><input type="number" id="s-col" value="3" class="border p-1 w-full rounded" onchange="updatePreviewStiker()"></div>
-                    <div><label class="block text-xs text-gray-600">Jml. Baris</label><input type="number" id="s-row" value="4" class="border p-1 w-full rounded" onchange="updatePreviewStiker()"></div>
+                    <div><label class="block text-xs text-gray-600">Lebar Kertas</label><input type="number" id="s-pw" value="204" class="border p-1 w-full rounded" onchange="updatePreviewStikerRouter()"></div>
+                    <div><label class="block text-xs text-gray-600">Tinggi Kertas</label><input type="number" id="s-ph" value="165" class="border p-1 w-full rounded" onchange="updatePreviewStikerRouter()"></div>
+                    <div><label class="block text-xs text-gray-600">Margin Kiri</label><input type="number" id="s-ml" value="3" class="border p-1 w-full rounded" onchange="updatePreviewStikerRouter()"></div>
+                    <div><label class="block text-xs text-gray-600">Margin Atas</label><input type="number" id="s-mt" value="14" class="border p-1 w-full rounded" onchange="updatePreviewStikerRouter()"></div>
+                    <div><label class="block text-xs text-gray-600">Lebar Label</label><input type="number" id="s-lw" value="64" class="border p-1 w-full rounded" onchange="updatePreviewStikerRouter()"></div>
+                    <div><label class="block text-xs text-gray-600">Tinggi Label</label><input type="number" id="s-lh" value="32" class="border p-1 w-full rounded" onchange="updatePreviewStikerRouter()"></div>
+                    <div><label class="block text-xs text-gray-600">Horiz. Pitch</label><input type="number" id="s-hp" value="66" class="border p-1 w-full rounded" onchange="updatePreviewStikerRouter()"></div>
+                    <div><label class="block text-xs text-gray-600">Vert. Pitch</label><input type="number" id="s-vp" value="34" class="border p-1 w-full rounded" onchange="updatePreviewStikerRouter()"></div>
+                    <div><label class="block text-xs text-gray-600">Jml. Kolom</label><input type="number" id="s-col" value="3" class="border p-1 w-full rounded" onchange="updatePreviewStikerRouter()"></div>
+                    <div><label class="block text-xs text-gray-600">Jml. Baris</label><input type="number" id="s-row" value="4" class="border p-1 w-full rounded" onchange="updatePreviewStikerRouter()"></div>
                 </div>
             </div>
 
-            <div class="flex gap-4 mt-2">
-                <button onclick="updatePreviewStiker()" class="bg-blue-600 text-white font-bold py-3 px-4 rounded hover:bg-blue-700 transition flex-1">
+            <div class="flex gap-4">
+                <button onclick="updatePreviewStikerRouter()" class="bg-blue-600 text-white font-bold py-3 px-4 rounded hover:bg-blue-700 transition flex-1">
                     Update Live Preview
                 </button>
-                <button onclick="cetakPDFStiker()" id="btn-print-stiker" class="bg-green-600 text-white font-bold py-3 px-4 rounded hover:bg-green-700 transition flex-1 flex items-center justify-center gap-2">
+                <button onclick="cetakPDFStikerRouter()" id="btn-print-stiker-shared" class="bg-green-600 text-white font-bold py-3 px-4 rounded hover:bg-green-700 transition flex-1 flex items-center justify-center gap-2">
                     Cetak PDF Stiker
                 </button>
             </div>
         </div>
+
     </div>
 
     <!-- AREA DOKUMEN BIASA (MENU 1, 2, 3) -->
@@ -502,7 +530,13 @@
         let dataSiswaGlobal = [];
         let dataTerfilterRombel = [];
         let templateAktif = 'penawaran';
+        
+        // State Stiker Wali Murid
         let daftarSiswaStikerDipilih = new Set(); 
+
+        // State Stiker Rekanan
+        let daftarRekananStiker = [];
+        let daftarRekananStikerDipilih = new Set();
 
         // Fungsi merapikan penulisan nama (Huruf besar di awal tiap kata)
         function toTitleCase(str) {
@@ -512,7 +546,7 @@
 
         function switchTab(tabId) {
             templateAktif = tabId;
-            const tabs = ['penawaran', 'terimakasih', 'rekanan', 'stiker'];
+            const tabs = ['penawaran', 'terimakasih', 'rekanan', 'stiker', 'stiker-rekanan'];
             
             tabs.forEach(id => {
                 const btn = document.getElementById(`tab-${id}`);
@@ -531,6 +565,8 @@
             document.getElementById('panel-otomatis').classList.add('hidden');
             document.getElementById('panel-manual').classList.add('template-hidden');
             document.getElementById('panel-stiker').classList.add('template-hidden');
+            document.getElementById('panel-stiker-rekanan').classList.add('template-hidden');
+            document.getElementById('panel-stiker-layout').classList.add('template-hidden');
             document.getElementById('area-dokumen-a4').classList.add('template-hidden');
             document.getElementById('area-cetak-stiker').classList.add('template-hidden');
 
@@ -540,9 +576,16 @@
                 updateSuratRekanan();
             } else if (tabId === 'stiker') {
                 document.getElementById('panel-stiker').classList.remove('template-hidden');
+                document.getElementById('panel-stiker-layout').classList.remove('template-hidden');
                 document.getElementById('area-cetak-stiker').classList.remove('template-hidden');
                 loadDaftarStiker();
                 updatePreviewStiker();
+            } else if (tabId === 'stiker-rekanan') {
+                document.getElementById('panel-stiker-rekanan').classList.remove('template-hidden');
+                document.getElementById('panel-stiker-layout').classList.remove('template-hidden');
+                document.getElementById('area-cetak-stiker').classList.remove('template-hidden');
+                renderDaftarStikerRekanan();
+                updatePreviewStikerRekanan();
             } else {
                 document.getElementById('panel-otomatis').classList.remove('hidden');
                 document.getElementById('area-dokumen-a4').classList.remove('template-hidden');
@@ -701,7 +744,26 @@
         }
 
         /* ==========================================
-           LOGIKA CETAK STIKER (POSISI ABSOLUT & STRING BUFFER)
+           ROUTER FUNGSI PREVIEW & CETAK STIKER 
+        ========================================== */
+        function updatePreviewStikerRouter(isPreview = true) {
+            if(templateAktif === 'stiker') {
+                updatePreviewStiker(isPreview);
+            } else if (templateAktif === 'stiker-rekanan') {
+                updatePreviewStikerRekanan(isPreview);
+            }
+        }
+
+        function cetakPDFStikerRouter() {
+            if(templateAktif === 'stiker') {
+                cetakPDFStiker();
+            } else if (templateAktif === 'stiker-rekanan') {
+                cetakPDFStikerRekanan();
+            }
+        }
+
+        /* ==========================================
+           LOGIKA CETAK STIKER WALI MURID
         ========================================== */
         function loadDaftarStiker() {
             const filterKelas = document.getElementById('stiker-filter-kelas').value;
@@ -775,6 +837,16 @@
             let indexSiswa = 0;
             const borderStyle = isPreview ? "border: 1px dashed black;" : "border: none;";
 
+            // Hitung skala font dan elemen stiker secara proporsional
+            const scaleX = lw / 64;
+            const scaleY = lh / 32;
+            const scale = Math.min(scaleX, scaleY);
+            const fontSize = 8 * scale;
+            const logoHeight = 6 * scale;
+            const mbLogo = 2 * scale;
+            const paddingTB = 2 * scale;
+            const paddingLR = 3 * scale;
+
             // OPTIMASI ANTI-LAG PREVIEW: Susun kertas HTML dalam memory terlebih dahulu
             let allPagesHTML = '';
 
@@ -791,12 +863,12 @@
                         const top = mt + (r * vp);
 
                         kertasHTML += `
-                            <div style="position: absolute; left: ${left}mm; top: ${top}mm; width: ${lw}mm; height: ${lh}mm; ${borderStyle} padding: 2mm 3mm; box-sizing: border-box; overflow: hidden; background: transparent;">
-                                <div style="text-align: center; margin-bottom: 2mm; height: 6mm;">
+                            <div style="position: absolute; left: ${left}mm; top: ${top}mm; width: ${lw}mm; height: ${lh}mm; ${borderStyle} padding: ${paddingTB}mm ${paddingLR}mm; box-sizing: border-box; overflow: hidden; background: transparent;">
+                                <div style="text-align: center; margin-bottom: ${mbLogo}mm; height: ${logoHeight}mm;">
                                     <img src="https://raw.githubusercontent.com/Blackhawk0243/sponsorship48/main/logo-min.png" style="height: 100%; display: inline-block; margin-right: 4px;">
                                     <img src="https://raw.githubusercontent.com/Blackhawk0243/sponsorship48/main/logo-hut.png" style="height: 100%; display: inline-block;">
                                 </div>
-                                <div style="font-size: 8pt; line-height: 1.3; text-align: left; color: black; font-family: 'Times New Roman', Times, serif;">
+                                <div style="font-size: ${fontSize}pt; line-height: 1.3; text-align: left; color: black; font-family: 'Times New Roman', Times, serif;">
                                     Kepada Yth.<br>
                                     <strong>Bapak/Ibu ${wali}</strong><br>
                                     Wali Murid dari:<br>
@@ -816,7 +888,7 @@
 
         function cetakPDFStiker() {
             if(daftarSiswaStikerDipilih.size === 0) {
-                const btn = document.getElementById('btn-print-stiker');
+                const btn = document.getElementById('btn-print-stiker-shared');
                 const textAwal = btn.innerHTML;
                 btn.innerHTML = "Pilih Siswa Dulu!";
                 btn.classList.add('bg-red-600', 'hover:bg-red-700');
@@ -847,6 +919,181 @@
             setTimeout(() => { 
                 document.title = originalTitle;
                 updatePreviewStiker(true); 
+            }, 1000); 
+        }
+
+        /* ==========================================
+           LOGIKA CETAK STIKER REKANAN
+        ========================================== */
+        function tambahStikerRekanan() {
+            const input = document.getElementById('input-stiker-perusahaan');
+            const nama = input.value.trim();
+            if(nama) {
+                const id = 'rek_' + Date.now();
+                daftarRekananStiker.push({ id, nama });
+                daftarRekananStikerDipilih.add(id);
+                input.value = '';
+                renderDaftarStikerRekanan();
+                updatePreviewStikerRekanan();
+            }
+        }
+
+        function hapusStikerRekanan(id) {
+            daftarRekananStiker = daftarRekananStiker.filter(r => r.id !== id);
+            daftarRekananStikerDipilih.delete(id);
+            renderDaftarStikerRekanan();
+            updatePreviewStikerRekanan();
+        }
+
+        function toggleStikerRekananItem(checkbox) {
+            if(checkbox.checked) daftarRekananStikerDipilih.add(checkbox.value);
+            else daftarRekananStikerDipilih.delete(checkbox.value);
+            updateLabelRekananCount();
+            updatePreviewStikerRekanan();
+        }
+
+        function toggleAllStikerRekanan() {
+            const isChecked = document.getElementById('chk-all-stiker-rekanan').checked;
+            document.querySelectorAll('.chk-stiker-rek').forEach(chk => {
+                chk.checked = isChecked;
+                if(isChecked) daftarRekananStikerDipilih.add(chk.value);
+                else daftarRekananStikerDipilih.delete(chk.value);
+            });
+            updateLabelRekananCount();
+            updatePreviewStikerRekanan();
+        }
+
+        function updateLabelRekananCount() {
+            document.getElementById('stiker-rekanan-count').innerText = `${daftarRekananStikerDipilih.size} Terpilih`;
+        }
+
+        function renderDaftarStikerRekanan() {
+            const container = document.getElementById('daftar-rekanan-stiker');
+            if (daftarRekananStiker.length === 0) {
+                container.innerHTML = '<div class="p-2 text-gray-500 text-center italic">Belum ada daftar perusahaan. Silakan tambah di atas.</div>';
+            } else {
+                let html = '';
+                daftarRekananStiker.forEach(r => {
+                    const checked = daftarRekananStikerDipilih.has(r.id) ? 'checked' : '';
+                    html += `
+                        <div class="flex items-center justify-between p-1 hover:bg-gray-100 border-b">
+                            <label class="flex items-center gap-2 cursor-pointer flex-1">
+                                <input type="checkbox" class="chk-stiker-rek" value="${r.id}" ${checked} onchange="toggleStikerRekananItem(this)">
+                                <span><strong>${r.nama}</strong></span>
+                            </label>
+                            <button onclick="hapusStikerRekanan('${r.id}')" class="text-red-500 hover:text-red-700 text-xs px-2 font-bold">Hapus</button>
+                        </div>
+                    `;
+                });
+                container.innerHTML = html;
+            }
+            updateLabelRekananCount();
+        }
+
+        function updatePreviewStikerRekanan(isPreview = true) {
+            const wadah = document.getElementById('wadah-halaman-stiker');
+            
+            const pw = parseFloat(document.getElementById('s-pw').value);
+            const ph = parseFloat(document.getElementById('s-ph').value);
+            const ml = parseFloat(document.getElementById('s-ml').value);
+            const mt = parseFloat(document.getElementById('s-mt').value);
+            const lw = parseFloat(document.getElementById('s-lw').value);
+            const lh = parseFloat(document.getElementById('s-lh').value);
+            const hp = parseFloat(document.getElementById('s-hp').value);
+            const vp = parseFloat(document.getElementById('s-vp').value);
+            const cols = parseInt(document.getElementById('s-col').value);
+            const rows = parseInt(document.getElementById('s-row').value);
+
+            const stikerPerHalaman = cols * rows;
+            let barisanRekanan = Array.from(daftarRekananStikerDipilih).map(id => daftarRekananStiker.find(r => r.id === id));
+            
+            if(barisanRekanan.length === 0 && isPreview) {
+                barisanRekanan = [{nama: "Contoh Nama Perusahaan / Instansi"}];
+            }
+
+            const totalHalaman = Math.ceil(barisanRekanan.length / stikerPerHalaman);
+            let indexRekanan = 0;
+            const borderStyle = isPreview ? "border: 1px dashed black;" : "border: none;";
+
+            // Hitung skala font dan elemen stiker secara proporsional
+            const scaleX = lw / 64;
+            const scaleY = lh / 32;
+            const scale = Math.min(scaleX, scaleY);
+            const fontSize = 8 * scale;
+            const logoHeight = 6 * scale;
+            const mbLogo = 2 * scale;
+            const paddingTB = 2 * scale;
+            const paddingLR = 3 * scale;
+
+            let allPagesHTML = '';
+
+            for (let hal = 0; hal < totalHalaman; hal++) {
+                let kertasHTML = `<div class="kertas-stiker" style="width: ${pw}mm; height: ${ph}mm;">`;
+                
+                for (let r = 0; r < rows; r++) {
+                    for (let c = 0; c < cols; c++) {
+                        if (indexRekanan >= barisanRekanan.length) break;
+                        const rec = barisanRekanan[indexRekanan];
+                        
+                        const left = ml + (c * hp);
+                        const top = mt + (r * vp);
+
+                        kertasHTML += `
+                            <div style="position: absolute; left: ${left}mm; top: ${top}mm; width: ${lw}mm; height: ${lh}mm; ${borderStyle} padding: ${paddingTB}mm ${paddingLR}mm; box-sizing: border-box; overflow: hidden; background: transparent;">
+                                <div style="text-align: center; margin-bottom: ${mbLogo}mm; height: ${logoHeight}mm;">
+                                    <img src="https://raw.githubusercontent.com/Blackhawk0243/sponsorship48/main/logo-min.png" style="height: 100%; display: inline-block; margin-right: 4px;">
+                                    <img src="https://raw.githubusercontent.com/Blackhawk0243/sponsorship48/main/logo-hut.png" style="height: 100%; display: inline-block;">
+                                </div>
+                                <div style="font-size: ${fontSize}pt; line-height: 1.3; text-align: left; color: black; font-family: 'Times New Roman', Times, serif;">
+                                    Kepada Yth.<br>
+                                    Bapak/Ibu Pimpinan<br>
+                                    <strong>${rec.nama}</strong><br>
+                                    di Tempat
+                                </div>
+                            </div>
+                        `;
+                        indexRekanan++;
+                    }
+                }
+                kertasHTML += `</div>`;
+                allPagesHTML += kertasHTML; 
+            }
+            
+            wadah.innerHTML = allPagesHTML; 
+        }
+
+        function cetakPDFStikerRekanan() {
+            if(daftarRekananStikerDipilih.size === 0) {
+                const btn = document.getElementById('btn-print-stiker-shared');
+                const textAwal = btn.innerHTML;
+                btn.innerHTML = "Pilih Perusahaan Dulu!";
+                btn.classList.add('bg-red-600', 'hover:bg-red-700');
+                btn.classList.remove('bg-green-600', 'hover:bg-green-700');
+                setTimeout(() => {
+                    btn.innerHTML = textAwal;
+                    btn.classList.remove('bg-red-600', 'hover:bg-red-700');
+                    btn.classList.add('bg-green-600', 'hover:bg-green-700');
+                }, 2000);
+                return;
+            }
+            
+            const originalTitle = document.title;
+            document.title = `Stiker_Label_103_Rekanan`;
+
+            const pw = document.getElementById('s-pw').value;
+            const ph = document.getElementById('s-ph').value;
+            document.getElementById('dynamic-print-style').innerHTML = `@page { size: ${pw}mm ${ph}mm; margin: 0; }`;
+
+            document.getElementById('area-dokumen-a4').classList.add('template-hidden');
+            document.getElementById('area-cetak-stiker').classList.remove('template-hidden');
+            
+            updatePreviewStikerRekanan(false); 
+            
+            window.print();
+            
+            setTimeout(() => { 
+                document.title = originalTitle;
+                updatePreviewStikerRekanan(true); 
             }, 1000); 
         }
     </script>

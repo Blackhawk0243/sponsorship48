@@ -45,6 +45,27 @@
 
         /* Menyembunyikan template yang tidak aktif */
         .template-hidden { display: none !important; }
+
+        /* Membungkus setiap halaman surat penawaran/berita acara agar
+           tingginya dibatasi persis 1 halaman A4 saat dicetak, sehingga
+           jumlah halaman selalu tepat 2 (tidak meluber jadi 3, tidak
+           berkurang jadi 1). Tinggi 277mm = 297mm - (10mm+10mm margin atas/bawah @page). */
+        .surat-page {
+            display: flex;
+            flex-direction: column;
+        }
+        @media print {
+            .surat-page {
+                height: 277mm;
+                overflow: hidden;
+            }
+        }
+
+        /* Batasi tinggi maksimum logo agar rasio gambar yang tidak simetris
+           tidak mendorong tinggi header membengkak dan menambah halaman. */
+        .logo-kop {
+            max-height: 26mm;
+        }
     </style>
 </head>
 <body class="bg-gray-200 p-4 text-gray-800" onload="tarikDataOtomatis()">
@@ -117,8 +138,9 @@
     <div id="template-penawaran" class="print-container font-serif text-black">
         
         <!-- HALAMAN 1 -->
+        <div class="surat-page">
         <div class="flex justify-between items-center border-b-[4px] border-black pb-1 mb-[2px]">
-            <img src="https://raw.githubusercontent.com/Blackhawk0243/sponsorship48/main/logo-min.png" alt="Logo MIN" class="w-24 h-auto object-contain shrink-0">
+            <img src="https://raw.githubusercontent.com/Blackhawk0243/sponsorship48/main/logo-min.png" alt="Logo MIN" class="w-24 h-auto object-contain shrink-0 logo-kop">
             
             <div class="text-center flex-1 px-2 text-black">
                 <h1 class="text-[34px] font-bold tracking-wide" style="line-height: 1.1; font-family: 'Times New Roman', Times, serif;">HUT KE-48</h1>
@@ -127,7 +149,7 @@
                 <p class="text-[12px] mt-0" style="font-family: Arial, Helvetica, sans-serif;">Jln. Bandung 7C, Telp.& Fax. (0341) 551176 – 565642 Malang</p>
             </div>
             
-            <img src="https://raw.githubusercontent.com/Blackhawk0243/sponsorship48/main/logo-hut.png" alt="Logo HUT" class="w-32 h-auto object-contain shrink-0">
+            <img src="https://raw.githubusercontent.com/Blackhawk0243/sponsorship48/main/logo-hut.png" alt="Logo HUT" class="w-32 h-auto object-contain shrink-0 logo-kop">
         </div>
         <div class="border-b-[1px] border-black mb-5"></div>
 
@@ -179,13 +201,15 @@
             </div>
             <p class="mt-4 text-[13px] font-bold">Narahubung: Siti Aliyah, S.Pd., M.Pd, 085855106031</p>
         </div>
+        </div><!-- /surat-page halaman 1 -->
 
 
         <!-- HALAMAN 2 (BERITA ACARA) -->
         <div class="page-break"></div>
 
+        <div class="surat-page">
         <div class="flex justify-between items-center border-b-[4px] border-black pb-1 mb-[2px]">
-            <img src="https://raw.githubusercontent.com/Blackhawk0243/sponsorship48/main/logo-min.png" alt="Logo MIN" class="w-24 h-auto object-contain shrink-0">
+            <img src="https://raw.githubusercontent.com/Blackhawk0243/sponsorship48/main/logo-min.png" alt="Logo MIN" class="w-24 h-auto object-contain shrink-0 logo-kop">
             
             <div class="text-center flex-1 px-2 text-black">
                 <h1 class="text-[34px] font-bold tracking-wide" style="line-height: 1.1; font-family: 'Times New Roman', Times, serif;">HUT KE-48</h1>
@@ -194,7 +218,7 @@
                 <p class="text-[12px] mt-0" style="font-family: Arial, Helvetica, sans-serif;">Jln. Bandung 7C, Telp.& Fax. (0341) 551176 – 565642 Malang</p>
             </div>
             
-            <img src="https://raw.githubusercontent.com/Blackhawk0243/sponsorship48/main/logo-hut.png" alt="Logo HUT" class="w-32 h-auto object-contain shrink-0">
+            <img src="https://raw.githubusercontent.com/Blackhawk0243/sponsorship48/main/logo-hut.png" alt="Logo HUT" class="w-32 h-auto object-contain shrink-0 logo-kop">
         </div>
         <div class="border-b-[1px] border-black mb-6"></div>
 
@@ -239,6 +263,7 @@
                 </div>
             </div>
         </div>
+        </div><!-- /surat-page halaman 2 -->
     </div>
 
     <!-- ================= TEMPLATE 2: SURAT UCAPAN TERIMA KASIH ================= -->

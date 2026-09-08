@@ -6,6 +6,7 @@
     <title>Aplikasi Cetak Surat - MIN 1 Kota Malang</title>
     <!-- Memuat Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
+    
     <style>
         @media print {
             body { 
@@ -15,28 +16,33 @@
                 -webkit-print-color-adjust: exact; 
             }
             .no-print { display: none !important; }
-            .print-container { 
+            .print-page { 
                 box-shadow: none !important; 
                 margin: 0 !important; 
-                padding: 0 !important; 
                 width: 100% !important; 
                 max-width: none !important; 
                 border: none !important;
                 min-height: auto !important;
+                page-break-after: always;
+                padding: 10mm 15mm !important;
             }
-            .page-break { page-break-before: always; }
-            @page { size: A4; margin: 10mm 15mm; }
+            .print-page:last-child {
+                page-break-after: auto;
+            }
+            @page { size: A4; margin: 0; }
         }
         
         /* Tampilan kertas di layar komputer */
-        .print-container {
+        .print-page {
             background: white; 
-            max-width: 210mm; 
+            width: 210mm; 
             min-height: 297mm; 
             margin: 20px auto; 
             padding: 15mm 20mm; 
             box-shadow: 0 4px 6px rgba(0,0,0,0.1); 
             border: 1px solid #ddd;
+            box-sizing: border-box;
+            position: relative;
         }
 
         .font-serif { 
@@ -45,27 +51,6 @@
 
         /* Menyembunyikan template yang tidak aktif */
         .template-hidden { display: none !important; }
-
-        /* Membungkus setiap halaman surat penawaran/berita acara agar
-           tingginya dibatasi persis 1 halaman A4 saat dicetak, sehingga
-           jumlah halaman selalu tepat 2 (tidak meluber jadi 3, tidak
-           berkurang jadi 1). Tinggi 277mm = 297mm - (10mm+10mm margin atas/bawah @page). */
-        .surat-page {
-            display: flex;
-            flex-direction: column;
-        }
-        @media print {
-            .surat-page {
-                height: 277mm;
-                overflow: hidden;
-            }
-        }
-
-        /* Batasi tinggi maksimum logo agar rasio gambar yang tidak simetris
-           tidak mendorong tinggi header membengkak dan menambah halaman. */
-        .logo-kop {
-            max-height: 26mm;
-        }
     </style>
 </head>
 <body class="bg-gray-200 p-4 text-gray-800" onload="tarikDataOtomatis()">
@@ -77,7 +62,7 @@
         <!-- Tab Navigasi Jenis Surat -->
         <div class="flex border-b border-gray-200 mb-6">
             <button id="tab-penawaran" onclick="switchTab('penawaran')" class="flex-1 py-2 px-4 text-center font-semibold border-b-2 border-green-600 text-green-600 bg-green-50 transition">
-                1. Surat Penawaran & Berita Acara
+                1. Surat Penawaran & Berita Acara (2 Halaman)
             </button>
             <button id="tab-terimakasih" onclick="switchTab('terimakasih')" class="flex-1 py-2 px-4 text-center font-semibold border-b-2 border-transparent text-gray-500 hover:text-gray-700 hover:bg-gray-50 transition">
                 2. Surat Ucapan Terima Kasih
@@ -127,20 +112,14 @@
                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"></polyline><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><rect x="6" y="14" width="12" height="8"></rect></svg>
                 Cetak Dokumen PDF
             </button>
-
-            <!-- Panel debug: membantu melihat data mentah jika sinkronisasi bermasalah -->
-            <div id="debug-panel" class="hidden text-xs bg-gray-50 border border-gray-200 rounded p-3 mt-1 text-gray-600 max-h-40 overflow-auto"></div>
-            <button onclick="toggleDebug()" class="text-xs text-blue-600 underline self-start">Tampilkan/Sembunyikan data mentah (debug)</button>
         </div>
     </div>
 
     <!-- ================= TEMPLATE 1: SURAT PENAWARAN & BERITA ACARA ================= -->
-    <div id="template-penawaran" class="print-container font-serif text-black">
-        
-        <!-- HALAMAN 1 -->
-        <div class="surat-page">
+    <!-- HALAMAN 1 (SURAT PENAWARAN) -->
+    <div class="print-page font-serif text-black page-penawaran">
         <div class="flex justify-between items-center border-b-[4px] border-black pb-1 mb-[2px]">
-            <img src="https://raw.githubusercontent.com/Blackhawk0243/sponsorship48/main/logo-min.png" alt="Logo MIN" class="w-24 h-auto object-contain shrink-0 logo-kop">
+            <img src="https://raw.githubusercontent.com/Blackhawk0243/sponsorship48/main/logo-min.png" alt="Logo MIN" class="w-24 h-auto object-contain shrink-0" crossorigin="anonymous">
             
             <div class="text-center flex-1 px-2 text-black">
                 <h1 class="text-[34px] font-bold tracking-wide" style="line-height: 1.1; font-family: 'Times New Roman', Times, serif;">HUT KE-48</h1>
@@ -149,7 +128,7 @@
                 <p class="text-[12px] mt-0" style="font-family: Arial, Helvetica, sans-serif;">Jln. Bandung 7C, Telp.& Fax. (0341) 551176 – 565642 Malang</p>
             </div>
             
-            <img src="https://raw.githubusercontent.com/Blackhawk0243/sponsorship48/main/logo-hut.png" alt="Logo HUT" class="w-32 h-auto object-contain shrink-0 logo-kop">
+            <img src="https://raw.githubusercontent.com/Blackhawk0243/sponsorship48/main/logo-hut.png" alt="Logo HUT" class="w-32 h-auto object-contain shrink-0" crossorigin="anonymous">
         </div>
         <div class="border-b-[1px] border-black mb-5"></div>
 
@@ -183,7 +162,7 @@
                     <p>Mengetahui,</p>
                     <p>Kepala Madrasah,</p>
                     <div class="h-20 flex items-center justify-center relative my-1">
-                        <img src="https://raw.githubusercontent.com/Blackhawk0243/sponsorship48/main/ttd-kepala.png" alt="TTD Kepala" class="absolute w-36 object-contain z-10 mix-blend-multiply">
+                        <img src="https://raw.githubusercontent.com/Blackhawk0243/sponsorship48/main/ttd-kepala.png" alt="TTD Kepala" class="absolute w-36 object-contain z-10 mix-blend-multiply" crossorigin="anonymous">
                     </div>
                     <p class="font-bold underline mb-0">Hj. Siti Aisah, S.Ag., M.Pd</p>
                     <p class="text-xs">NIP. 197410161997032002</p>
@@ -193,7 +172,7 @@
                     <p>Malang, 1 September 2026</p>
                     <p>Ketua Panitia,</p>
                     <div class="h-20 flex items-center justify-center relative my-1">
-                        <img src="https://raw.githubusercontent.com/Blackhawk0243/sponsorship48/main/ttd-ketua.png" alt="TTD Ketua" class="absolute w-28 object-contain z-10 mix-blend-multiply" onerror="this.style.display='none'">
+                        <img src="https://raw.githubusercontent.com/Blackhawk0243/sponsorship48/main/ttd-ketua.png" alt="TTD Ketua" class="absolute w-28 object-contain z-10 mix-blend-multiply" crossorigin="anonymous" onerror="this.style.display='none'">
                     </div>
                     <p class="font-bold underline mb-0">Abdullah, S.Pd., M.Pd.</p>
                     <p class="text-xs">NIP. 196911212005011001</p>
@@ -201,15 +180,12 @@
             </div>
             <p class="mt-4 text-[13px] font-bold">Narahubung: Siti Aliyah, S.Pd., M.Pd, 085855106031</p>
         </div>
-        </div><!-- /surat-page halaman 1 -->
+    </div>
 
-
-        <!-- HALAMAN 2 (BERITA ACARA) -->
-        <div class="page-break"></div>
-
-        <div class="surat-page">
+    <!-- HALAMAN 2 (BERITA ACARA) -->
+    <div class="print-page font-serif text-black page-penawaran">
         <div class="flex justify-between items-center border-b-[4px] border-black pb-1 mb-[2px]">
-            <img src="https://raw.githubusercontent.com/Blackhawk0243/sponsorship48/main/logo-min.png" alt="Logo MIN" class="w-24 h-auto object-contain shrink-0 logo-kop">
+            <img src="https://raw.githubusercontent.com/Blackhawk0243/sponsorship48/main/logo-min.png" alt="Logo MIN" class="w-24 h-auto object-contain shrink-0" crossorigin="anonymous">
             
             <div class="text-center flex-1 px-2 text-black">
                 <h1 class="text-[34px] font-bold tracking-wide" style="line-height: 1.1; font-family: 'Times New Roman', Times, serif;">HUT KE-48</h1>
@@ -218,7 +194,7 @@
                 <p class="text-[12px] mt-0" style="font-family: Arial, Helvetica, sans-serif;">Jln. Bandung 7C, Telp.& Fax. (0341) 551176 – 565642 Malang</p>
             </div>
             
-            <img src="https://raw.githubusercontent.com/Blackhawk0243/sponsorship48/main/logo-hut.png" alt="Logo HUT" class="w-32 h-auto object-contain shrink-0 logo-kop">
+            <img src="https://raw.githubusercontent.com/Blackhawk0243/sponsorship48/main/logo-hut.png" alt="Logo HUT" class="w-32 h-auto object-contain shrink-0" crossorigin="anonymous">
         </div>
         <div class="border-b-[1px] border-black mb-6"></div>
 
@@ -263,14 +239,13 @@
                 </div>
             </div>
         </div>
-        </div><!-- /surat-page halaman 2 -->
     </div>
 
     <!-- ================= TEMPLATE 2: SURAT UCAPAN TERIMA KASIH ================= -->
-    <div id="template-terimakasih" class="print-container font-serif text-black template-hidden">
+    <div class="print-page font-serif text-black page-terimakasih template-hidden">
         
         <div class="flex justify-between items-center border-b-[4px] border-black pb-1 mb-[2px]">
-            <img src="https://raw.githubusercontent.com/Blackhawk0243/sponsorship48/main/logo-min.png" alt="Logo MIN" class="w-24 h-auto object-contain shrink-0">
+            <img src="https://raw.githubusercontent.com/Blackhawk0243/sponsorship48/main/logo-min.png" alt="Logo MIN" class="w-24 h-auto object-contain shrink-0" crossorigin="anonymous">
             
             <div class="text-center flex-1 px-2 text-black">
                 <h1 class="text-[34px] font-bold tracking-wide" style="line-height: 1.1; font-family: 'Times New Roman', Times, serif;">HUT KE-48</h1>
@@ -279,7 +254,7 @@
                 <p class="text-[12px] mt-0" style="font-family: Arial, Helvetica, sans-serif;">Jln. Bandung 7C, Telp.& Fax. (0341) 551176 – 565642 Malang</p>
             </div>
             
-            <img src="https://raw.githubusercontent.com/Blackhawk0243/sponsorship48/main/logo-hut.png" alt="Logo HUT" class="w-32 h-auto object-contain shrink-0">
+            <img src="https://raw.githubusercontent.com/Blackhawk0243/sponsorship48/main/logo-hut.png" alt="Logo HUT" class="w-32 h-auto object-contain shrink-0" crossorigin="anonymous">
         </div>
         <div class="border-b-[1px] border-black mb-6"></div>
 
@@ -316,7 +291,7 @@
                     <p>Mengetahui</p>
                     <p>Kepala,</p>
                     <div class="h-24 flex items-center justify-center relative my-1">
-                        <img src="https://raw.githubusercontent.com/Blackhawk0243/sponsorship48/main/ttd-kepala.png" alt="TTD Kepala" class="absolute w-36 object-contain z-10 mix-blend-multiply">
+                        <img src="https://raw.githubusercontent.com/Blackhawk0243/sponsorship48/main/ttd-kepala.png" alt="TTD Kepala" class="absolute w-36 object-contain z-10 mix-blend-multiply" crossorigin="anonymous">
                     </div>
                     <p class="font-bold underline mb-0">Hj. Siti Aisah, S.Ag., M.Pd</p>
                     <p class="text-xs">NIP. 197410161997032002</p>
@@ -326,7 +301,7 @@
                     <p class="mb-5">&nbsp;</p>
                     <p>Ketua Pelaksana</p>
                     <div class="h-24 flex items-center justify-center relative my-1">
-                        <img src="https://raw.githubusercontent.com/Blackhawk0243/sponsorship48/main/ttd-ketua.png" alt="TTD Ketua" class="absolute w-28 object-contain z-10 mix-blend-multiply" onerror="this.style.display='none'">
+                        <img src="https://raw.githubusercontent.com/Blackhawk0243/sponsorship48/main/ttd-ketua.png" alt="TTD Ketua" class="absolute w-28 object-contain z-10 mix-blend-multiply" crossorigin="anonymous" onerror="this.style.display='none'">
                     </div>
                     <p class="font-bold underline mb-0">Abdullah, S.Pd., M.Pd.</p>
                     <p class="text-xs">NIP. 196911212005011001</p>
@@ -341,8 +316,7 @@
         
         let dataSiswaGlobal = [];
         let dataTerfilterRombel = [];
-        let templateAktif = 'penawaran'; // 'penawaran' atau 'terimakasih'
-        let dataMentahTerakhir = [];
+        let templateAktif = 'penawaran'; 
 
         // Fungsi berpindah tab menu surat
         function switchTab(tabId) {
@@ -350,8 +324,8 @@
             
             const btnPenawaran = document.getElementById('tab-penawaran');
             const btnTerimakasih = document.getElementById('tab-terimakasih');
-            const tmplPenawaran = document.getElementById('template-penawaran');
-            const tmplTerimakasih = document.getElementById('template-terimakasih');
+            const pagesPenawaran = document.querySelectorAll('.page-penawaran');
+            const pagesTerimakasih = document.querySelectorAll('.page-terimakasih');
 
             if (tabId === 'penawaran') {
                 btnPenawaran.classList.add('border-green-600', 'text-green-600', 'bg-green-50');
@@ -360,8 +334,8 @@
                 btnTerimakasih.classList.remove('border-green-600', 'text-green-600', 'bg-green-50');
                 btnTerimakasih.classList.add('border-transparent', 'text-gray-500', 'hover:text-gray-700', 'hover:bg-gray-50');
                 
-                tmplPenawaran.classList.remove('template-hidden');
-                tmplTerimakasih.classList.add('template-hidden');
+                pagesPenawaran.forEach(el => el.classList.remove('template-hidden'));
+                pagesTerimakasih.forEach(el => el.classList.add('template-hidden'));
             } else {
                 btnTerimakasih.classList.add('border-green-600', 'text-green-600', 'bg-green-50');
                 btnTerimakasih.classList.remove('border-transparent', 'text-gray-500', 'hover:text-gray-700', 'hover:bg-gray-50');
@@ -369,70 +343,25 @@
                 btnPenawaran.classList.remove('border-green-600', 'text-green-600', 'bg-green-50');
                 btnPenawaran.classList.add('border-transparent', 'text-gray-500', 'hover:text-gray-700', 'hover:bg-gray-50');
                 
-                tmplTerimakasih.classList.remove('template-hidden');
-                tmplPenawaran.classList.add('template-hidden');
+                pagesTerimakasih.forEach(el => el.classList.remove('template-hidden'));
+                pagesPenawaran.forEach(el => el.classList.add('template-hidden'));
             }
         }
 
-        function toggleDebug() {
-            const panel = document.getElementById('debug-panel');
-            panel.classList.toggle('hidden');
-            if (!panel.classList.contains('hidden')) {
-                panel.innerHTML = '<strong>Contoh 3 baris data hasil olahan:</strong><br>' +
-                    JSON.stringify(dataSiswaGlobal.slice(0, 3), null, 2).replace(/\\n/g, '<br>') +
-                    '<br><br><strong>Contoh 1 baris data mentah dari spreadsheet:</strong><br>' +
-                    JSON.stringify(dataMentahTerakhir.slice(0, 1), null, 2).replace(/\\n/g, '<br>');
-            }
-        }
-
-        // Cari nilai field di objek 'item' berdasarkan beberapa kemungkinan nama kolom,
-        // tanpa peduli huruf besar/kecil, spasi, atau underscore.
-        function cariField(item, ...kemungkinanNama) {
-            const keys = Object.keys(item || {});
-            for (const nama of kemungkinanNama) {
-                const target = nama.toLowerCase().replace(/[\s_]/g, '');
-                const found = keys.find(k => k.toLowerCase().replace(/[\s_]/g, '') === target);
-                if (found !== undefined) {
-                    const val = item[found];
-                    if (val !== undefined && val !== null && val.toString().trim() !== '') {
-                        return val.toString().trim();
+        // Fungsi bantuan mendeteksi Key JSON secara fleksibel (mendukung "nama", "kelas", "ayah")
+        function cariNilai(obj, kataKunciArray) {
+            const keys = Object.keys(obj);
+            for (let key of keys) {
+                const lowerKey = key.toLowerCase().trim();
+                for (let keyword of kataKunciArray) {
+                    if (lowerKey === keyword || lowerKey.includes(keyword)) {
+                        return obj[key];
                     }
                 }
             }
-            return '';
+            return "";
         }
 
-        // Menguraikan kelas & rombel dari berbagai kemungkinan format:
-        // "1A", "1 A", "1-A", "Kelas 1A", atau dari kolom kelas & rombel yang terpisah.
-        function uraikanKelasRombel(kelasRaw, rombelRaw) {
-            let tingkat = '';
-            let rombel = '';
-
-            let bersih = (kelasRaw || '').toString().toUpperCase();
-            bersih = bersih.replace(/KELAS/g, '').trim();
-            bersih = bersih.replace(/[\s\-_.]+/g, ''); // buang spasi/strip/underscore/titik
-
-            const match = bersih.match(/^(\d{1,2})([A-Z]*)$/);
-            if (match) {
-                tingkat = match[1];
-                rombel = match[2];
-            } else {
-                // fallback: ambil semua digit di depan sebagai tingkat
-                const digitMatch = bersih.match(/\d+/);
-                if (digitMatch) tingkat = digitMatch[0];
-                const hurufMatch = bersih.match(/[A-Z]+/);
-                if (hurufMatch) rombel = hurufMatch[0];
-            }
-
-            // Jika rombel belum ketemu dari kolom kelas, coba ambil dari kolom rombel terpisah
-            if (!rombel && rombelRaw) {
-                rombel = rombelRaw.toString().toUpperCase().replace(/[\s\-_.]+/g, '');
-            }
-
-            return { tingkat, rombel, combined: tingkat + rombel };
-        }
-
-        // Sinkronisasi otomatis saat web pertama dibuka (onload)
         async function tarikDataOtomatis() {
             await tarikDataSpreadsheet();
         }
@@ -444,48 +373,55 @@
             statusText.innerHTML = '<span class="text-blue-600 font-bold">Sedang menyinkronkan data dari Spreadsheet...</span>';
             
             try {
+                // Gunakan proxy cors jika diperlukan, atau fetch langsung ke endpoint Apps Script Web App
                 const response = await fetch(APPS_SCRIPT_URL);
                 if (!response.ok) throw new Error('Gagal terhubung ke server');
                 
                 const rawData = await response.json();
-                dataMentahTerakhir = rawData;
                 
                 if (rawData && rawData.length > 0) {
                     dataSiswaGlobal = rawData.map(item => {
-                        const nama = cariField(item, 'nama_siswa', 'nama siswa', 'nama', 'siswa');
-                        const wali = cariField(item, 'nama_wali', 'nama wali', 'wali', 'ayah', 'orang tua', 'ortu', 'orangtua');
-                        const kelasRaw = cariField(item, 'kelas', 'jenjang', 'jenjang kelas');
-                        const rombelRaw = cariField(item, 'rombel', 'rombongan belajar');
-
-                        const { combined } = uraikanKelasRombel(kelasRaw, rombelRaw);
-
+                        let nama = cariNilai(item, ['nama', 'siswa', 'name']);
+                        let wali = cariNilai(item, ['ayah', 'ibu', 'wali', 'ortu', 'orang tua']);
+                        let kelasRaw = cariNilai(item, ['kelas', 'rombel', 'tingkat', 'class']).toString().trim();
+                        
+                        let tingkat = "";
+                        let rombel = "";
+                        
+                        // Ekstraksi angka 1-6 dari kolom KELAS (misal "1A" -> tingkat="1", rombel="A")
+                        let angkaMatch = kelasRaw.match(/[1-6]/);
+                        if (angkaMatch) {
+                            tingkat = angkaMatch[0];
+                        }
+                        
+                        let hurufMatch = kelasRaw.match(/[A-Za-z]/);
+                        if (hurufMatch) {
+                            rombel = hurufMatch[0].toUpperCase();
+                        }
+                        
                         return {
-                            nama_siswa: nama,
-                            nama_wali: wali,
-                            kelas: combined
+                            nama_siswa: nama.toString().trim(),
+                            nama_wali: wali.toString().trim(),
+                            tingkat: tingkat,    
+                            rombel: rombel,      
+                            kelasAsli: kelasRaw  
                         };
                     }).filter(s => s.nama_siswa !== "");
 
-                    const tanpaKelas = dataSiswaGlobal.filter(s => s.kelas === '').length;
-
                     selectKelas.disabled = false;
-                    if (tanpaKelas > 0) {
-                        statusText.innerHTML = `<span class="text-yellow-600 font-bold">Sukses sebagian: ${dataSiswaGlobal.length} siswa tersinkron, namun ${tanpaKelas} data tidak terbaca kolom kelasnya. Klik "Tampilkan data mentah" di bawah untuk memeriksa format kolom kelas/rombel di spreadsheet Anda.</span>`;
-                    } else {
-                        statusText.innerHTML = `<span class="text-green-600 font-bold">Sukses! ${dataSiswaGlobal.length} data siswa tersinkron otomatis.</span>`;
-                    }
+                    statusText.innerHTML = `<span class="text-green-600 font-bold">Sukses! ${dataSiswaGlobal.length} data tersinkron. Silakan pilih kelas.</span>`;
                 } else {
-                    statusText.innerHTML = '<span class="text-red-600 font-bold">Data Spreadsheet kosong.</span>';
+                    statusText.innerHTML = '<span class="text-red-600 font-bold">Data Spreadsheet kosong atau format tidak sesuai.</span>';
                 }
             } catch (err) {
                 console.error(err);
-                statusText.innerHTML = '<span class="text-red-600 font-bold">Gagal sinkron. Periksa koneksi atau setel Web App ke "Anyone".</span>';
+                statusText.innerHTML = '<span class="text-red-600 font-bold">Gagal sinkron. Pastikan Apps Script berstatus "Anyone" (Siapa saja) pada pengaturan deploy.</span>';
             }
         }
 
         // Filter Rombel berdasarkan Kelas (1-6)
         function filterRombel() {
-            const tingkat = document.getElementById('filter-kelas').value;
+            const tingkatTerpilih = document.getElementById('filter-kelas').value;
             const selectRombel = document.getElementById('filter-rombel');
             const selectSiswa = document.getElementById('pilih-siswa');
             
@@ -493,24 +429,22 @@
             selectSiswa.innerHTML = '<option value="">-- Pilih rombel terlebih dahulu --</option>';
             selectSiswa.disabled = true;
             
-            if (tingkat !== "") {
-                // Ambil semua rombel unik yang cocok dengan tingkat (misal "1A" -> tingkat "1", huruf "A")
+            if (tingkatTerpilih !== "") {
                 const rombelSet = new Set();
                 dataSiswaGlobal.forEach(s => {
-                    if (s.kelas && s.kelas.startsWith(tingkat)) {
-                        const huruf = s.kelas.substring(tingkat.length).toUpperCase();
-                        if (huruf) rombelSet.add(huruf);
+                    if (s.tingkat === tingkatTerpilih && s.rombel !== "") {
+                        rombelSet.add(s.rombel);
                     }
                 });
 
                 const sortedRombel = Array.from(rombelSet).sort();
                 if (sortedRombel.length > 0) {
                     sortedRombel.forEach(r => {
-                        selectRombel.innerHTML += `<option value="${tingkat}${r}">Kelas ${tingkat}${r}</option>`;
+                        selectRombel.innerHTML += `<option value="${r}">Kelas ${tingkatTerpilih}${r}</option>`;
                     });
                     selectRombel.disabled = false;
                 } else {
-                    selectRombel.innerHTML = '<option value="">-- Tidak ada rombel ditemukan (cek format kolom kelas) --</option>';
+                    selectRombel.innerHTML = '<option value="">-- Tidak ada rombel ditemukan --</option>';
                     selectRombel.disabled = true;
                 }
             } else {
@@ -522,23 +456,24 @@
 
         // Filter Nama Siswa berdasarkan Rombel yang dipilih
         function filterSiswa() {
-            const kelasRombel = document.getElementById('filter-rombel').value;
+            const tingkatTerpilih = document.getElementById('filter-kelas').value;
+            const rombelTerpilih = document.getElementById('filter-rombel').value; 
             const selectSiswa = document.getElementById('pilih-siswa');
             
             selectSiswa.innerHTML = '<option value="">-- Pilih Nama Siswa --</option>';
             
-            if (kelasRombel !== "") {
-                dataTerfilterRombel = dataSiswaGlobal.filter(s => s.kelas.toUpperCase() === kelasRombel.toUpperCase());
-                // Urutkan abjad nama siswa
+            if (tingkatTerpilih !== "" && rombelTerpilih !== "") {
+                dataTerfilterRombel = dataSiswaGlobal.filter(s => s.tingkat === tingkatTerpilih && s.rombel === rombelTerpilih);
+                
                 dataTerfilterRombel.sort((a, b) => a.nama_siswa.localeCompare(b.nama_siswa));
 
                 if (dataTerfilterRombel.length > 0) {
                     dataTerfilterRombel.forEach((siswa, index) => {
-                        selectSiswa.innerHTML += `<option value="${index}">${siswa.nama_siswa} (Wali: ${siswa.nama_wali || ' - '})</option>`;
+                        selectSiswa.innerHTML += `<option value="${index}">${siswa.nama_siswa} (Ayah: ${siswa.nama_wali || ' - '})</option>`;
                     });
                     selectSiswa.disabled = false;
                 } else {
-                    selectSiswa.innerHTML = '<option value="">-- Tidak ada siswa di kelas ini --</option>';
+                    selectSiswa.innerHTML = '<option value="">-- Tidak ada siswa --</option>';
                     selectSiswa.disabled = true;
                 }
             } else {
@@ -556,18 +491,17 @@
             if (index !== "") {
                 const siswa = dataTerfilterRombel[index];
                 const namaWali = siswa.nama_wali || "[Nama wali murid]";
+                const teksKelasTampil = siswa.kelasAsli || `Kelas ${siswa.tingkat}${siswa.rombel}`; 
                 
-                // Template Penawaran & Berita Acara
                 document.getElementById('cetak-wali').innerText = namaWali;
                 document.getElementById('cetak-siswa').innerText = siswa.nama_siswa;
-                document.getElementById('cetak-kelas').innerText = siswa.kelas;
+                document.getElementById('cetak-kelas').innerText = teksKelasTampil;
                 document.getElementById('cetak-wali-ba').innerText = namaWali;
                 document.getElementById('cetak-wali-sign').innerText = namaWali;
 
-                // Template Ucapan Terima Kasih
                 document.getElementById('tk-cetak-wali').innerText = namaWali;
                 document.getElementById('tk-cetak-siswa').innerText = siswa.nama_siswa;
-                document.getElementById('tk-cetak-kelas').innerText = siswa.kelas;
+                document.getElementById('tk-cetak-kelas').innerText = teksKelasTampil;
                 
                 btnPrint.disabled = false;
                 btnPrint.classList.remove('opacity-50', 'cursor-not-allowed');

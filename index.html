@@ -27,6 +27,11 @@
             box-shadow: 0 4px 6px rgba(0,0,0,0.1); border: 1px solid #ddd;
             font-family: 'Times New Roman', Times, serif;
         }
+
+        /* Memaksa font Times New Roman pada seluruh teks surat */
+        .font-serif {
+            font-family: 'Times New Roman', Times, serif !important;
+        }
     </style>
 </head>
 <body class="bg-gray-200 text-gray-800 font-sans">
@@ -98,7 +103,7 @@
             <div class="text-center flex-1 px-2 text-black">
                 <h1 class="text-[34px] font-bold tracking-wide" style="line-height: 1.1; font-family: 'Times New Roman', Times, serif;">HUT KE-48</h1>
                 <h2 class="text-[15px] font-bold mt-1 tracking-wide" style="font-family: Arial, Helvetica, sans-serif;">MIN 1 KOTA MALANG</h2>
-                <h3 class="text-[14px] font-bold mt-0" style="font-family: Arial, Helvetica, sans-serif;">TAHUN PELAJARAN 2025/2026</h3>
+                <h3 class="text-[14px] font-bold mt-0" style="font-family: Arial, Helvetica, sans-serif;">TAHUN PELAJARAN 2026/2027</h3>
                 <p class="text-[12px] mt-0" style="font-family: Arial, Helvetica, sans-serif;">Jln. Bandung 7C, Telp.& Fax. (0341) 551176 – 565642 Malang</p>
             </div>
 
@@ -192,10 +197,10 @@
             <p class="indent-10">Pada hari ini, ............................................. tanggal ....................... pada bulan ....................... tahun 2026.</p>
             <p>Yang bertanda tangan di bawah ini:</p>
             <table class="ml-4 w-full mt-2">
-                <tr><td class="w-40 h-10">Nama</td><td class="w-4">:</td><td class="border-b border-dotted border-black font-bold" id="nama-wali-form"></td></tr>
-                <tr><td class="h-10">Alamat</td><td>:</td><td class="border-b border-dotted border-black"></td></tr>
-                <tr><td class="h-10">No Telp.</td><td>:</td><td class="border-b border-dotted border-black"></td></tr>
-                <tr><td class="h-10 align-bottom pb-1">Instansi / Perusahaan</td><td class="align-bottom pb-1">:</td><td class="border-b border-dotted border-black font-bold align-bottom pb-1">Wali Murid Ananda <span id="nama-siswa-form"></span> (<span id="kelas-siswa-form"></span>)</td></tr>
+                <tr><td class="w-40 py-2">Nama</td><td class="w-4 py-2">:</td><td class="border-b border-dotted border-black font-bold" id="nama-wali-form"></td></tr>
+                <tr><td class="py-2">Alamat</td><td class="py-2">:</td><td class="border-b border-dotted border-black"></td></tr>
+                <tr><td class="py-2">No Telp.</td><td class="py-2">:</td><td class="border-b border-dotted border-black"></td></tr>
+                <tr><td class="py-2">Instansi / Perusahaan</td><td class="py-2">:</td><td class="border-b border-dotted border-black"></td></tr>
             </table>
         </div>
 
@@ -204,20 +209,16 @@
             <p class="mb-2 mt-4">Menyatakan bahwa kami <strong>bersedia / tidak bersedia*</strong> menjadi donatur pada kegiatan MIN 1 Kota Malang.</p>
             <p class="mb-2">Adapun bentuk bantuan yang kami berikan berupa:</p>
             
-            <div class="ml-4 space-y-4 mt-4">
-                <div class="flex">
+            <div class="ml-4 space-y-4 mt-4 text-left">
+                <div class="flex items-end">
                     <span class="w-6">a.</span>
-                    <div class="flex-1">
-                        <span>Bantuan uang sebesar Rp </span>
-                        <span class="border-b border-dotted border-black inline-block w-[75%]"></span>
-                    </div>
+                    <span class="mr-2">Bantuan uang sebesar Rp</span>
+                    <span class="flex-1 border-b border-dotted border-black"></span>
                 </div>
-                <div class="flex">
+                <div class="flex items-end">
                     <span class="w-6">b.</span>
-                    <div class="flex-1">
-                        <span>Bantuan lain berupa </span>
-                        <span class="border-b border-dotted border-black inline-block w-[80%]"></span>
-                    </div>
+                    <span class="mr-2">Bantuan lain berupa</span>
+                    <span class="flex-1 border-b border-dotted border-black"></span>
                 </div>
             </div>
             
@@ -227,10 +228,10 @@
 
         <!-- TANDA TANGAN WALI -->
         <div class="text-[15px] flex justify-end mt-16 font-serif text-black">
-            <div class="text-center w-56">
+            <div class="text-center w-64">
                 <p>Malang, .............................. 2026</p>
-                <p class="mb-24"></p>
-                <p>( ........................................................ )</p>
+                <div class="h-24"></div>
+                <p class="whitespace-nowrap">( ........................................................ )</p>
             </div>
         </div>
     </div>
@@ -338,8 +339,6 @@
 
                 // Update teks di Halaman 2 (Berita Acara)
                 document.getElementById('nama-wali-form').innerText = siswa.nama_wali;
-                document.getElementById('nama-siswa-form').innerText = siswa.nama_siswa;
-                document.getElementById('kelas-siswa-form').innerText = siswa.kelas;
                 
                 // Aktifkan tombol print
                 btnPrint.disabled = false;
@@ -352,8 +351,6 @@
                 document.getElementById('kelas-siswa').innerText = "[kelas]";
                 
                 document.getElementById('nama-wali-form').innerText = "";
-                document.getElementById('nama-siswa-form').innerText = "";
-                document.getElementById('kelas-siswa-form').innerText = "";
                 
                 // Matikan tombol print
                 btnPrint.disabled = true;

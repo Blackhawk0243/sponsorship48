@@ -3,58 +3,80 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cetak Surat Sponsorship MIN 1</title>
-    <!-- Memanggil Tailwind CSS langsung via CDN -->
+    <title>Aplikasi Cetak Surat - MIN 1 Kota Malang</title>
+    <!-- Memuat Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         @media print {
-            body { background-color: white; margin: 0; padding: 0; -webkit-print-color-adjust: exact; }
+            body { 
+                background-color: white !important; 
+                margin: 0 !important; 
+                padding: 0 !important; 
+                -webkit-print-color-adjust: exact; 
+            }
             .no-print { display: none !important; }
             .print-container { 
-                box-shadow: none !important; margin: 0 !important; padding: 0 !important; 
-                width: 100% !important; border: none !important;
-                /* Mencegah munculnya halaman kosong di tengah */
-                min-height: auto !important; 
+                box-shadow: none !important; 
+                margin: 0 !important; 
+                padding: 0 !important; 
+                width: 100% !important; 
+                max-width: none !important; 
+                border: none !important;
+                min-height: auto !important;
             }
             .page-break { page-break-before: always; }
-            @page { size: A4 portrait; margin: 10mm 15mm; }
+            @page { size: A4; margin: 10mm 15mm; }
         }
         
-        /* Tampilan simulasi kertas di layar komputer */
+        /* Tampilan kertas di layar komputer */
         .print-container {
-            background: white; max-width: 210mm; min-height: 297mm; 
-            margin: 20px auto; padding: 15mm 20mm; 
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1); border: 1px solid #ddd;
-            font-family: 'Times New Roman', Times, serif;
+            background: white; 
+            max-width: 210mm; 
+            min-height: 297mm; 
+            margin: 20px auto; 
+            padding: 15mm 20mm; 
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1); 
+            border: 1px solid #ddd;
         }
 
-        /* Memaksa font Times New Roman pada seluruh teks surat */
-        .font-serif {
-            font-family: 'Times New Roman', Times, serif !important;
+        .font-serif { 
+            font-family: 'Times New Roman', Times, serif !important; 
         }
+
+        /* Menyembunyikan template yang tidak aktif */
+        .template-hidden { display: none !important; }
     </style>
 </head>
-<body class="bg-gray-200 text-gray-800 font-sans">
+<body class="bg-gray-200 p-4 text-gray-800" onload="tarikDataOtomatis()">
 
-    <!-- PANEL KONTROL -->
-    <div class="no-print max-w-3xl mx-auto bg-white p-6 rounded-xl shadow-md mt-8 mb-8 border-t-4 border-green-600">
-        <h2 class="text-2xl font-bold mb-4 text-center">Aplikasi Cetak Surat Sponsorship MIN 1</h2>
+    <!-- BAGIAN KONTROL & TOMBOL (TIDAK IKUT TERCETAK) -->
+    <div class="no-print max-w-3xl mx-auto bg-white p-6 rounded-lg shadow-md mb-8 border-t-4 border-green-600">
+        <h2 class="text-2xl font-bold mb-4 text-center">Aplikasi Cetak Surat MIN 1 Kota Malang</h2>
         
-        <!-- Tombol Tarik Data -->
-        <button onclick="tarikData()" class="bg-blue-600 text-white font-bold px-4 py-3 rounded-lg mb-2 w-full hover:bg-blue-700 transition shadow-sm">
-            1. Tarik Data dari Spreadsheet
-        </button>
-        <p id="status" class="text-sm text-gray-600 mb-6 text-center">Status: Belum ditarik</p>
-        
-        <!-- Filter Kelas dan Rombel -->
-        <div class="bg-gray-50 p-4 rounded-lg border border-gray-200 mb-6">
-            <label class="font-bold block mb-3 text-sm text-gray-700">2. Sortir dan Pilih Siswa:</label>
-            
-            <div class="grid grid-cols-2 gap-4 mb-4">
+        <!-- Tab Navigasi Jenis Surat -->
+        <div class="flex border-b border-gray-200 mb-6">
+            <button id="tab-penawaran" onclick="switchTab('penawaran')" class="flex-1 py-2 px-4 text-center font-semibold border-b-2 border-green-600 text-green-600 bg-green-50 transition">
+                1. Surat Penawaran & Berita Acara
+            </button>
+            <button id="tab-terimakasih" onclick="switchTab('terimakasih')" class="flex-1 py-2 px-4 text-center font-semibold border-b-2 border-transparent text-gray-500 hover:text-gray-700 hover:bg-gray-50 transition">
+                2. Surat Ucapan Terima Kasih
+            </button>
+        </div>
+
+        <div class="flex flex-col gap-4">
+            <div class="flex items-center justify-between">
+                <span id="status-tarik" class="text-sm font-medium text-gray-600">Status: Mengambil data secara otomatis...</span>
+                <button onclick="tarikDataSpreadsheet()" class="bg-blue-600 text-white font-bold py-2 px-4 rounded text-sm hover:bg-blue-700 transition">
+                    Sinkron Ulang Data
+                </button>
+            </div>
+
+            <!-- Filter Sortir Kelas dan Rombel -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                    <label class="text-xs text-gray-500 mb-1 block">Pilih Kelas (Opsional)</label>
-                    <select id="filter-kelas" onchange="filterSiswa()" class="w-full border border-gray-300 p-2.5 rounded bg-white shadow-sm" disabled>
-                        <option value="">-- Semua Kelas --</option>
+                    <label class="font-bold text-sm text-gray-700">Pilih Jenjang Kelas:</label>
+                    <select id="filter-kelas" onchange="filterRombel()" class="border border-gray-300 p-2.5 rounded w-full bg-white mt-1" disabled>
+                        <option value="">-- Pilih Kelas (1-6) --</option>
                         <option value="1">Kelas 1</option>
                         <option value="2">Kelas 2</option>
                         <option value="3">Kelas 3</option>
@@ -63,300 +85,414 @@
                         <option value="6">Kelas 6</option>
                     </select>
                 </div>
+
                 <div>
-                    <label class="text-xs text-gray-500 mb-1 block">Pilih Rombel (Opsional)</label>
-                    <select id="filter-rombel" onchange="filterSiswa()" class="w-full border border-gray-300 p-2.5 rounded bg-white shadow-sm" disabled>
-                        <option value="">-- Semua Rombel --</option>
-                        <option value="A">A</option><option value="B">B</option>
-                        <option value="C">C</option><option value="D">D</option>
-                        <option value="E">E</option><option value="F">F</option>
-                        <option value="G">G</option><option value="H">H</option>
-                        <option value="I">I</option>
+                    <label class="font-bold text-sm text-gray-700">Pilih Rombel:</label>
+                    <select id="filter-rombel" onchange="filterSiswa()" class="border border-gray-300 p-2.5 rounded w-full bg-white mt-1" disabled>
+                        <option value="">-- Pilih Rombel (A-I) --</option>
                     </select>
                 </div>
             </div>
 
-            <!-- Dropdown Pilih Siswa -->
-            <label class="text-xs text-gray-500 mb-1 block">Pilih Nama Siswa</label>
-            <select id="pilih-siswa" onchange="updateSurat()" class="w-full border border-gray-300 p-3 rounded bg-white shadow-sm font-medium text-gray-800" disabled>
-                <option value="">-- Silakan tarik data terlebih dahulu --</option>
-            </select>
+            <!-- Pilih Nama Siswa -->
+            <div class="flex flex-col gap-2">
+                <label class="font-bold text-sm text-gray-700">Pilih Nama Siswa:</label>
+                <select id="pilih-siswa" onchange="updateSurat()" class="border border-gray-300 p-3 rounded w-full bg-white font-medium" disabled>
+                    <option value="">-- Pilih kelas dan rombel terlebih dahulu --</option>
+                </select>
+            </div>
+
+            <button onclick="window.print()" id="btn-print" class="bg-green-600 text-white font-bold py-3 px-4 rounded hover:bg-green-700 transition mt-2 opacity-50 cursor-not-allowed flex items-center justify-center gap-2" disabled>
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"></polyline><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><rect x="6" y="14" width="12" height="8"></rect></svg>
+                Cetak Dokumen PDF
+            </button>
         </div>
-        
-        <!-- Tombol Cetak -->
-        <button id="btn-print" onclick="window.print()" class="bg-green-600 text-white font-bold px-4 py-3 rounded-lg w-full opacity-50 cursor-not-allowed transition shadow-md flex items-center justify-center gap-2" disabled>
-            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"></polyline><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><rect x="6" y="14" width="12" height="8"></rect></svg>
-            3. Cetak PDF Dokumen
-        </button>
     </div>
 
-    <!-- ================= KERTAS HALAMAN 1 ================= -->
-    <div class="print-container relative bg-white">
+    <!-- ================= TEMPLATE 1: SURAT PENAWARAN & BERITA ACARA ================= -->
+    <div id="template-penawaran" class="print-container font-serif text-black">
         
-        <!-- KOP SURAT (Desain Sesuai Gambar) -->
-        <div class="flex items-center justify-between pb-1">
-            <div class="w-[120px] shrink-0 flex justify-start">
-                <!-- LOGO MIN KIRI -->
-                <img src="https://raw.githubusercontent.com/Blackhawk0243/sponsorship48/main/logo-min.png" alt="Logo MIN" class="w-[100px] h-auto object-contain">
-            </div>
+        <!-- HALAMAN 1 -->
+        <div class="flex justify-between items-center border-b-[4px] border-black pb-1 mb-[2px]">
+            <img src="https://raw.githubusercontent.com/Blackhawk0243/sponsorship48/main/logo-min.png" alt="Logo MIN" class="w-24 h-auto object-contain shrink-0">
             
             <div class="text-center flex-1 px-2 text-black">
                 <h1 class="text-[34px] font-bold tracking-wide" style="line-height: 1.1; font-family: 'Times New Roman', Times, serif;">HUT KE-48</h1>
                 <h2 class="text-[15px] font-bold mt-1 tracking-wide" style="font-family: Arial, Helvetica, sans-serif;">MIN 1 KOTA MALANG</h2>
-                <h3 class="text-[14px] font-bold mt-0" style="font-family: Arial, Helvetica, sans-serif;">TAHUN PELAJARAN 2026/2027</h3>
+                <h3 class="text-[14px] font-bold mt-0" style="font-family: Arial, Helvetica, sans-serif;">TAHUN PELAJARAN 2025/2026</h3>
                 <p class="text-[12px] mt-0" style="font-family: Arial, Helvetica, sans-serif;">Jln. Bandung 7C, Telp.& Fax. (0341) 551176 – 565642 Malang</p>
             </div>
-
-            <div class="w-[150px] shrink-0 flex justify-end">
-                <!-- LOGO HUT 48 KANAN -->
-                <img src="https://raw.githubusercontent.com/Blackhawk0243/sponsorship48/main/logo-hut.png" alt="Logo HUT" class="w-[140px] h-auto object-contain">
-            </div>
+            
+            <img src="https://raw.githubusercontent.com/Blackhawk0243/sponsorship48/main/logo-hut.png" alt="Logo HUT" class="w-32 h-auto object-contain shrink-0">
         </div>
-        <!-- Garis Ganda Kop Surat -->
-        <div class="border-b-[4px] border-black mt-2 mb-[2px]"></div>
         <div class="border-b-[1px] border-black mb-5"></div>
 
-        <!-- NOMOR & PERIHAL -->
-        <table class="text-[15px] mb-5 leading-relaxed text-black font-serif">
-            <tr><td class="w-24">Nomor</td><td class="w-3">:</td><td>B-805/Mi.13.25.01/PP.00.4/09/2026</td></tr>
-            <tr><td>Lampiran</td><td>:</td><td>1 bendel</td></tr>
-            <tr><td class="align-top">Perihal</td><td class="align-top">:</td><td><strong>Penawaran Kerjasama dalam<br>bentuk Sponsorship / Donatur</strong></td></tr>
-        </table>
-
-        <!-- TUJUAN SURAT -->
-        <div class="text-[15px] mb-5 leading-relaxed text-black font-serif">
-            <p>Kepada Yth:</p>
-            <p>Bapak/Ibu <strong><span id="nama-wali">[Nama wali murid]</span></strong></p>
-            <p>Wali murid dari Ananda <strong><span id="nama-siswa">[Nama siswa]</span></strong> Kelas <strong><span id="kelas-siswa">[kelas]</span></strong></p>
-            <p>di Tempat</p>
-        </div>
-
-        <!-- ISI SURAT -->
-        <div class="text-[15px] text-justify mb-5 leading-relaxed text-black font-serif">
-            <p class="mb-2">Assalaamu'alaikum Wr.Wb.</p>
-            <p class="indent-10 mb-2">Dalam rangka kegiatan akhir tahun kami akan menyelenggarakan serangkaian kegiatan yang terangkum dalam sebuah acara <strong>"PERINGATAN HUT KE-48 TAHUN MADRASAH IBTIDAIYAH NEGERI 1 KOTA MALANG"</strong>. Acara tersebut Insya Allah akan dilaksanakan pada hari Minggu, 27 September 2026.</p>
-            <p class="indent-10 mb-2">Berkaitan dengan hal tersebut, demi kesuksesan dan kelancaran kegiatan yang dimaksud, kami mengharap Lembaga / Perusahaan Bapak/Ibu berkenan untuk berpartisipasi dalam bentuk Sponsorship/Donatur.</p>
-            <p class="indent-10 mb-2">Adapun bentuk partisipasi dan uraian kegiatan, berikut kami lampirkan Proposal Kegiatan. Bagi Bapak/Ibu yang berkenan memberikan partisipasi dalam bentuk dana, donasi dapat disalurkan melalui rekening <strong>Bank BRI 005101246266508 a.n SITI ALIYAH</strong></p>
-            <p class="indent-10 mb-2">Demikian atas kerjasama yang baik kami menyampaikan terima kasih.</p>
-            <p>Wassalaamu'alaikum Wr.Wb.</p>
-        </div>
-
-        <!-- TANDA TANGAN -->
-        <div class="flex justify-between text-[15px] mt-6 text-black font-serif">
-            <div class="text-center relative w-1/2">
-                <p>Mengetahui,</p>
-                <p>Kepala Madrasah,</p>
-                <div class="h-20 relative flex justify-center items-center mt-1 mb-1">
-                    <!-- TTD KEPALA & STEMPEL -->
-                    <img src="https://raw.githubusercontent.com/Blackhawk0243/sponsorship48/main/ttd-kepala.png" alt="TTD Kepala" class="absolute w-[140px] h-auto object-contain mix-blend-multiply" onerror="this.style.display='none'">
-                </div>
-                <p class="font-bold underline mb-0">Hj. Siti Aisah, S.Ag., M.Pd</p>
-                <p>NIP. 197410161997032002</p>
-            </div>
-            <div class="text-center w-1/2 relative">
-                <p>Malang, 1 September 2026</p>
-                <p>Ketua Panitia,</p>
-                <div class="h-20 relative flex justify-center items-center mt-1 mb-1">
-                    <!-- TTD KETUA -->
-                    <img src="https://raw.githubusercontent.com/Blackhawk0243/sponsorship48/main/ttd-ketua.png" alt="TTD Ketua" class="absolute w-[120px] h-auto object-contain mix-blend-multiply" onerror="this.style.display='none'">
-                </div>
-                <p class="font-bold underline mb-0">Abdullah, S.Pd., M.Pd.</p>
-                <p>NIP. 196911212005011001</p>
-            </div>
-        </div>
-        
-        <p class="text-[13px] font-bold mt-6 text-black font-serif">Narahubung: Siti Aliyah, S.Pd., M.Pd, 085855106031</p>
-    </div>
-
-    <!-- ================= KERTAS HALAMAN 2 ================= -->
-    <div class="print-container page-break relative bg-white">
-        
-        <!-- KOP SURAT HALAMAN 2 -->
-        <div class="flex items-center justify-between pb-1">
-            <div class="w-[120px] shrink-0 flex justify-start">
-                <img src="https://raw.githubusercontent.com/Blackhawk0243/sponsorship48/main/logo-min.png" alt="Logo MIN" class="w-[100px] h-auto object-contain">
-            </div>
-            <div class="text-center flex-1 px-2 text-black">
-                <h1 class="text-[34px] font-bold tracking-wide" style="line-height: 1.1; font-family: 'Times New Roman', Times, serif;">HUT KE-48</h1>
-                <h2 class="text-[15px] font-bold mt-1 tracking-wide" style="font-family: Arial, Helvetica, sans-serif;">MIN 1 KOTA MALANG</h2>
-                <h3 class="text-[14px] font-bold mt-0" style="font-family: Arial, Helvetica, sans-serif;">TAHUN PELAJARAN 2026/2027</h3>
-                <p class="text-[12px] mt-0" style="font-family: Arial, Helvetica, sans-serif;">Jln. Bandung 7C, Telp.& Fax. (0341) 551176 – 565642 Malang</p>
-            </div>
-            <div class="w-[150px] shrink-0 flex justify-end">
-                <img src="https://raw.githubusercontent.com/Blackhawk0243/sponsorship48/main/logo-hut.png" alt="Logo HUT" class="w-[140px] h-auto object-contain">
-            </div>
-        </div>
-        <div class="border-b-[4px] border-black mt-2 mb-[2px]"></div>
-        <div class="border-b-[1px] border-black mb-8"></div>
-
-        <!-- JUDUL HALAMAN 2 -->
-        <h3 class="text-center font-bold text-lg underline mb-8 font-serif text-black">BERITA ACARA KESANGGUPAN SPONSORSHIP</h3>
-
-        <!-- FORM ISIAN -->
-        <div class="text-[15px] leading-loose mb-6 font-serif text-black">
-            <p class="indent-10">Pada hari ini, ............................................. tanggal ....................... pada bulan ....................... tahun 2026.</p>
-            <p>Yang bertanda tangan di bawah ini:</p>
-            <table class="ml-4 w-full mt-2">
-                <tr><td class="w-40 py-2">Nama</td><td class="w-4 py-2">:</td><td class="border-b border-dotted border-black font-bold" id="nama-wali-form"></td></tr>
-                <tr><td class="py-2">Alamat</td><td class="py-2">:</td><td class="border-b border-dotted border-black"></td></tr>
-                <tr><td class="py-2">No Telp.</td><td class="py-2">:</td><td class="border-b border-dotted border-black"></td></tr>
-                <tr><td class="py-2">Instansi / Perusahaan</td><td class="py-2">:</td><td class="border-b border-dotted border-black"></td></tr>
+        <div class="flex justify-between text-[15px] mb-6 leading-relaxed">
+            <table class="w-2/3">
+                <tr><td class="w-24">Nomor</td><td class="w-3">:</td><td>B-805/Mi.13.25.01/PP.00.4/09/2026</td></tr>
+                <tr><td>Lampiran</td><td>:</td><td>1 bendel</td></tr>
+                <tr><td class="align-top">Perihal</td><td class="align-top">:</td><td>Penawaran Kerjasama dalam bentuk Sponsorship / Donatur</td></tr>
             </table>
         </div>
 
-        <!-- KETERANGAN BANTUAN -->
-        <div class="text-[15px] leading-relaxed mb-6 text-justify font-serif text-black">
-            <p class="mb-2 mt-4">Menyatakan bahwa kami <strong>bersedia / tidak bersedia*</strong> menjadi donatur pada kegiatan MIN 1 Kota Malang.</p>
-            <p class="mb-2">Adapun bentuk bantuan yang kami berikan berupa:</p>
-            
-            <div class="ml-4 space-y-4 mt-4 text-left">
-                <div class="flex items-end">
-                    <span class="w-6">a.</span>
-                    <span class="mr-2">Bantuan uang sebesar Rp</span>
-                    <span class="flex-1 border-b border-dotted border-black"></span>
-                </div>
-                <div class="flex items-end">
-                    <span class="w-6">b.</span>
-                    <span class="mr-2">Bantuan lain berupa</span>
-                    <span class="flex-1 border-b border-dotted border-black"></span>
-                </div>
-            </div>
-            
-            <p class="mt-8">Demikian berita acara ini kami buat untuk dipergunakan sebagaimana mestinya.</p>
-            <p class="text-xs italic mt-2">*coret yang tidak diperlukan</p>
+        <div class="text-[15px] mb-6 leading-relaxed">
+            <p>Kepada Yth:</p>
+            <p class="font-bold mt-1">Bapak/Ibu <span id="cetak-wali">[Nama wali murid]</span></p>
+            <p>Wali murid dari Ananda <span id="cetak-siswa" class="font-bold">[Nama siswa]</span> Kelas <span id="cetak-kelas" class="font-bold">[kelas]</span></p>
+            <p>di Tempat</p>
         </div>
 
-        <!-- TANDA TANGAN WALI -->
-        <div class="text-[15px] flex justify-end mt-16 font-serif text-black">
-            <div class="text-center w-64">
-                <p>Malang, .............................. 2026</p>
-                <div class="h-24"></div>
-                <p class="whitespace-nowrap">( ........................................................ )</p>
+        <div class="text-[15px] text-justify leading-relaxed mb-6 space-y-3">
+            <p class="font-bold">Assalaamu'alaikum Wr.Wb.</p>
+            <p class="indent-10">Dalam rangka kegiatan akhir tahun kami akan menyelenggarakan serangkaian kegiatan yang terangkum dalam sebuah acara <strong>"PERINGATAN HUT KE-48 TAHUN MADRASAH IBTIDAIYAH NEGERI 1 KOTA MALANG"</strong>. Acara tersebut Insya Allah akan dilaksanakan pada hari Minggu, 27 September 2026.</p>
+            <p class="indent-10">Berkaitan dengan hal tersebut, demi kesuksesan dan kelancaran kegiatan yang dimaksud, kami mengharap Lembaga / Perusahaan Bapak/Ibu berkenan untuk berpartisipasi dalam bentuk Sponsorship/Donatur.</p>
+            <p class="indent-10">Adapun bentuk partisipasi dan uraian kegiatan, berikut kami lampirkan Proposal Kegiatan. Bagi Bapak/Ibu yang berkenan memberikan partisipasi dalam bentuk dana, donasi dapat disalurkan melalui rekening <strong>Bank BRI 005101246266508 a.n SITI ALIYAH</strong></p>
+            <p class="indent-10">Demikian atas kerjasama yang baik kami menyampaikan terima kasih.</p>
+            <p class="font-bold">Wassalaamu'alaikum Wr.Wb.</p>
+        </div>
+
+        <div class="text-[15px] relative mt-6">
+            <div class="flex justify-between">
+                <div class="text-center relative w-1/2">
+                    <p>Mengetahui,</p>
+                    <p>Kepala Madrasah,</p>
+                    <div class="h-20 flex items-center justify-center relative my-1">
+                        <img src="https://raw.githubusercontent.com/Blackhawk0243/sponsorship48/main/ttd-kepala.png" alt="TTD Kepala" class="absolute w-36 object-contain z-10 mix-blend-multiply">
+                    </div>
+                    <p class="font-bold underline mb-0">Hj. Siti Aisah, S.Ag., M.Pd</p>
+                    <p class="text-xs">NIP. 197410161997032002</p>
+                </div>
+                
+                <div class="text-center w-1/2 relative">
+                    <p>Malang, 1 September 2026</p>
+                    <p>Ketua Panitia,</p>
+                    <div class="h-20 flex items-center justify-center relative my-1">
+                        <img src="https://raw.githubusercontent.com/Blackhawk0243/sponsorship48/main/ttd-ketua.png" alt="TTD Ketua" class="absolute w-28 object-contain z-10 mix-blend-multiply" onerror="this.style.display='none'">
+                    </div>
+                    <p class="font-bold underline mb-0">Abdullah, S.Pd., M.Pd.</p>
+                    <p class="text-xs">NIP. 196911212005011001</p>
+                </div>
+            </div>
+            <p class="mt-4 text-[13px] font-bold">Narahubung: Siti Aliyah, S.Pd., M.Pd, 085855106031</p>
+        </div>
+
+
+        <!-- HALAMAN 2 (BERITA ACARA) -->
+        <div class="page-break"></div>
+
+        <div class="flex justify-between items-center border-b-[4px] border-black pb-1 mb-[2px]">
+            <img src="https://raw.githubusercontent.com/Blackhawk0243/sponsorship48/main/logo-min.png" alt="Logo MIN" class="w-24 h-auto object-contain shrink-0">
+            
+            <div class="text-center flex-1 px-2 text-black">
+                <h1 class="text-[34px] font-bold tracking-wide" style="line-height: 1.1; font-family: 'Times New Roman', Times, serif;">HUT KE-48</h1>
+                <h2 class="text-[15px] font-bold mt-1 tracking-wide" style="font-family: Arial, Helvetica, sans-serif;">MIN 1 KOTA MALANG</h2>
+                <h3 class="text-[14px] font-bold mt-0" style="font-family: Arial, Helvetica, sans-serif;">TAHUN PELAJARAN 2025/2026</h3>
+                <p class="text-[12px] mt-0" style="font-family: Arial, Helvetica, sans-serif;">Jln. Bandung 7C, Telp.& Fax. (0341) 551176 – 565642 Malang</p>
+            </div>
+            
+            <img src="https://raw.githubusercontent.com/Blackhawk0243/sponsorship48/main/logo-hut.png" alt="Logo HUT" class="w-32 h-auto object-contain shrink-0">
+        </div>
+        <div class="border-b-[1px] border-black mb-6"></div>
+
+        <div class="text-center mb-6">
+            <h3 class="font-bold text-[17px] underline tracking-wide">BERITA ACARA</h3>
+            <h3 class="font-bold text-[16px] tracking-wide">KESANGGUPAN SPONSORSHIP</h3>
+        </div>
+
+        <div class="text-[15px] leading-relaxed mb-4">
+            <p>Pada hari ini, ............................................. tanggal ....................... pada bulan ....................... tahun 2026.</p>
+            <p class="mt-2">Yang bertanda tangan di bawah ini:</p>
+            <table class="w-full ml-4 mt-2">
+                <tr class="h-9"><td class="w-48 align-bottom pb-1">Nama</td><td class="w-4 align-bottom pb-1">:</td><td class="border-b border-dotted border-black align-bottom pb-1 font-bold"><span id="cetak-wali-ba">[Nama wali murid]</span></td></tr>
+                <tr class="h-9"><td class="align-bottom pb-1">Alamat</td><td class="align-bottom pb-1">:</td><td class="border-b border-dotted border-black align-bottom pb-1"></td></tr>
+                <tr class="h-9"><td class="align-bottom pb-1">No Telp.</td><td class="align-bottom pb-1">:</td><td class="border-b border-dotted border-black align-bottom pb-1"></td></tr>
+                <tr class="h-9"><td class="align-bottom pb-1">Instansi / Perusahaan</td><td class="align-bottom pb-1">:</td><td class="border-b border-dotted border-black align-bottom pb-1"></td></tr>
+            </table>
+        </div>
+
+        <div class="text-[15px] text-justify leading-relaxed mb-6 space-y-3">
+            <p>Menyatakan bahwa kami <strong>bersedia / tidak bersedia</strong>* menjadi donatur pada kegiatan MIN 1 Kota Malang.</p>
+            <p>Adapun bentuk bantuan yang kami berikan berupa:</p>
+            <div class="ml-6 space-y-3">
+                <div class="flex items-end gap-2">
+                    <span>a. Bantuan uang sebesar Rp</span>
+                    <span class="border-b border-dotted border-black flex-1 inline-block"></span>
+                </div>
+                <div class="flex items-end gap-2">
+                    <span>b. Bantuan lain berupa</span>
+                    <span class="border-b border-dotted border-black flex-1 inline-block"></span>
+                </div>
+            </div>
+            <p class="pt-2">Demikian berita acara ini kami buat untuk dipergunakan sebagaimana mestinya.</p>
+            <p class="text-[13px] italic">*coret yang tidak diperlukan</p>
+        </div>
+
+        <div class="text-[15px] relative mt-12">
+            <div class="flex justify-end">
+                <div class="text-center w-64">
+                    <p class="mb-20">Malang, .............................. 2026</p>
+                    <p class="whitespace-nowrap">( <span id="cetak-wali-sign" class="font-medium">........................................................</span> )</p>
+                </div>
             </div>
         </div>
     </div>
 
-    <!-- LOGIKA JAVASCRIPT -->
+    <!-- ================= TEMPLATE 2: SURAT UCAPAN TERIMA KASIH ================= -->
+    <div id="template-terimakasih" class="print-container font-serif text-black template-hidden">
+        
+        <div class="flex justify-between items-center border-b-[4px] border-black pb-1 mb-[2px]">
+            <img src="https://raw.githubusercontent.com/Blackhawk0243/sponsorship48/main/logo-min.png" alt="Logo MIN" class="w-24 h-auto object-contain shrink-0">
+            
+            <div class="text-center flex-1 px-2 text-black">
+                <h1 class="text-[34px] font-bold tracking-wide" style="line-height: 1.1; font-family: 'Times New Roman', Times, serif;">HUT KE-48</h1>
+                <h2 class="text-[15px] font-bold mt-1 tracking-wide" style="font-family: Arial, Helvetica, sans-serif;">MIN 1 KOTA MALANG</h2>
+                <h3 class="text-[14px] font-bold mt-0" style="font-family: Arial, Helvetica, sans-serif;">TAHUN PELAJARAN 2025/2026</h3>
+                <p class="text-[12px] mt-0" style="font-family: Arial, Helvetica, sans-serif;">Jln. Bandung 7C, Telp.& Fax. (0341) 551176 – 565642 Malang</p>
+            </div>
+            
+            <img src="https://raw.githubusercontent.com/Blackhawk0243/sponsorship48/main/logo-hut.png" alt="Logo HUT" class="w-32 h-auto object-contain shrink-0">
+        </div>
+        <div class="border-b-[1px] border-black mb-6"></div>
+
+        <div class="flex justify-between text-[15px] mb-8 leading-relaxed">
+            <table class="w-2/3">
+                <tr><td class="w-24">Nomor</td><td class="w-3">:</td><td>B-806/Mi.13.25.01/PP.00.4/09/2026</td></tr>
+                <tr><td>Hal</td><td>:</td><td>Ucapan Terimakasih</td></tr>
+            </table>
+            <div class="w-1/3 text-right">
+                <p>Malang, 30 September 2026</p>
+            </div>
+        </div>
+
+        <div class="text-[15px] mb-6 leading-relaxed">
+            <p>Yth.</p>
+            <p class="font-bold mt-1">Bapak/Ibu <span id="tk-cetak-wali">[Nama wali murid]</span></p>
+            <p>(Orang Tua dari Ananda <span id="tk-cetak-siswa">[Nama siswa]</span> Kelas <span id="tk-cetak-kelas">[kelas]</span>)</p>
+            <p>Di Malang</p>
+        </div>
+
+        <div class="text-[15px] text-justify leading-relaxed mb-8 space-y-4">
+            <p class="font-bold">Assalamualaikum Wr. Wb.</p>
+            
+            <p class="indent-10">Mewakili segenap <em>civitas akademica</em> MIN 1 Kota Malang, kami menyampaikan ucapan terima kasih, <em>jazakumulloh khoiron katsir</em>, dan penghargaan setinggi-tingginya kepada Bapak/Ibu yang telah berkenan berpartisipasi aktif dalam rangkaian acara peringatan HUT ke-48 MIN 1 Kota Malang. Semoga segala jerih payah Bapak/Ibu diterima Alloh Swt sebagai amal jariyah. Amin</p>
+            
+            <p class="indent-10">Demikian surat ucapan terima kasih ini disampaikan semoga silaturahmi ini tetap terjaga di tahun-tahun depan.</p>
+            
+            <p class="font-bold">Wassalamualaikum Wr. Wb.</p>
+        </div>
+
+        <div class="text-[15px] relative mt-16">
+            <div class="flex justify-between">
+                <div class="text-center relative w-1/2">
+                    <p>Mengetahui</p>
+                    <p>Kepala,</p>
+                    <div class="h-24 flex items-center justify-center relative my-1">
+                        <img src="https://raw.githubusercontent.com/Blackhawk0243/sponsorship48/main/ttd-kepala.png" alt="TTD Kepala" class="absolute w-36 object-contain z-10 mix-blend-multiply">
+                    </div>
+                    <p class="font-bold underline mb-0">Hj. Siti Aisah, S.Ag., M.Pd</p>
+                    <p class="text-xs">NIP. 197410161997032002</p>
+                </div>
+                
+                <div class="text-center w-1/2 relative">
+                    <p class="mb-5">&nbsp;</p>
+                    <p>Ketua Pelaksana</p>
+                    <div class="h-24 flex items-center justify-center relative my-1">
+                        <img src="https://raw.githubusercontent.com/Blackhawk0243/sponsorship48/main/ttd-ketua.png" alt="TTD Ketua" class="absolute w-28 object-contain z-10 mix-blend-multiply" onerror="this.style.display='none'">
+                    </div>
+                    <p class="font-bold underline mb-0">Abdullah, S.Pd., M.Pd.</p>
+                    <p class="text-xs">NIP. 196911212005011001</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- SCRIPT JAVASCRIPT LOGIKA WEB & SINKRONISASI OTOMATIS -->
     <script>
-        // URL GOOGLE APPS SCRIPT MILIK ANDA
         const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbz8Ah8PwSvWESkiLhWe0v0iK_oyC2rBOUVARSXFSlFA97zQpDi1vpD2QfyaXZOaeTSKOw/exec"; 
         
         let dataSiswaGlobal = [];
+        let dataTerfilterRombel = [];
+        let templateAktif = 'penawaran'; // 'penawaran' atau 'terimakasih'
 
-        async function tarikData() {
-            const statusEl = document.getElementById('status');
-            const selectSiswa = document.getElementById('pilih-siswa');
+        // Fungsi berpindah tab menu surat
+        function switchTab(tabId) {
+            templateAktif = tabId;
             
-            statusEl.innerHTML = '<span class="text-blue-600 font-bold">Sedang mengambil data dari Spreadsheet... Mohon tunggu.</span>';
+            const btnPenawaran = document.getElementById('tab-penawaran');
+            const btnTerimakasih = document.getElementById('tab-terimakasih');
+            const tmplPenawaran = document.getElementById('template-penawaran');
+            const tmplTerimakasih = document.getElementById('template-terimakasih');
+
+            if (tabId === 'penawaran') {
+                btnPenawaran.classList.add('border-green-600', 'text-green-600', 'bg-green-50');
+                btnPenawaran.classList.remove('border-transparent', 'text-gray-500', 'hover:text-gray-700', 'hover:bg-gray-50');
+                
+                btnTerimakasih.classList.remove('border-green-600', 'text-green-600', 'bg-green-50');
+                btnTerimakasih.classList.add('border-transparent', 'text-gray-500', 'hover:text-gray-700', 'hover:bg-gray-50');
+                
+                tmplPenawaran.classList.remove('template-hidden');
+                tmplTerimakasih.classList.add('template-hidden');
+            } else {
+                btnTerimakasih.classList.add('border-green-600', 'text-green-600', 'bg-green-50');
+                btnTerimakasih.classList.remove('border-transparent', 'text-gray-500', 'hover:text-gray-700', 'hover:bg-gray-50');
+                
+                btnPenawaran.classList.remove('border-green-600', 'text-green-600', 'bg-green-50');
+                btnPenawaran.classList.add('border-transparent', 'text-gray-500', 'hover:text-gray-700', 'hover:bg-gray-50');
+                
+                tmplTerimakasih.classList.remove('template-hidden');
+                tmplPenawaran.classList.add('template-hidden');
+            }
+        }
+
+        // Sinkronisasi otomatis saat web pertama dibuka (onload)
+        async function tarikDataOtomatis() {
+            await tarikDataSpreadsheet();
+        }
+
+        async function tarikDataSpreadsheet() {
+            const statusText = document.getElementById('status-tarik');
+            const selectKelas = document.getElementById('filter-kelas');
+            
+            statusText.innerHTML = '<span class="text-blue-600 font-bold">Sedang menyinkronkan data dari Spreadsheet...</span>';
             
             try {
-                const res = await fetch(APPS_SCRIPT_URL);
-                const rawData = await res.json();
+                const response = await fetch(APPS_SCRIPT_URL);
+                if (!response.ok) throw new Error('Gagal terhubung ke server');
+                
+                const rawData = await response.json();
                 
                 if (rawData && rawData.length > 0) {
-                    // Auto-Koreksi: Mengatasi jika posisi kolom 'Kelas' dan 'Nama Wali(Ayah)' di Spreadsheet terbalik
-                    dataSiswaGlobal = rawData.map((row, index) => {
-                        let nama = row.nama_siswa || row.NAMA || "";
-                        let kls = row.kelas || "";
-                        let wali = row.nama_wali || row.AYAH || "";
-
-                        // Jika isi nama_wali/ayah bentuknya "1A" (kurang dari 4 huruf dan ada angka), berarti data tertukar
-                        if (wali.length <= 3 && /[1-6][A-I]/i.test(wali)) {
-                            let temp = kls;
-                            kls = wali;
-                            wali = temp;
-                        }
+                    dataSiswaGlobal = rawData.map(item => {
+                        let nama = item.nama_siswa || item.NAMA || "";
+                        let wali = item.nama_wali || item.Ayah || item.Wali || "";
+                        let kelasRaw = (item.kelas || item.KELAS || "").toString().trim();
                         
-                        return { 
-                            originalIndex: index, 
-                            nama_siswa: nama.trim(), 
-                            kelas: kls.trim().toUpperCase(), 
-                            nama_wali: wali.trim() 
+                        return {
+                            nama_siswa: nama.toString().trim(),
+                            nama_wali: wali.toString().trim(),
+                            kelas: kelasRaw
                         };
-                    });
+                    }).filter(s => s.nama_siswa !== "");
 
-                    // Aktifkan Form Sortir
-                    document.getElementById('filter-kelas').disabled = false;
-                    document.getElementById('filter-rombel').disabled = false;
-                    
-                    statusEl.innerHTML = `<span class="text-green-600 font-bold">Sukses! ${dataSiswaGlobal.length} data siswa berhasil ditarik.</span>`;
-                    
-                    // Panggil fungsi filter pertama kali untuk mengisi dropdown siswa
-                    filterSiswa();
-
+                    selectKelas.disabled = false;
+                    statusText.innerHTML = `<span class="text-green-600 font-bold">Sukses! ${dataSiswaGlobal.length} data siswa tersinkron otomatis.</span>`;
                 } else {
-                    statusEl.innerHTML = '<span class="text-red-600 font-bold">Data Spreadsheet kosong atau format tidak terbaca.</span>';
+                    statusText.innerHTML = '<span class="text-red-600 font-bold">Data Spreadsheet kosong.</span>';
                 }
-            } catch (error) {
-                console.error(error);
-                statusEl.innerHTML = '<span class="text-red-600 font-bold">Gagal mengambil data. Pastikan Web App Apps Script aktif.</span>';
+            } catch (err) {
+                console.error(err);
+                statusText.innerHTML = '<span class="text-red-600 font-bold">Gagal sinkron. Periksa koneksi atau setel Web App ke "Anyone".</span>';
             }
         }
 
-        function filterSiswa() {
-            const filterKelas = document.getElementById('filter-kelas').value; // cth: "1"
-            const filterRombel = document.getElementById('filter-rombel').value; // cth: "A"
+        // Filter Rombel berdasarkan Kelas (1-6)
+        function filterRombel() {
+            const tingkat = document.getElementById('filter-kelas').value;
+            const selectRombel = document.getElementById('filter-rombel');
             const selectSiswa = document.getElementById('pilih-siswa');
-
-            // Reset isi dropdown
-            selectSiswa.innerHTML = '<option value="">-- Pilih Nama Siswa --</option>';
-
-            // Lakukan penyaringan data
-            let filteredData = dataSiswaGlobal;
-
-            if (filterKelas !== "") {
-                filteredData = filteredData.filter(s => s.kelas.startsWith(filterKelas));
-            }
-            if (filterRombel !== "") {
-                filteredData = filteredData.filter(s => s.kelas.endsWith(filterRombel));
-            }
-
-            // Masukkan data hasil filter ke dalam Dropdown
-            filteredData.forEach(siswa => {
-                const option = document.createElement('option');
-                option.value = siswa.originalIndex;
-                option.text = `${siswa.kelas} - ${siswa.nama_siswa} (Wali: ${siswa.nama_wali})`;
-                selectSiswa.appendChild(option);
-            });
-
-            selectSiswa.disabled = false;
             
-            // Panggil updateSurat untuk mereset tampilan surat dan tombol print jika pilihan berubah
-            updateSurat();
+            selectRombel.innerHTML = '<option value="">-- Pilih Rombel (A-I) --</option>';
+            selectSiswa.innerHTML = '<option value="">-- Pilih rombel terlebih dahulu --</option>';
+            selectSiswa.disabled = true;
+            
+            if (tingkat !== "") {
+                // Ambil semua rombel unik yang cocok dengan tingkat (misal angka pertama kelas adalah tingkat)
+                const rombelSet = new Set();
+                dataSiswaGlobal.forEach(s => {
+                    if (s.kelas.startsWith(tingkat)) {
+                        // Ambil huruf rombel di belakang angka (contoh: "1A" -> "A")
+                        const huruf = s.kelas.substring(1).toUpperCase();
+                        if (huruf) rombelSet.add(huruf);
+                    }
+                });
+
+                const sortedRombel = Array.from(rombelSet).sort();
+                if (sortedRombel.length > 0) {
+                    sortedRombel.forEach(r => {
+                        selectRombel.innerHTML += `<option value="${tingkat}${r}">Kelas ${tingkat}${r}</option>`;
+                    });
+                    selectRombel.disabled = false;
+                } else {
+                    selectRombel.innerHTML = '<option value="">-- Tidak ada rombel ditemukan --</option>';
+                    selectRombel.disabled = true;
+                }
+            } else {
+                selectRombel.disabled = true;
+            }
+            
+            resetSurat();
         }
 
-        function updateSurat() {
-            const selectedIdx = document.getElementById('pilih-siswa').value;
-            const btnPrint = document.getElementById('btn-print');
+        // Filter Nama Siswa berdasarkan Rombel yang dipilih
+        function filterSiswa() {
+            const kelasRombel = document.getElementById('filter-rombel').value;
+            const selectSiswa = document.getElementById('pilih-siswa');
             
-            if (selectedIdx !== "") {
-                const siswa = dataSiswaGlobal.find(s => s.originalIndex == selectedIdx);
-                
-                // Update teks di Halaman 1
-                document.getElementById('nama-wali').innerText = siswa.nama_wali;
-                document.getElementById('nama-siswa').innerText = siswa.nama_siswa;
-                document.getElementById('kelas-siswa').innerText = siswa.kelas;
+            selectSiswa.innerHTML = '<option value="">-- Pilih Nama Siswa --</option>';
+            
+            if (kelasRombel !== "") {
+                dataTerfilterRombel = dataSiswaGlobal.filter(s => s.kelas.toUpperCase() === kelasRombel.toUpperCase());
+                // Urutkan abjad nama siswa
+                dataTerfilterRombel.sort((a, b) => a.nama_siswa.localeCompare(b.nama_siswa));
 
-                // Update teks di Halaman 2 (Berita Acara)
-                document.getElementById('nama-wali-form').innerText = siswa.nama_wali;
-                
-                // Aktifkan tombol print
-                btnPrint.disabled = false;
-                btnPrint.classList.remove('opacity-50', 'cursor-not-allowed', 'bg-green-600');
-                btnPrint.classList.add('bg-green-500', 'hover:bg-green-600');
+                if (dataTerfilterRombel.length > 0) {
+                    dataTerfilterRombel.forEach((siswa, index) => {
+                        selectSiswa.innerHTML += `<option value="${index}">${siswa.nama_siswa} (Wali: ${siswa.nama_wali || ' - '})</option>`;
+                    });
+                    selectSiswa.disabled = false;
+                } else {
+                    selectSiswa.innerHTML = '<option value="">-- Tidak ada siswa di kelas ini --</option>';
+                    selectSiswa.disabled = true;
+                }
             } else {
-                // Kembalikan ke format kosong
-                document.getElementById('nama-wali').innerText = "[Nama wali murid]";
-                document.getElementById('nama-siswa').innerText = "[Nama siswa]";
-                document.getElementById('kelas-siswa').innerText = "[kelas]";
-                
-                document.getElementById('nama-wali-form').innerText = "";
-                
-                // Matikan tombol print
-                btnPrint.disabled = true;
-                btnPrint.classList.add('opacity-50', 'cursor-not-allowed', 'bg-green-600');
-                btnPrint.classList.remove('bg-green-500', 'hover:bg-green-600');
+                selectSiswa.disabled = true;
             }
+            
+            resetSurat();
+        }
+
+        // Update Teks Surat sesuai siswa yang dipilih
+        function updateSurat() {
+            const index = document.getElementById('pilih-siswa').value;
+            const btnPrint = document.getElementById('btn-print');
+
+            if (index !== "") {
+                const siswa = dataTerfilterRombel[index];
+                const namaWali = siswa.nama_wali || "[Nama wali murid]";
+                
+                // Template Penawaran & Berita Acara
+                document.getElementById('cetak-wali').innerText = namaWali;
+                document.getElementById('cetak-siswa').innerText = siswa.nama_siswa;
+                document.getElementById('cetak-kelas').innerText = siswa.kelas;
+                document.getElementById('cetak-wali-ba').innerText = namaWali;
+                document.getElementById('cetak-wali-sign').innerText = namaWali;
+
+                // Template Ucapan Terima Kasih
+                document.getElementById('tk-cetak-wali').innerText = namaWali;
+                document.getElementById('tk-cetak-siswa').innerText = siswa.nama_siswa;
+                document.getElementById('tk-cetak-kelas').innerText = siswa.kelas;
+                
+                btnPrint.disabled = false;
+                btnPrint.classList.remove('opacity-50', 'cursor-not-allowed');
+            } else {
+                resetSurat();
+            }
+        }
+
+        function resetSurat() {
+            const btnPrint = document.getElementById('btn-print');
+            btnPrint.disabled = true;
+            btnPrint.classList.add('opacity-50', 'cursor-not-allowed');
+            
+            document.getElementById('cetak-wali').innerText = "[Nama wali murid]";
+            document.getElementById('cetak-siswa').innerText = "[Nama siswa]";
+            document.getElementById('cetak-kelas').innerText = "[kelas]";
+            document.getElementById('cetak-wali-ba').innerText = "[Nama wali murid]";
+            document.getElementById('cetak-wali-sign').innerText = "........................................................";
+
+            document.getElementById('tk-cetak-wali').innerText = "[Nama wali murid]";
+            document.getElementById('tk-cetak-siswa').innerText = "[Nama siswa]";
+            document.getElementById('tk-cetak-kelas').innerText = "[kelas]";
         }
     </script>
 </body>

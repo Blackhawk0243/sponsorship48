@@ -8,9 +8,8 @@ import { Printer, FileText, Search, AlertCircle, RefreshCw } from 'lucide-react'
 // ============================================================================
 const LOGO_MIN_URL = "https://placehold.co/120x120?text=LOGO+MIN"; 
 const LOGO_HUT_URL = "https://placehold.co/120x120?text=HUT+48";
-const TTD_KEPALA_URL = "https://placehold.co/150x80?text=TTD+Kepala"; 
+const TTD_KEPALA_URL = "https://placehold.co/150x100?text=TTD+Kepala+Stempel"; 
 const TTD_KETUA_URL = "https://placehold.co/150x80?text=TTD+Ketua";
-const STEMPEL_URL = "https://placehold.co/150x150?text=Stempel+Kemenag"; // Stempel bulat Kemenag
 
 // ============================================================================
 // MASUKKAN URL WEB APP GOOGLE APPS SCRIPT ANDA DI BAWAH INI
@@ -169,10 +168,9 @@ export default function SuratSponsorshipApp() {
             <div className="text-center w-1/2 relative z-10 flex flex-col items-center">
               <p className="mb-14">Mengetahui,<br/>Kepala Madrasah,</p>
               
-              {/* Gambar Stempel & TTD ditumpuk */}
+              {/* Gambar TTD & Stempel (Sudah menyatu dalam satu gambar) */}
               <div className="absolute top-10 flex justify-center items-center w-full">
-                 <img src={STEMPEL_URL} alt="Stempel" className="absolute -left-6 w-24 h-24 object-contain mix-blend-multiply opacity-80" />
-                 <img src={TTD_KEPALA_URL} alt="TTD Kepala" className="w-28 object-contain mix-blend-multiply z-20 translate-x-4" />
+                 <img src={TTD_KEPALA_URL} alt="TTD Kepala dan Stempel" className="w-36 object-contain mix-blend-multiply z-20" />
               </div>
 
               <p className="font-bold underline mt-2">Siti Aisah, S.Ag. M.Pd</p>

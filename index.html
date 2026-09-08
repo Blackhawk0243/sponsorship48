@@ -1,446 +1,258 @@
-import React, { useState, useMemo, useEffect } from 'react';
-import { Printer, FileText, Search, AlertCircle, RefreshCw } from 'lucide-react';
-
-// ============================================================================
-// PENGATURAN LINK GAMBAR GITHUB & GOOGLE APPS SCRIPT
-// Ganti link di bawah ini dengan link "Raw" dari GitHub Anda
-// Contoh format raw: https://raw.githubusercontent.com/username/repo/main/logo.png
-// ============================================================================
-const LOGO_MIN_URL = "https://placehold.co/120x120?text=LOGO+MIN"; 
-const LOGO_HUT_URL = "https://placehold.co/120x120?text=HUT+48";
-const TTD_KEPALA_URL = "https://placehold.co/150x100?text=TTD+Kepala+Stempel"; 
-const TTD_KETUA_URL = "https://placehold.co/150x80?text=TTD+Ketua";
-
-// ============================================================================
-// MASUKKAN URL WEB APP GOOGLE APPS SCRIPT ANDA DI BAWAH INI
-// ============================================================================
-const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbz8Ah8PwSvWESkiLhWe0v0iK_oyC2rBOUVARSXFSlFA97zQpDi1vpD2QfyaXZOaeTSKOw/exec";
-
-// Data dummy awal agar aplikasi bisa langsung dicoba meski Apps Script belum terpasang
-const INITIAL_DATA = [
-  { nama_siswa: "Ahmad Budi Santoso", nama_wali: "Budi Santoso", kelas: "1A" },
-  { nama_siswa: "Siti Aminah", nama_wali: "Abdullah", kelas: "3C" },
-  { nama_siswa: "Reza Rahadian", nama_wali: "Rahadian Syah", kelas: "6I" },
-];
-
-export default function SuratSponsorshipApp() {
-  const [students, setStudents] = useState(INITIAL_DATA);
-  const [searchTerm, setSearchTerm] = useState("");
-  const [selectedStudent, setSelectedStudent] = useState(null);
-  
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState(null);
-  const [isDataLoaded, setIsDataLoaded] = useState(false);
-
-  // Fungsi untuk mengambil data dari Google Spreadsheet via Apps Script
-  const fetchSpreadsheetData = async () => {
-    if (!APPS_SCRIPT_URL || APPS_SCRIPT_URL.includes("CONTOH")) {
-      setError("Silakan masukkan URL Web App Google Apps Script Anda terlebih dahulu di bagian atas kode (baris 16).");
-      return;
-    }
-
-    setIsLoading(true);
-    setError(null);
-    
-    try {
-      const response = await fetch(APPS_SCRIPT_URL);
-      if (!response.ok) {
-        throw new Error('Gagal mengambil data dari server.');
-      }
-      
-      const data = await response.json();
-      
-      if (data && data.length > 0) {
-        setStudents(data);
-        setIsDataLoaded(true);
-        setSelectedStudent(null);
-      } else {
-        throw new Error('Data kosong atau format sheet tidak sesuai.');
-      }
-    } catch (err) {
-      console.error(err);
-      setError("Terjadi kesalahan saat mengambil data. Pastikan URL Apps Script benar dan akses diatur ke 'Siapa saja'.");
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  // Fitur Pencarian Data
-  const filteredStudents = useMemo(() => {
-    return students.filter(s => 
-      s.nama_siswa.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      s.nama_wali.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      s.kelas.toLowerCase().includes(searchTerm.toLowerCase())
-    );
-  }, [students, searchTerm]);
-
-  // Fungsi Cetak
-  const handlePrint = () => {
-    window.print();
-  };
-
-  const KopSurat = () => (
-    <div className="flex items-center justify-between border-b-[3px] border-black pb-3 mb-6">
-      {/* Kolom Logo Kiri */}
-      <div className="w-28 flex justify-center">
-        <img src={LOGO_MIN_URL} alt="Logo MIN" className="w-24 h-24 object-contain" />
-      </div>
-      
-      {/* Kolom Teks Tengah */}
-      <div className="text-center flex-1 px-2">
-        <h2 className="text-[17px] font-bold font-serif leading-tight">MADRASAH IBTIDAIYAH NEGERI 1 KOTA MALANG</h2>
-        <h1 className="text-2xl font-extrabold font-serif tracking-widest text-green-700 mt-1 mb-1">MIN 1 KOTA MALANG</h1>
-        <p className="text-[13px] font-serif font-bold mt-1">TAHUN PELAJARAN 2025/2026</p>
-        <p className="text-[11px] font-serif mt-1">Jln. Bandung 7C, Telp.& Fax. (0341) 551176565642 Malang</p>
-        <p className="text-[12px] font-serif font-bold italic mt-1 text-green-800">"Menjaga Asa, Mengalirkan Cahaya Bagi Bangsa"</p>
-      </div>
-
-      {/* Kolom Logo Kanan */}
-      <div className="w-28 flex justify-center">
-        <img src={LOGO_HUT_URL} alt="Logo HUT 48" className="w-24 h-24 object-contain" />
-      </div>
-    </div>
-  );
-
-  const PrintLayout = ({ data }) => {
-    if (!data) return null;
-
-    return (
-      <div className="print-only text-black bg-white">
-        
-        {/* ========================================================================= */}
-        {/* HALAMAN 1 - SURAT PENGANTAR PROPOSAL */}
-        {/* ========================================================================= */}
-        <div className="a4-page font-serif relative">
-          <KopSurat />
-          
-          <div className="flex justify-between mb-6 text-sm">
-            <div>
-              <table className="border-none">
-                <tbody>
-                  <tr><td className="w-20 align-top">Nomor</td><td className="w-4 align-top">:</td><td>B-805/Mi.13.25.01/PP.00.4/09/2026</td></tr>
-                  <tr><td className="align-top">Lampiran</td><td className="align-top">:</td><td>1 bendel</td></tr>
-                  <tr><td className="align-top">Perihal</td><td className="align-top">:</td><td className="font-bold">Penawaran Kerjasama dalam<br/>bentuk Sponsorship / Donatur</td></tr>
-                </tbody>
-              </table>
-            </div>
-          </div>
-
-          <div className="mb-6 pl-10 text-sm">
-            <p>Kepada Yth:</p>
-            <p className="font-bold">Bapak/Ibu {data.nama_wali}</p>
-            <p>Wali murid dari Ananda <span className="font-bold">{data.nama_siswa}</span> Kelas <span className="font-bold">{data.kelas}</span></p>
-            <p>di Tempat</p>
-          </div>
-
-          <div className="mb-4 space-y-3 text-justify px-10 text-sm">
-            <p className="font-bold italic">Assalaamu'alaikum Wr.Wb.</p>
-            
-            <p className="indent-10">
-              Dalam rangka kegiatan akhir tahun kami akan menyelenggarakan serangkaian 
-              kegiatan yang terangkum dalam sebuah acara "<span className="font-bold">PERINGATAN HUT KE-48 TAHUN 
-              MADRASAH IBTIDAIYAH NEGERI 1 KOTA MALANG</span>". Acara tersebut Insya 
-              Allah akan dilaksanakan pada hari Minggu, 27 September 2026.
-            </p>
-
-            <p className="indent-10">
-              Berkaitan dengan hal tersebut, demi kesuksesan dan kelancaran kegiatan yang 
-              dimaksud, kami mengharap Lembaga / Perusahaan Bapak/Ibu berkenan untuk 
-              berpartisipasi dalam bentuk Sponsorship/Donatur.
-            </p>
-
-            <p className="indent-10">
-              Adapun bentuk partisipasi dan uraian kegiatan, berikut kami lampirkan Proposal 
-              Kegiatan. Bagi Bapak/Ibu yang berkenan memberikan partisipasi dalam bentuk dana, 
-              donasi dapat disalurkan melalui rekening <span className="font-bold">Bank BRI 005101246266508 a.n SITI ALIYAH</span>
-            </p>
-
-            <p className="indent-10">
-              Demikian atas kerjasama yang baik kami menyampaikan terima kasih.
-            </p>
-
-            <p className="font-bold italic">Wassalaamu'alaikum Wr.Wb.</p>
-          </div>
-
-          {/* Bagian Tanda Tangan Hal 1 */}
-          <div className="mt-12 flex justify-between px-10 relative text-sm">
-            {/* Tanda Tangan Kiri */}
-            <div className="text-center w-1/2 relative z-10 flex flex-col items-center">
-              <p className="mb-14">Mengetahui,<br/>Kepala Madrasah,</p>
-              
-              {/* Gambar TTD & Stempel (Sudah menyatu dalam satu gambar) */}
-              <div className="absolute top-10 flex justify-center items-center w-full">
-                 <img src={TTD_KEPALA_URL} alt="TTD Kepala dan Stempel" className="w-36 object-contain mix-blend-multiply z-20" />
-              </div>
-
-              <p className="font-bold underline mt-2">Siti Aisah, S.Ag. M.Pd</p>
-            </div>
-            
-            {/* Tanda Tangan Kanan */}
-            <div className="text-center w-1/2 relative z-10 flex flex-col items-center">
-              <p className="mb-14">Malang, 1 September 2026<br/>Ketua Panitia,</p>
-              
-              <div className="absolute top-10 flex justify-center items-center w-full">
-                <img src={TTD_KETUA_URL} alt="TTD Ketua" className="w-28 object-contain mix-blend-multiply" />
-              </div>
-
-              <p className="font-bold underline mt-2">Abdullah, S.Pd., M.Pd.</p>
-              <p>NIP. 196911212005011001</p>
-            </div>
-          </div>
-
-          <div className="mt-8 px-10 font-bold text-sm">
-            <p>Narahubung: Siti Aliyah, S.Pd., M.Pd, 085855106031</p>
-          </div>
-        </div>
-
-
-        {/* ========================================================================= */}
-        {/* HALAMAN 2 - BERITA ACARA */}
-        {/* ========================================================================= */}
-        <div className="a4-page font-serif page-break-before relative">
-          <KopSurat />
-          
-          <div className="text-center mb-8 mt-6">
-            <h3 className="font-bold text-lg underline tracking-wide">BERITA ACARA</h3>
-            <h3 className="font-bold text-lg tracking-wide">KESANGGUPAN SPONSORSHIP</h3>
-          </div>
-
-          <div className="px-10 space-y-6 text-[15px] leading-relaxed">
-            <p className="indent-10">Pada hari ini, ............................... tanggal ......................... pada bulan ............................. tahun 2026.</p>
-            
-            <p>Yang bertanda tangan di bawah ini:</p>
-            <table className="w-full ml-4">
-              <tbody>
-                <tr className="h-10"><td className="w-48 align-bottom pb-1">Nama</td><td className="w-4 align-bottom pb-1">:</td><td className="border-b border-dotted border-black align-bottom pb-1 font-bold">{data.nama_wali}</td></tr>
-                <tr className="h-10"><td className="align-bottom pb-1">Alamat</td><td className="align-bottom pb-1">:</td><td className="border-b border-dotted border-black align-bottom pb-1"></td></tr>
-                <tr className="h-10"><td className="align-bottom pb-1">No Telp.</td><td className="align-bottom pb-1">:</td><td className="border-b border-dotted border-black align-bottom pb-1"></td></tr>
-                <tr className="h-10"><td className="align-bottom pb-1">Instansi / Perusahaan</td><td className="align-bottom pb-1">:</td><td className="border-b border-dotted border-black align-bottom pb-1 font-bold">Wali Murid {data.nama_siswa} ({data.kelas})</td></tr>
-              </tbody>
-            </table>
-
-            <p className="pt-2">Menyatakan bahwa kami bersedia / tidak bersedia menjadi donatur pada kegiatan MIN 1 Kota Malang.</p>
-
-            <p>Adapun bentuk bantuan yang kami berikan berupa:</p>
-            <div className="ml-4 space-y-6">
-              <div className="flex">
-                <span className="w-6">a.</span>
-                <div className="flex-1">
-                  <span>Bantuan uang sebesar Rp </span>
-                  <span className="border-b border-dotted border-black inline-block w-3/4"></span>
-                </div>
-              </div>
-              <div className="flex">
-                <span className="w-6">b.</span>
-                <div className="flex-1">
-                  <span>Bantuan lain berupa </span>
-                  <span className="border-b border-dotted border-black inline-block w-4/5"></span>
-                </div>
-              </div>
-            </div>
-
-            <p className="pt-4">Demikian berita acara ini kami buat untuk dipergunakan sebagaimana mestinya.</p>
-            <p className="text-[11px] italic">*coret yang tidak diperlukan</p>
-
-            {/* Bagian Tanda Tangan Hal 2 */}
-            <div className="mt-20 flex justify-end">
-              <div className="text-center w-72">
-                <p className="mb-24">Malang, ............................ 2026</p>
-                <p>( ........................................................ )</p>
-              </div>
-            </div>
-          </div>
-        </div>
-
-      </div>
-    );
-  };
-
-  return (
-    <>
-      {/* Pengaturan CSS khusus cetak kertas A4 */}
-      <style dangerouslySetInnerHTML={{__html: `
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cetak Surat Sponsorship MIN 1</title>
+    <!-- Memanggil Tailwind CSS langsung via CDN tanpa install -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Pengaturan Khusus untuk Print A4 */
         @media print {
-          body { background: white; margin: 0; padding: 0; }
-          body * { visibility: hidden; }
-          .print-only, .print-only * { visibility: visible; }
-          .print-only { position: absolute; left: 0; top: 0; width: 100%; }
-          .no-print { display: none !important; }
-          
-          /* Pengaturan ukuran A4 */
-          @page { size: A4 portrait; margin: 0; }
-          .a4-page { 
-            width: 210mm; 
-            min-height: 297mm; 
-            padding: 25mm 20mm; /* Jarak margin kertas saat di print */
-            margin: 0; 
-            background: white; 
-            box-sizing: border-box; 
-          }
-          .page-break-before { page-break-before: always; }
+            body { background-color: white; margin: 0; padding: 0; -webkit-print-color-adjust: exact; }
+            .no-print { display: none !important; }
+            .print-container { 
+                box-shadow: none !important; margin: 0 !important; padding: 0 !important; 
+                width: 100% !important; max-width: none !important; border: none !important;
+            }
+            .page-break { page-break-before: always; }
+            @page { size: A4; margin: 15mm; }
         }
-        @media screen {
-          .print-only { display: none; }
-          body { background-color: #f3f4f6; }
+        
+        /* Tampilan kertas di layar komputer */
+        .print-container {
+            background: white; max-width: 210mm; min-height: 297mm; 
+            margin: 20px auto; padding: 15mm 20mm; 
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1); border: 1px solid #ddd;
+            font-family: 'Times New Roman', Times, serif;
         }
-      `}} />
+    </style>
+</head>
+<body class="bg-gray-200 p-4 text-gray-800">
 
-      <div className="min-h-screen bg-gray-50 p-4 md:p-8 no-print font-sans">
-        <div className="max-w-5xl mx-auto space-y-6">
-          
-          {/* Header Dashboard */}
-          <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 flex flex-col md:flex-row items-center justify-between gap-4">
-            <div>
-              <h1 className="text-2xl font-bold text-gray-800 flex items-center gap-2">
-                <FileText className="text-green-600" />
-                Cetak Surat Sponsorship MIN 1
-              </h1>
-              <p className="text-gray-500 mt-1 text-sm">Pilih data siswa untuk otomatis membuat PDF sesuai format.</p>
-            </div>
-            
-            <button 
-              onClick={fetchSpreadsheetData}
-              disabled={isLoading}
-              className={`flex items-center gap-2 px-5 py-2.5 rounded-xl transition-colors border font-medium ${
-                isLoading 
-                ? 'bg-gray-100 text-gray-400 border-gray-200 cursor-not-allowed' 
-                : 'bg-green-50 text-green-700 hover:bg-green-100 border-green-200 cursor-pointer shadow-sm'
-              }`}
-            >
-              <RefreshCw size={18} className={isLoading ? "animate-spin" : ""} />
-              {isLoading ? 'Mengambil Data...' : 'Tarik Data Spreadsheet'}
+    <!-- BAGIAN KONTROL & TOMBOL (TIDAK IKUT TERCETAK) -->
+    <div class="no-print max-w-3xl mx-auto bg-white p-6 rounded-lg shadow-md mb-8">
+        <h2 class="text-2xl font-bold mb-4 text-center">Aplikasi Cetak Surat Sponsorship</h2>
+        
+        <div class="flex flex-col gap-4">
+            <button onclick="tarikDataSpreadsheet()" class="bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700 transition">
+                1. Tarik Data dari Spreadsheet
             </button>
-          </div>
+            <span id="status-tarik" class="text-sm text-gray-600">Status: Belum menarik data.</span>
 
-          {/* Pesan Peringatan & Panduan */}
-          {error && (
-            <div className="bg-red-50 text-red-700 p-4 rounded-xl flex items-start gap-3 border border-red-100 shadow-sm animate-pulse">
-              <AlertCircle className="mt-0.5 shrink-0" size={18} />
-              <div className="text-sm">
-                <p className="font-bold">Gagal memuat data</p>
-                <p>{error}</p>
-              </div>
-            </div>
-          )}
-
-          {!isDataLoaded && !error && (
-            <div className="bg-blue-50 text-blue-700 p-4 rounded-xl flex items-start gap-3 border border-blue-100 shadow-sm">
-              <AlertCircle className="mt-0.5 shrink-0" size={18} />
-              <div className="text-sm">
-                <p className="font-bold mb-1">Status Data: Menggunakan Data Contoh (Dummy)</p>
-                <p className="text-blue-600">Tekan tombol <strong>"Tarik Data Spreadsheet"</strong> di atas jika Anda sudah memasukkan URL Apps Script ke dalam baris kode. </p>
-              </div>
-            </div>
-          )}
-
-          {/* Tabel dan Pencarian Siswa */}
-          <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden flex flex-col md:flex-row gap-6 p-6">
-            
-            <div className="w-full md:w-2/3 flex flex-col">
-              <div className="relative mb-4">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={20} />
-                <input 
-                  type="text"
-                  placeholder="Cari nama siswa, nama wali, atau kelas..."
-                  className="w-full pl-10 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500 focus:bg-white transition-all text-sm"
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                />
-              </div>
-
-              <div className="flex-1 overflow-y-auto border border-gray-100 rounded-xl max-h-[400px]">
-                <table className="w-full text-left border-collapse">
-                  <thead className="bg-gray-50 sticky top-0 border-b border-gray-200 z-10 shadow-sm">
-                    <tr>
-                      <th className="py-3 px-4 text-xs font-semibold text-gray-500 uppercase tracking-wider">Nama Siswa</th>
-                      <th className="py-3 px-4 text-xs font-semibold text-gray-500 uppercase tracking-wider">Nama Wali</th>
-                      <th className="py-3 px-4 text-xs font-semibold text-gray-500 uppercase tracking-wider">Kelas</th>
-                      <th className="py-3 px-4 text-xs font-semibold text-gray-500 uppercase tracking-wider text-center">Aksi</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-gray-100">
-                    {filteredStudents.length > 0 ? (
-                      filteredStudents.map((student, idx) => (
-                        <tr 
-                          key={idx} 
-                          className={`hover:bg-green-50/50 transition-colors ${selectedStudent === student ? 'bg-green-50' : ''}`}
-                        >
-                          <td className="py-3 px-4 text-gray-800 font-medium text-sm">{student.nama_siswa}</td>
-                          <td className="py-3 px-4 text-gray-600 text-sm">{student.nama_wali}</td>
-                          <td className="py-3 px-4 text-gray-600">
-                            <span className="bg-gray-100 border border-gray-200 text-gray-700 px-2.5 py-1 rounded-md text-xs font-bold">
-                              {student.kelas}
-                            </span>
-                          </td>
-                          <td className="py-3 px-4 text-center">
-                            <button
-                              onClick={() => setSelectedStudent(student)}
-                              className={`px-4 py-1.5 rounded-lg text-sm font-semibold transition-all ${
-                                selectedStudent === student 
-                                ? 'bg-green-600 text-white shadow-md shadow-green-200' 
-                                : 'bg-white border border-gray-300 text-gray-700 hover:border-green-500 hover:text-green-600'
-                              }`}
-                            >
-                              {selectedStudent === student ? 'Terpilih' : 'Pilih'}
-                            </button>
-                          </td>
-                        </tr>
-                      ))
-                    ) : (
-                      <tr>
-                        <td colSpan="4" className="py-12 text-center text-gray-400 text-sm">
-                          Tidak ada data siswa yang cocok dengan pencarian.
-                        </td>
-                      </tr>
-                    )}
-                  </tbody>
-                </table>
-              </div>
+            <div class="flex flex-col gap-2 mt-4">
+                <label class="font-semibold">2. Pilih Siswa:</label>
+                <select id="pilih-siswa" onchange="updateSurat()" class="border border-gray-300 p-2 rounded w-full" disabled>
+                    <option value="">-- Tarik data terlebih dahulu --</option>
+                </select>
             </div>
 
-            {/* Panel Preview & Tombol Cetak (Kanan) */}
-            <div className="w-full md:w-1/3 flex flex-col justify-center border-l-0 md:border-l border-gray-100 md:pl-6">
-              {selectedStudent ? (
-                <div className="bg-gradient-to-br from-gray-800 to-gray-900 rounded-2xl shadow-xl p-6 text-white text-center transform transition-all duration-300">
-                  <div className="mb-6">
-                    <div className="w-16 h-16 bg-green-500/20 rounded-full flex items-center justify-center mx-auto mb-4 border border-green-500/30">
-                       <FileText className="text-green-400" size={28} />
-                    </div>
-                    <p className="text-gray-300 text-xs uppercase tracking-widest font-semibold mb-2">Dokumen Siap Cetak</p>
-                    <h3 className="text-xl font-bold mb-1 leading-tight">{selectedStudent.nama_siswa}</h3>
-                    <div className="flex items-center justify-center gap-2 mb-2">
-                       <span className="bg-gray-700/50 text-gray-300 text-xs px-2 py-1 rounded">Kelas {selectedStudent.kelas}</span>
-                    </div>
-                    <p className="text-gray-400 text-sm border-t border-gray-700 pt-3 mt-3">
-                      Yth. Bapak/Ibu {selectedStudent.nama_wali}
-                    </p>
-                  </div>
-                  
-                  <button
-                    onClick={handlePrint}
-                    className="w-full bg-green-500 hover:bg-green-400 text-gray-900 font-bold py-3.5 px-4 rounded-xl flex items-center justify-center gap-2 transition-all transform hover:-translate-y-1 hover:shadow-lg hover:shadow-green-500/30"
-                  >
-                    <Printer size={20} />
-                    Cetak File PDF
-                  </button>
-                  <p className="text-gray-500 text-xs mt-4">
-                    Kertas akan otomatis diatur ke A4 (2 Halaman)
-                  </p>
-                </div>
-              ) : (
-                <div className="bg-gray-50 border-2 border-dashed border-gray-200 rounded-2xl p-8 flex flex-col items-center justify-center text-center h-full min-h-[250px]">
-                  <Printer className="text-gray-300 mb-4" size={40} />
-                  <p className="text-gray-500 font-medium text-sm">Pilih salah satu siswa dari tabel<br/>untuk memunculkan tombol cetak PDF.</p>
-                </div>
-              )}
-            </div>
-            
-          </div>
+            <button onclick="window.print()" id="btn-print" class="bg-green-600 text-white py-2 px-4 rounded hover:bg-green-700 transition mt-4 opacity-50 cursor-not-allowed" disabled>
+                3. Cetak PDF / Print
+            </button>
         </div>
-      </div>
+    </div>
 
-      {/* Memanggil Komponen Print di background */}
-      <PrintLayout data={selectedStudent} />
-    </>
-  );
-}
+    <!-- BAGIAN KERTAS SURAT (YANG AKAN TERCETAK) -->
+    <div id="area-cetak" class="print-container">
+        
+        <!-- ================= HALAMAN 1 ================= -->
+        <!-- KOP SURAT -->
+        <div class="flex justify-between items-center border-b-[3px] border-black pb-2 mb-1">
+            <!-- GANTI SRC GAMBAR DI BAWAH INI DENGAN LINK GITHUB ANDA -->
+            <img src="https://raw.githubusercontent.com/username/repo/main/logo-min.png" alt="Logo MIN" class="w-24 h-24 object-contain">
+            
+            <div class="text-center flex-1 px-2 leading-tight">
+                <h2 class="font-bold text-lg">KEMENTERIAN AGAMA</h2>
+                <h1 class="font-bold text-xl">MADRASAH IBTIDAIYAH NEGERI 1 KOTA MALANG</h1>
+                <p class="font-bold text-sm">HUT KE-48 MIN 1 KOTA MALANG</p>
+                <p class="font-bold text-sm">TAHUN PELAJARAN 2025/2026</p>
+                <p class="text-[12px]">Jln. Bandung 7C, Telp.& Fax. (0341) 551176565642 Malang</p>
+                <p class="text-[13px] italic font-bold mt-1">"Menjaga Asa. Mengalirkan Cahaya Bagi Bangsa"</p>
+            </div>
+            
+            <!-- GANTI SRC GAMBAR DI BAWAH INI DENGAN LINK GITHUB ANDA -->
+            <img src="https://raw.githubusercontent.com/username/repo/main/logo-hut.png" alt="Logo HUT" class="w-24 h-24 object-contain">
+        </div>
+        <div class="border-b-[1px] border-black mb-6"></div>
+
+        <!-- NOMOR & PERIHAL -->
+        <div class="flex justify-between text-sm mb-6">
+            <div>
+                <table class="leading-relaxed">
+                    <tr><td class="w-20">Nomor</td><td class="w-4">:</td><td>B-805/Mi.13.25.01/PP.00.4/09/2026</td></tr>
+                    <tr><td>Lampiran</td><td>:</td><td>1 bendel</td></tr>
+                    <tr><td class="align-top">Perihal</td><td class="align-top">:</td><td>Penawaran Kerjasama dalam<br>bentuk Sponsorship / Donatur</td></tr>
+                </table>
+            </div>
+        </div>
+
+        <!-- ALAMAT TUJUAN -->
+        <div class="text-sm mb-6 leading-relaxed">
+            <p>Kepada Yth:</p>
+            <p class="font-bold">Bapak/Ibu <span id="cetak-wali">[Nama wali murid]</span></p>
+            <p class="font-bold">Wali murid dari Ananda <span id="cetak-siswa">[Nama siswa]</span> Kelas <span id="cetak-kelas">[kelas]</span></p>
+            <p>di Tempat</p>
+        </div>
+
+        <!-- ISI SURAT -->
+        <div class="text-sm text-justify leading-relaxed mb-8">
+            <p class="mb-2">Assalaamu'alaikum Wr.Wb.</p>
+            <p class="mb-2 indent-8">Dalam rangka kegiatan akhir tahun kami akan menyelenggarakan serangkaian kegiatan yang terangkum dalam sebuah acara <strong>"PERINGATAN HUT KE-48 TAHUN MADRASAH IBTIDAIYAH NEGERI I KOTA MALANG"</strong>. Acara tersebut Insya Allah akan dilaksanakan pada hari Minggu, 27 September 2026.</p>
+            <p class="mb-2 indent-8">Berkaitan dengan hal tersebut, demi kesuksesan dan kelancaran kegiatan yang dimaksud, kami mengharap Lembaga / Perusahaan Bapak/Ibu berkenan untuk berpartisipasi dalam bentuk Sponsorship/Donatur.</p>
+            <p class="mb-2 indent-8">Adapun bentuk partisipasi dan uraian kegiatan, berikut kami lampirkan Proposal Kegiatan. Bagi Bapak/Ibu yang berkenan memberikan partisipasi dalam bentuk dana, donasi dapat disalurkan melalui rekening Bank <strong>BRI 005101246266508 a.n SITI ALIYAH</strong></p>
+            <p class="mb-2 indent-8">Demikian atas kerjasama yang baik kami menyampaikan terima kasih.</p>
+            <p>Wassalaamu'alaikum Wr.Wb.</p>
+        </div>
+
+        <!-- TANDA TANGAN -->
+        <div class="text-sm relative">
+            <div class="flex justify-between mt-8">
+                <div class="text-center">
+                    <p>Mengetahui,</p>
+                    <p>Kepala Madrasah,</p>
+                    <div class="h-20 flex items-center justify-center relative mt-2 mb-2">
+                        <!-- GANTI SRC GAMBAR DI BAWAH INI DENGAN LINK GITHUB ANDA (GAMBAR TTD YG MENYATU DENGAN STEMPEL) -->
+                        <img src="https://raw.githubusercontent.com/username/repo/main/ttd-kepala-stempel.png" alt="TTD Kepala" class="absolute w-36 object-contain z-10">
+                    </div>
+                    <p class="font-bold underline mb-0">Siti Aisah, S.Ag., M.Pd</p>
+                </div>
+                
+                <div class="text-center">
+                    <p>Malang, 1 September 2026</p>
+                    <p>Ketua Panitia,</p>
+                    <div class="h-20 mt-2 mb-2"></div>
+                    <p class="font-bold underline mb-0">Abdullah, S.Pd., M.Pd.</p>
+                    <p>NIP. 196911212005011001</p>
+                </div>
+            </div>
+            <p class="mt-8 text-xs">Narahubung: Siti Aliyah, S.Pd., M.Pd, 085855106031</p>
+        </div>
+
+
+        <!-- ================= HALAMAN 2 ================= -->
+        <div class="page-break"></div>
+
+        <!-- KOP SURAT HALAMAN 2 -->
+        <div class="flex justify-between items-center border-b-[3px] border-black pb-2 mb-1">
+            <img src="https://raw.githubusercontent.com/username/repo/main/logo-min.png" class="w-24 h-24 object-contain">
+            <div class="text-center flex-1 px-2 leading-tight">
+                <h2 class="font-bold text-lg">KEMENTERIAN AGAMA</h2>
+                <h1 class="font-bold text-xl">MADRASAH IBTIDAIYAH NEGERI 1 KOTA MALANG</h1>
+                <p class="font-bold text-sm">HUT KE-48 MIN 1 KOTA MALANG</p>
+                <p class="font-bold text-sm">TAHUN PELAJARAN 2025/2026</p>
+                <p class="text-[12px]">Jln. Bandung 7C, Telp.& Fax. (0341) 551176565642 Malang</p>
+                <p class="text-[13px] italic font-bold mt-1">"Menjaga Asa. Mengalirkan Cahaya Bagi Bangsa"</p>
+            </div>
+            <img src="https://raw.githubusercontent.com/username/repo/main/logo-hut.png" class="w-24 h-24 object-contain">
+        </div>
+        <div class="border-b-[1px] border-black mb-8"></div>
+
+        <h3 class="text-center font-bold text-lg underline mb-6">BERITA ACARA KESANGGUPAN SPONSORSHIP</h3>
+
+        <div class="text-sm leading-loose mb-6">
+            <p>Pada hari ini, ............................................. tanggal ....................... pada bulan ....................... tahun 2026.</p>
+            <p>Yang yang bertanda tangan di bawah ini:</p>
+            <table class="ml-4 w-full">
+                <tr><td class="w-36">Nama</td><td class="w-4">:</td><td class="border-b border-dotted border-black"></td></tr>
+                <tr><td>Alamat</td><td>:</td><td class="border-b border-dotted border-black"></td></tr>
+                <tr><td>No Telp.</td><td>:</td><td class="border-b border-dotted border-black"></td></tr>
+                <tr><td>Instansi Perusahaan</td><td>:</td><td class="border-b border-dotted border-black"></td></tr>
+            </table>
+        </div>
+
+        <div class="text-sm leading-relaxed mb-6 text-justify">
+            <p>Menyatakan bahwa kami bersedia / tidak bersedia* menjadi donatur pada kegiatan MIN 1 Kota Malang.</p>
+            <p>Adapun bentuk bantuan yang kami berikan berupa:</p>
+            <p class="ml-4">a. Bantuan uang sebesar Rp ........................................................................................</p>
+            <p class="ml-4">b. Bantuan lain berupa ..............................................................................................</p>
+            <p class="mt-4">Demikian berita acara ini kami buat untuk dipergunakan sebagaimana mestinya.</p>
+            <p class="text-xs italic mt-2">*coret yang tidak diperlukan</p>
+        </div>
+
+        <div class="text-sm flex justify-end mt-12">
+            <div class="text-center">
+                <p>Malang, .............................. 2026</p>
+                <p class="mb-20"></p>
+                <p>( ........................................................ )</p>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- SCRIPT JAVASCRIPT LOGIKA WEB -->
+    <script>
+        // === GANTI URL INI DENGAN URL WEB APP GOOGLE APPS SCRIPT ANDA ===
+        const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbz8Ah8PwSvWESkiLhWe0v0iK_oyC2rBOUVARSXFSlFA97zQpDi1vpD2QfyaXZOaeTSKOw/exec"; 
+        
+        let dataSiswaGlobal = [];
+
+        async function tarikDataSpreadsheet() {
+            const statusText = document.getElementById('status-tarik');
+            const selectElement = document.getElementById('pilih-siswa');
+            
+            if (!APPS_SCRIPT_URL || APPS_SCRIPT_URL.includes("...")) {
+                statusText.innerHTML = '<span class="text-red-600">Error: Anda belum mengganti Link Apps Script di dalam kode HTML.</span>';
+                return;
+            }
+
+            statusText.innerText = "Sedang mengambil data dari Spreadsheet...";
+            
+            try {
+                const response = await fetch(APPS_SCRIPT_URL);
+                const data = await response.json();
+                
+                if (data && data.length > 0) {
+                    dataSiswaGlobal = data;
+                    
+                    // Bersihkan pilihan sebelumnya
+                    selectElement.innerHTML = '<option value="">-- Pilih Siswa --</option>';
+                    selectElement.disabled = false;
+                    
+                    // Masukkan data siswa ke dropdown
+                    data.forEach((siswa, index) => {
+                        const option = document.createElement('option');
+                        option.value = index; 
+                        option.text = `${siswa.kelas} - ${siswa.nama_siswa} (Wali: ${siswa.nama_wali})`;
+                        selectElement.appendChild(option);
+                    });
+                    
+                    statusText.innerHTML = `<span class="text-green-600">Berhasil menarik ${data.length} data siswa.</span>`;
+                } else {
+                    statusText.innerHTML = '<span class="text-red-600">Data di Spreadsheet kosong.</span>';
+                }
+            } catch (error) {
+                statusText.innerHTML = '<span class="text-red-600">Gagal mengambil data. Pastikan akses Web App sudah diset ke "Siapa Saja" (Anyone).</span>';
+            }
+        }
+
+        function updateSurat() {
+            const selectElement = document.getElementById('pilih-siswa');
+            const btnPrint = document.getElementById('btn-print');
+            const selectedIndex = selectElement.value;
+
+            if (selectedIndex !== "") {
+                const siswa = dataSiswaGlobal[selectedIndex];
+                
+                // Memasukkan data ke titik-titik di kertas surat
+                document.getElementById('cetak-wali').innerText = siswa.nama_wali;
+                document.getElementById('cetak-siswa').innerText = siswa.nama_siswa;
+                document.getElementById('cetak-kelas').innerText = siswa.kelas;
+                
+                // Aktifkan tombol print
+                btnPrint.disabled = false;
+                btnPrint.classList.remove('opacity-50', 'cursor-not-allowed');
+            } else {
+                // Nonaktifkan tombol print jika tidak ada yang dipilih
+                btnPrint.disabled = true;
+                btnPrint.classList.add('opacity-50', 'cursor-not-allowed');
+                
+                // Kembalikan ke text awal
+                document.getElementById('cetak-wali').innerText = "[Nama wali murid]";
+                document.getElementById('cetak-siswa').innerText = "[Nama siswa]";
+                document.getElementById('cetak-kelas').innerText = "[kelas]";
+            }
+        }
+    </script>
+</body>
+</html>

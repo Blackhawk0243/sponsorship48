@@ -24,7 +24,7 @@
                 border: none !important;
                 min-height: auto !important;
             }
-            .page-break { page-break-before: always; }
+            .page-break { page-break-before: always; break-before: page; }
             @page { size: A4; margin: 10mm 15mm; }
         }
         
@@ -110,140 +110,140 @@
     </div>
 
     <!-- ================= TEMPLATE 1: SURAT PENAWARAN & BERITA ACARA ================= -->
-    <div id="template-penawaran" class="print-container font-serif text-black">
+    <div id="template-penawaran">
         
         <!-- HALAMAN 1 -->
-        <div class="flex justify-between items-center border-b-[4px] border-black pb-1 mb-[2px]">
-            <img src="https://raw.githubusercontent.com/Blackhawk0243/sponsorship48/main/logo-min.png" alt="Logo MIN" class="w-24 h-auto object-contain shrink-0">
+        <div class="print-container font-serif text-black">
+            <div class="flex justify-between items-center border-b-[4px] border-black pb-1 mb-[2px]">
+                <img src="https://raw.githubusercontent.com/Blackhawk0243/sponsorship48/main/logo-min.png" alt="Logo MIN" class="w-24 h-auto object-contain shrink-0">
             
-            <div class="text-center flex-1 px-2 text-black">
-                <h1 class="text-[34px] font-bold tracking-wide" style="line-height: 1.1; font-family: 'Times New Roman', Times, serif;">HUT KE-48</h1>
-                <h2 class="text-[15px] font-bold mt-1 tracking-wide" style="font-family: Arial, Helvetica, sans-serif;">MIN 1 KOTA MALANG</h2>
-                <h3 class="text-[14px] font-bold mt-0" style="font-family: Arial, Helvetica, sans-serif;">TAHUN PELAJARAN 2025/2026</h3>
-                <p class="text-[12px] mt-0" style="font-family: Arial, Helvetica, sans-serif;">Jln. Bandung 7C, Telp.& Fax. (0341) 551176 – 565642 Malang</p>
-            </div>
+                <div class="text-center flex-1 px-2 text-black">
+                    <h1 class="text-[34px] font-bold tracking-wide" style="line-height: 1.1; font-family: 'Times New Roman', Times, serif;">HUT KE-48</h1>
+                    <h2 class="text-[15px] font-bold mt-1 tracking-wide" style="font-family: Arial, Helvetica, sans-serif;">MIN 1 KOTA MALANG</h2>
+                    <h3 class="text-[14px] font-bold mt-0" style="font-family: Arial, Helvetica, sans-serif;">TAHUN PELAJARAN 2025/2026</h3>
+                    <p class="text-[12px] mt-0" style="font-family: Arial, Helvetica, sans-serif;">Jln. Bandung 7C, Telp.& Fax. (0341) 551176 – 565642 Malang</p>
+                </div>
             
-            <img src="https://raw.githubusercontent.com/Blackhawk0243/sponsorship48/main/logo-hut.png" alt="Logo HUT" class="w-32 h-auto object-contain shrink-0">
-        </div>
-        <div class="border-b-[1px] border-black mb-5"></div>
-
-        <div class="flex justify-between text-[15px] mb-6 leading-relaxed">
-            <table class="w-2/3">
-                <tr><td class="w-24">Nomor</td><td class="w-3">:</td><td>B-805/Mi.13.25.01/PP.00.4/09/2026</td></tr>
-                <tr><td>Lampiran</td><td>:</td><td>1 bendel</td></tr>
-                <tr><td class="align-top">Perihal</td><td class="align-top">:</td><td>Penawaran Kerjasama dalam bentuk Sponsorship / Donatur</td></tr>
-            </table>
-        </div>
-
-        <div class="text-[15px] mb-6 leading-relaxed">
-            <p>Kepada Yth:</p>
-            <p class="font-bold mt-1">Bapak/Ibu <span id="cetak-wali">[Nama wali murid]</span></p>
-            <p>Wali murid dari Ananda <span id="cetak-siswa" class="font-bold">[Nama siswa]</span> Kelas <span id="cetak-kelas" class="font-bold">[kelas]</span></p>
-            <p>di Tempat</p>
-        </div>
-
-        <div class="text-[15px] text-justify leading-relaxed mb-6 space-y-3">
-            <p class="font-bold">Assalaamu'alaikum Wr.Wb.</p>
-            <p class="indent-10">Dalam rangka kegiatan akhir tahun kami akan menyelenggarakan serangkaian kegiatan yang terangkum dalam sebuah acara <strong>"PERINGATAN HUT KE-48 TAHUN MADRASAH IBTIDAIYAH NEGERI 1 KOTA MALANG"</strong>. Acara tersebut Insya Allah akan dilaksanakan pada hari Minggu, 27 September 2026.</p>
-            <p class="indent-10">Berkaitan dengan hal tersebut, demi kesuksesan dan kelancaran kegiatan yang dimaksud, kami mengharap Lembaga / Perusahaan Bapak/Ibu berkenan untuk berpartisipasi dalam bentuk Sponsorship/Donatur.</p>
-            <p class="indent-10">Adapun bentuk partisipasi dan uraian kegiatan, berikut kami lampirkan Proposal Kegiatan. Bagi Bapak/Ibu yang berkenan memberikan partisipasi dalam bentuk dana, donasi dapat disalurkan melalui rekening <strong>Bank BRI 005101246266508 a.n SITI ALIYAH</strong></p>
-            <p class="indent-10">Demikian atas kerjasama yang baik kami menyampaikan terima kasih.</p>
-            <p class="font-bold">Wassalaamu'alaikum Wr.Wb.</p>
-        </div>
-
-        <div class="text-[15px] relative mt-6">
-            <div class="flex justify-between">
-                <div class="text-center relative w-1/2">
-                    <p>Mengetahui,</p>
-                    <p>Kepala Madrasah,</p>
-                    <div class="h-20 flex items-center justify-center relative my-1">
-                        <img src="https://raw.githubusercontent.com/Blackhawk0243/sponsorship48/main/ttd-kepala.png" alt="TTD Kepala" class="absolute w-36 object-contain z-10 mix-blend-multiply">
-                    </div>
-                    <p class="font-bold underline mb-0">Hj. Siti Aisah, S.Ag., M.Pd</p>
-                    <p class="text-xs">NIP. 197410161997032002</p>
-                </div>
-                
-                <div class="text-center w-1/2 relative">
-                    <p>Malang, 1 September 2026</p>
-                    <p>Ketua Panitia,</p>
-                    <div class="h-20 flex items-center justify-center relative my-1">
-                        <img src="https://raw.githubusercontent.com/Blackhawk0243/sponsorship48/main/ttd-ketua.png" alt="TTD Ketua" class="absolute w-28 object-contain z-10 mix-blend-multiply" onerror="this.style.display='none'">
-                    </div>
-                    <p class="font-bold underline mb-0">Abdullah, S.Pd., M.Pd.</p>
-                    <p class="text-xs">NIP. 196911212005011001</p>
-                </div>
+                <img src="https://raw.githubusercontent.com/Blackhawk0243/sponsorship48/main/logo-hut.png" alt="Logo HUT" class="w-32 h-auto object-contain shrink-0">
             </div>
-            <p class="mt-4 text-[13px] font-bold">Narahubung: Siti Aliyah, S.Pd., M.Pd, 085855106031</p>
-        </div>
+            <div class="border-b-[1px] border-black mb-5"></div>
 
+            <div class="flex justify-between text-[15px] mb-6 leading-relaxed">
+                <table class="w-2/3">
+                    <tr><td class="w-24">Nomor</td><td class="w-3">:</td><td>B-805/Mi.13.25.01/PP.00.4/09/2026</td></tr>
+                    <tr><td>Lampiran</td><td>:</td><td>1 bendel</td></tr>
+                    <tr><td class="align-top">Perihal</td><td class="align-top">:</td><td>Penawaran Kerjasama dalam bentuk Sponsorship / Donatur</td></tr>
+                </table>
+            </div>
+
+            <div class="text-[15px] mb-6 leading-relaxed">
+                <p>Kepada Yth:</p>
+                <p class="font-bold mt-1">Bapak/Ibu <span id="cetak-wali">[Nama wali murid]</span></p>
+                <p>Wali murid dari Ananda <span id="cetak-siswa" class="font-bold">[Nama siswa]</span> Kelas <span id="cetak-kelas" class="font-bold">[kelas]</span></p>
+                <p>di Tempat</p>
+            </div>
+
+            <div class="text-[15px] text-justify leading-relaxed mb-6 space-y-3">
+                <p class="font-bold">Assalaamu'alaikum Wr.Wb.</p>
+                <p class="indent-10">Dalam rangka kegiatan akhir tahun kami akan menyelenggarakan serangkaian kegiatan yang terangkum dalam sebuah acara <strong>"PERINGATAN HUT KE-48 TAHUN MADRASAH IBTIDAIYAH NEGERI 1 KOTA MALANG"</strong>. Acara tersebut Insya Allah akan dilaksanakan pada hari Minggu, 27 September 2026.</p>
+                <p class="indent-10">Berkaitan dengan hal tersebut, demi kesuksesan dan kelancaran kegiatan yang dimaksud, kami mengharap Lembaga / Perusahaan Bapak/Ibu berkenan untuk berpartisipasi dalam bentuk Sponsorship/Donatur.</p>
+                <p class="indent-10">Adapun bentuk partisipasi dan uraian kegiatan, berikut kami lampirkan Proposal Kegiatan. Bagi Bapak/Ibu yang berkenan memberikan partisipasi dalam bentuk dana, donasi dapat disalurkan melalui rekening <strong>Bank BRI 005101246266508 a.n SITI ALIYAH</strong></p>
+                <p class="indent-10">Demikian atas kerjasama yang baik kami menyampaikan terima kasih.</p>
+                <p class="font-bold">Wassalaamu'alaikum Wr.Wb.</p>
+            </div>
+
+            <div class="text-[15px] relative mt-6">
+                <div class="flex justify-between">
+                    <div class="text-center relative w-1/2">
+                        <p>Mengetahui,</p>
+                        <p>Kepala Madrasah,</p>
+                        <div class="h-20 flex items-center justify-center relative my-1">
+                            <img src="https://raw.githubusercontent.com/Blackhawk0243/sponsorship48/main/ttd-kepala.png" alt="TTD Kepala" class="absolute w-36 object-contain z-10 mix-blend-multiply">
+                        </div>
+                        <p class="font-bold underline mb-0">Hj. Siti Aisah, S.Ag., M.Pd</p>
+                        <p class="text-xs">NIP. 197410161997032002</p>
+                    </div>
+                    
+                    <div class="text-center w-1/2 relative">
+                        <p>Malang, 1 September 2026</p>
+                        <p>Ketua Panitia,</p>
+                        <div class="h-20 flex items-center justify-center relative my-1">
+                            <img src="https://raw.githubusercontent.com/Blackhawk0243/sponsorship48/main/ttd-ketua.png" alt="TTD Ketua" class="absolute w-28 object-contain z-10 mix-blend-multiply" onerror="this.style.display='none'">
+                        </div>
+                        <p class="font-bold underline mb-0">Abdullah, S.Pd., M.Pd.</p>
+                        <p class="text-xs">NIP. 196911212005011001</p>
+                    </div>
+                </div>
+                <p class="mt-4 text-[13px] font-bold">Narahubung: Siti Aliyah, S.Pd., M.Pd, 085855106031</p>
+            </div>
+        </div>
 
         <!-- HALAMAN 2 (BERITA ACARA) -->
-        <div class="page-break"></div>
-
-        <div class="flex justify-between items-center border-b-[4px] border-black pb-1 mb-[2px]">
-            <img src="https://raw.githubusercontent.com/Blackhawk0243/sponsorship48/main/logo-min.png" alt="Logo MIN" class="w-24 h-auto object-contain shrink-0">
+        <div class="print-container font-serif text-black page-break">
+            <div class="flex justify-between items-center border-b-[4px] border-black pb-1 mb-[2px]">
+                <img src="https://raw.githubusercontent.com/Blackhawk0243/sponsorship48/main/logo-min.png" alt="Logo MIN" class="w-24 h-auto object-contain shrink-0">
             
-            <div class="text-center flex-1 px-2 text-black">
-                <h1 class="text-[34px] font-bold tracking-wide" style="line-height: 1.1; font-family: 'Times New Roman', Times, serif;">HUT KE-48</h1>
-                <h2 class="text-[15px] font-bold mt-1 tracking-wide" style="font-family: Arial, Helvetica, sans-serif;">MIN 1 KOTA MALANG</h2>
-                <h3 class="text-[14px] font-bold mt-0" style="font-family: Arial, Helvetica, sans-serif;">TAHUN PELAJARAN 2025/2026</h3>
-                <p class="text-[12px] mt-0" style="font-family: Arial, Helvetica, sans-serif;">Jln. Bandung 7C, Telp.& Fax. (0341) 551176 – 565642 Malang</p>
-            </div>
+                <div class="text-center flex-1 px-2 text-black">
+                    <h1 class="text-[34px] font-bold tracking-wide" style="line-height: 1.1; font-family: 'Times New Roman', Times, serif;">HUT KE-48</h1>
+                    <h2 class="text-[15px] font-bold mt-1 tracking-wide" style="font-family: Arial, Helvetica, sans-serif;">MIN 1 KOTA MALANG</h2>
+                    <h3 class="text-[14px] font-bold mt-0" style="font-family: Arial, Helvetica, sans-serif;">TAHUN PELAJARAN 2025/2026</h3>
+                    <p class="text-[12px] mt-0" style="font-family: Arial, Helvetica, sans-serif;">Jln. Bandung 7C, Telp.& Fax. (0341) 551176 – 565642 Malang</p>
+                </div>
             
-            <img src="https://raw.githubusercontent.com/Blackhawk0243/sponsorship48/main/logo-hut.png" alt="Logo HUT" class="w-32 h-auto object-contain shrink-0">
-        </div>
-        <div class="border-b-[1px] border-black mb-6"></div>
-
-        <div class="text-center mb-6">
-            <h3 class="font-bold text-[17px] underline tracking-wide">BERITA ACARA</h3>
-            <h3 class="font-bold text-[16px] tracking-wide">KESANGGUPAN SPONSORSHIP</h3>
-        </div>
-
-        <div class="text-[15px] leading-relaxed mb-4">
-            <p>Pada hari ini, ............................................. tanggal ....................... pada bulan ....................... tahun 2026.</p>
-            <p class="mt-2">Yang bertanda tangan di bawah ini:</p>
-            <table class="w-full ml-4 mt-2">
-                <tr class="h-9"><td class="w-48 align-bottom pb-1">Nama</td><td class="w-4 align-bottom pb-1">:</td><td class="border-b border-dotted border-black align-bottom pb-1 font-bold"><span id="cetak-wali-ba">[Nama wali murid]</span></td></tr>
-                <tr class="h-9"><td class="align-bottom pb-1">Alamat</td><td class="align-bottom pb-1">:</td><td class="border-b border-dotted border-black align-bottom pb-1"></td></tr>
-                <tr class="h-9"><td class="align-bottom pb-1">No Telp.</td><td class="align-bottom pb-1">:</td><td class="border-b border-dotted border-black align-bottom pb-1"></td></tr>
-                <tr class="h-9"><td class="align-bottom pb-1">Instansi / Perusahaan</td><td class="align-bottom pb-1">:</td><td class="border-b border-dotted border-black align-bottom pb-1"></td></tr>
-            </table>
-        </div>
-
-        <div class="text-[15px] text-justify leading-relaxed mb-6 space-y-3">
-            <p>Menyatakan bahwa kami <strong>bersedia / tidak bersedia</strong>* menjadi donatur pada kegiatan MIN 1 Kota Malang.</p>
-            <p>Adapun bentuk bantuan yang kami berikan berupa:</p>
-            <div class="ml-6 space-y-3">
-                <div class="flex items-end gap-2">
-                    <span>a. Bantuan uang sebesar Rp</span>
-                    <span class="border-b border-dotted border-black flex-1 inline-block"></span>
-                </div>
-                <div class="flex items-end gap-2">
-                    <span>b. Bantuan lain berupa</span>
-                    <span class="border-b border-dotted border-black flex-1 inline-block"></span>
-                </div>
+                <img src="https://raw.githubusercontent.com/Blackhawk0243/sponsorship48/main/logo-hut.png" alt="Logo HUT" class="w-32 h-auto object-contain shrink-0">
             </div>
-            <p class="pt-2">Demikian berita acara ini kami buat untuk dipergunakan sebagaimana mestinya.</p>
-            <p class="text-[13px] italic">*coret yang tidak diperlukan</p>
-        </div>
+            <div class="border-b-[1px] border-black mb-6"></div>
 
-        <div class="text-[15px] relative mt-12">
-            <div class="flex justify-end">
-                <div class="text-center w-64">
-                    <p class="mb-20">Malang, .............................. 2026</p>
-                    <p class="whitespace-nowrap">( <span id="cetak-wali-sign" class="font-medium">........................................................</span> )</p>
+            <div class="text-center mb-6">
+                <h3 class="font-bold text-[17px] underline tracking-wide">BERITA ACARA</h3>
+                <h3 class="font-bold text-[16px] tracking-wide">KESANGGUPAN SPONSORSHIP</h3>
+            </div>
+
+            <div class="text-[15px] leading-relaxed mb-4">
+                <p>Pada hari ini, ............................................. tanggal ....................... pada bulan ....................... tahun 2026.</p>
+                <p class="mt-2">Yang bertanda tangan di bawah ini:</p>
+                <table class="w-full ml-4 mt-2">
+                    <tr class="h-9"><td class="w-48 align-bottom pb-1">Nama</td><td class="w-4 align-bottom pb-1">:</td><td class="border-b border-dotted border-black align-bottom pb-1 font-bold"><span id="cetak-wali-ba">[Nama wali murid]</span></td></tr>
+                    <tr class="h-9"><td class="align-bottom pb-1">Alamat</td><td class="align-bottom pb-1">:</td><td class="border-b border-dotted border-black align-bottom pb-1"></td></tr>
+                    <tr class="h-9"><td class="align-bottom pb-1">No Telp.</td><td class="align-bottom pb-1">:</td><td class="border-b border-dotted border-black align-bottom pb-1"></td></tr>
+                    <tr class="h-9"><td class="align-bottom pb-1">Instansi / Perusahaan</td><td class="align-bottom pb-1">:</td><td class="border-b border-dotted border-black align-bottom pb-1"></td></tr>
+                </table>
+            </div>
+
+            <div class="text-[15px] text-justify leading-relaxed mb-6 space-y-3">
+                <p>Menyatakan bahwa kami <strong>bersedia / tidak bersedia</strong>* menjadi donatur pada kegiatan MIN 1 Kota Malang.</p>
+                <p>Adapun bentuk bantuan yang kami berikan berupa:</p>
+                <div class="ml-6 space-y-3">
+                    <div class="flex items-end gap-2">
+                        <span>a. Bantuan uang sebesar Rp</span>
+                        <span class="border-b border-dotted border-black flex-1 inline-block"></span>
+                    </div>
+                    <div class="flex items-end gap-2">
+                        <span>b. Bantuan lain berupa</span>
+                        <span class="border-b border-dotted border-black flex-1 inline-block"></span>
+                    </div>
+                </div>
+                <p class="pt-2">Demikian berita acara ini kami buat untuk dipergunakan sebagaimana mestinya.</p>
+                <p class="text-[13px] italic">*coret yang tidak diperlukan</p>
+            </div>
+
+            <div class="text-[15px] relative mt-12">
+                <div class="flex justify-end">
+                    <div class="text-center w-64">
+                        <p class="mb-20">Malang, .............................. 2026</p>
+                        <p class="whitespace-nowrap">( <span id="cetak-wali-sign" class="font-medium">........................................................</span> )</p>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 
     <!-- ================= TEMPLATE 2: SURAT UCAPAN TERIMA KASIH ================= -->
-    <div id="template-terimakasih" class="print-container font-serif text-black template-hidden">
+    <div id="template-terimakasih" class="template-hidden">
         
-        <div class="flex justify-between items-center border-b-[4px] border-black pb-1 mb-[2px]">
-            <img src="https://raw.githubusercontent.com/Blackhawk0243/sponsorship48/main/logo-min.png" alt="Logo MIN" class="w-24 h-auto object-contain shrink-0">
-            
-            <div class="text-center flex-1 px-2 text-black">
+        <div class="print-container font-serif text-black">
+            <div class="flex justify-between items-center border-b-[4px] border-black pb-1 mb-[2px]">
+                <img src="https://raw.githubusercontent.com/Blackhawk0243/sponsorship48/main/logo-min.png" alt="Logo MIN" class="w-24 h-auto object-contain shrink-0">
                 <h1 class="text-[34px] font-bold tracking-wide" style="line-height: 1.1; font-family: 'Times New Roman', Times, serif;">HUT KE-48</h1>
                 <h2 class="text-[15px] font-bold mt-1 tracking-wide" style="font-family: Arial, Helvetica, sans-serif;">MIN 1 KOTA MALANG</h2>
                 <h3 class="text-[14px] font-bold mt-0" style="font-family: Arial, Helvetica, sans-serif;">TAHUN PELAJARAN 2025/2026</h3>
@@ -303,6 +303,7 @@
                     <p class="text-xs">NIP. 196701211990032001</p>
                 </div>
             </div>
+        </div>
         </div>
     </div>
 

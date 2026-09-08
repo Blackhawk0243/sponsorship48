@@ -25,7 +25,7 @@
                 border: none !important;
             }
             .page-break { page-break-before: always; }
-            @page { size: A4 portrait; margin: 15mm 20mm; }
+            @page { size: A4 portrait; margin: 10mm 15mm; }
         }
         
         /* Tampilan simulasi kertas di layar komputer */
@@ -34,7 +34,7 @@
             max-width: 210mm; 
             min-height: 297mm; 
             margin: 20px auto; 
-            padding: 15mm 20mm; 
+            padding: 10mm 15mm; 
             box-shadow: 0 10px 25px rgba(0,0,0,0.15); 
             border: 1px solid #ddd;
             color: black;
@@ -59,27 +59,35 @@
             <p id="status" class="text-sm text-gray-500 mt-2 text-center">Status: Menunggu penarikan data...</p>
         </div>
         
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
             <!-- Dropdown Filter Kelas -->
             <div>
-                <label class="font-bold block mb-2 text-sm text-gray-700">2. Sortir Kelas/Jenjang:</label>
-                <select id="filter-kelas" onchange="filterSiswa()" class="w-full border border-gray-300 p-3 rounded-lg bg-gray-50 focus:ring-2 focus:ring-green-500 focus:outline-none" disabled>
+                <label class="font-bold block mb-2 text-sm text-gray-700">2. Pilih Kelas (1-6):</label>
+                <select id="filter-tingkat" onchange="updateRombel()" class="w-full border border-gray-300 p-3 rounded-lg bg-gray-50 focus:ring-2 focus:ring-green-500 focus:outline-none" disabled>
                     <option value="">-- Tarik data dulu --</option>
                 </select>
             </div>
             
+            <!-- Dropdown Filter Rombel -->
+            <div>
+                <label class="font-bold block mb-2 text-sm text-gray-700">3. Pilih Rombel (A-I):</label>
+                <select id="filter-rombel" onchange="filterSiswa()" class="w-full border border-gray-300 p-3 rounded-lg bg-gray-50 focus:ring-2 focus:ring-green-500 focus:outline-none" disabled>
+                    <option value="">-- Pilih Kelas dulu --</option>
+                </select>
+            </div>
+
             <!-- Dropdown Pilih Siswa -->
             <div>
-                <label class="font-bold block mb-2 text-sm text-gray-700">3. Pilih Nama Siswa:</label>
+                <label class="font-bold block mb-2 text-sm text-gray-700">4. Pilih Nama Siswa:</label>
                 <select id="pilih-siswa" onchange="updateSurat()" class="w-full border border-gray-300 p-3 rounded-lg bg-gray-50 focus:ring-2 focus:ring-green-500 focus:outline-none" disabled>
-                    <option value="">-- Pilih kelas terlebih dahulu --</option>
+                    <option value="">-- Pilih Rombel dulu --</option>
                 </select>
             </div>
         </div>
         
         <!-- Tombol Cetak -->
         <button id="btn-print" onclick="window.print()" class="bg-gray-400 text-white font-bold px-4 py-4 rounded-lg w-full cursor-not-allowed transition shadow-sm flex items-center justify-center gap-2" disabled>
-            4. Cetak 2 Halaman (PDF A4)
+            5. Cetak 2 Halaman (PDF A4)
         </button>
     </div>
 
@@ -123,15 +131,15 @@
         </div>
 
         <!-- Tujuan Surat Sesuai Format Baru -->
-        <div class="mb-6 pl-10 text-[15px] font-surat leading-relaxed">
+        <div class="mb-4 pl-10 text-[15px] font-surat leading-relaxed">
             <p>Kepada Yth:</p>
             <p class="font-bold">Bapak/Ibu <span id="cetak-wali-1" class="text-blue-700 print:text-black">[Nama wali murid]</span></p>
             <p>Wali murid dari Ananda <span class="font-bold"><span id="cetak-siswa-1" class="text-blue-700 print:text-black">[Nama siswa]</span></span> Kelas <span class="font-bold"><span id="cetak-kelas-1" class="text-blue-700 print:text-black">[kelas]</span></span></p>
-            <p class="mt-2">di Tempat</p>
+            <p class="mt-1">di Tempat</p>
         </div>
 
         <!-- Isi Surat -->
-        <div class="mb-4 space-y-3 text-justify px-10 text-[15px] font-surat leading-relaxed">
+        <div class="mb-3 space-y-2 text-justify px-10 text-[15px] font-surat leading-relaxed">
             <p>Assalaamu'alaikum Wr.Wb.</p>
             
             <p class="indent-10">
@@ -161,28 +169,28 @@
         </div>
 
         <!-- Tanda Tangan Hal 1 -->
-        <div class="mt-8 flex justify-between px-10 relative text-[15px] font-surat">
+        <div class="mt-4 flex justify-between px-10 relative text-[15px] font-surat">
             <div class="text-center w-1/2 relative z-10 flex flex-col items-center">
                 <p>Mengetahui,</p>
                 <p>Kepala Madrasah,</p>
-                <div class="h-24 w-full relative flex justify-center items-center mt-1 mb-1">
+                <div class="h-20 w-full relative flex justify-center items-center mt-1 mb-1">
                     <!-- LOGO TTD KEPALA & STEMPEL (Ganti Link ini) -->
                     <img src="https://raw.githubusercontent.com/username/repo/main/ttd-kepala.png" alt="TTD Kepala" class="absolute w-[140px] object-contain z-20 mix-blend-multiply" onerror="this.style.display='none'">
                 </div>
-                <p class="font-bold underline mb-0 leading-none">Hj.Siti Aisah, S.Ag., M.Pd</p>
+                <p class="font-bold underline mb-0 leading-none">Hj. Siti Aisah, S.Ag., M.Pd</p>
                 <p class="mt-1 leading-none">NIP. 197410161997032002</p>
             </div>
             
             <div class="text-center w-1/2 relative z-10 flex flex-col items-center">
                 <p>Malang, 1 September 2026</p>
                 <p>Ketua Panitia,</p>
-                <div class="h-24 w-full mt-1 mb-1"></div>
+                <div class="h-20 w-full mt-1 mb-1"></div>
                 <p class="font-bold underline mb-0 leading-none">Abdullah, S.Pd., M.Pd.</p>
                 <p class="mt-1 leading-none">NIP. 196911212005011001</p>
             </div>
         </div>
 
-        <div class="mt-8 px-10 text-[13px] font-surat font-bold">
+        <div class="mt-6 px-10 text-[13px] font-surat font-bold">
             <p>Narahubung: Siti Aliyah, S.Pd., M.Pd, 085855106031</p>
         </div>
     </div>
@@ -211,29 +219,29 @@
         <div class="border-b-[1px] border-black mb-8"></div>
 
         <!-- Judul Berita Acara -->
-        <div class="text-center mb-8 mt-6 font-surat">
+        <div class="text-center mb-6 mt-4 font-surat">
             <h3 class="font-bold text-[18px] underline tracking-wide">BERITA ACARA</h3>
             <h3 class="font-bold text-[18px] tracking-wide">KESANGGUPAN SPONSORSHIP</h3>
         </div>
 
         <!-- Formulir -->
-        <div class="px-10 space-y-5 text-[15px] font-surat leading-relaxed">
+        <div class="px-10 space-y-4 text-[15px] font-surat leading-relaxed">
             <p class="indent-10">Pada hari ini, ............................... tanggal ......................... pada bulan ............................. tahun 2026.</p>
             
             <p>Yang bertanda tangan di bawah ini:</p>
             <table class="w-full ml-4">
                 <tbody>
-                    <tr class="h-10"><td class="w-48 align-bottom pb-1">Nama</td><td class="w-4 align-bottom pb-1">:</td><td class="border-b border-dotted border-black align-bottom pb-1 font-bold"><span id="cetak-wali-2" class="text-blue-700 print:text-black"></span></td></tr>
-                    <tr class="h-10"><td class="align-bottom pb-1">Alamat</td><td class="align-bottom pb-1">:</td><td class="border-b border-dotted border-black align-bottom pb-1"></td></tr>
-                    <tr class="h-10"><td class="align-bottom pb-1">No Telp.</td><td class="align-bottom pb-1">:</td><td class="border-b border-dotted border-black align-bottom pb-1"></td></tr>
-                    <tr class="h-10"><td class="align-bottom pb-1">Instansi / Perusahaan</td><td class="align-bottom pb-1">:</td><td class="border-b border-dotted border-black align-bottom pb-1 font-bold">Wali Murid <span id="cetak-siswa-2" class="text-blue-700 print:text-black"></span> (<span id="cetak-kelas-2" class="text-blue-700 print:text-black"></span>)</td></tr>
+                    <tr class="h-8"><td class="w-48 align-bottom pb-1">Nama</td><td class="w-4 align-bottom pb-1">:</td><td class="border-b border-dotted border-black align-bottom pb-1 font-bold"><span id="cetak-wali-2" class="text-blue-700 print:text-black"></span></td></tr>
+                    <tr class="h-8"><td class="align-bottom pb-1">Alamat</td><td class="align-bottom pb-1">:</td><td class="border-b border-dotted border-black align-bottom pb-1"></td></tr>
+                    <tr class="h-8"><td class="align-bottom pb-1">No Telp.</td><td class="align-bottom pb-1">:</td><td class="border-b border-dotted border-black align-bottom pb-1"></td></tr>
+                    <tr class="h-8"><td class="align-bottom pb-1">Instansi / Perusahaan</td><td class="align-bottom pb-1">:</td><td class="border-b border-dotted border-black align-bottom pb-1 font-bold">Wali Murid <span id="cetak-siswa-2" class="text-blue-700 print:text-black"></span> (<span id="cetak-kelas-2" class="text-blue-700 print:text-black"></span>)</td></tr>
                 </tbody>
             </table>
 
-            <p class="pt-4">Menyatakan bahwa kami bersedia / tidak bersedia menjadi donatur pada kegiatan MIN 1 Kota Malang.</p>
+            <p class="pt-2">Menyatakan bahwa kami <span class="font-bold">bersedia / tidak bersedia</span> menjadi donatur pada kegiatan MIN 1 Kota Malang.</p>
 
             <p>Adapun bentuk bantuan yang kami berikan berupa:</p>
-            <div class="ml-4 space-y-6">
+            <div class="ml-4 space-y-5">
                 <div class="flex">
                     <span class="w-6">a.</span>
                     <div class="flex-1">
@@ -250,14 +258,14 @@
                 </div>
             </div>
 
-            <p class="pt-6">Demikian berita acara ini kami buat untuk dipergunakan sebagaimana mestinya.</p>
+            <p class="pt-4">Demikian berita acara ini kami buat untuk dipergunakan sebagaimana mestinya.</p>
             <p class="text-[12px] italic">*coret yang tidak diperlukan</p>
 
             <!-- Tanda Tangan Wali Murid -->
-            <div class="mt-16 flex justify-end">
+            <div class="mt-10 flex justify-end">
                 <div class="text-center w-72">
                     <p>Malang, ............................ 2026</p>
-                    <p class="mb-24"></p>
+                    <p class="mb-20"></p>
                     <p>( <span class="inline-block w-48 border-b border-dotted border-black"></span> )</p>
                 </div>
             </div>
@@ -271,7 +279,6 @@
         const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbz8Ah8PwSvWESkiLhWe0v0iK_oyC2rBOUVARSXFSlFA97zQpDi1vpD2QfyaXZOaeTSKOw/exec"; 
         
         let dataGlobal = []; 
-        let kelasUnik = [];  
 
         // Fungsi 1: Tarik Data API
         async function tarikData() {
@@ -288,40 +295,38 @@
                 
                 if (rawData && rawData.length > 0) {
                     
-                    // Proteksi & Penyesuaian Kolom Otomatis:
-                    // Karena kolom di sheet Anda adalah (NAMA, KELAS, AYAH), kita mapping agar tidak tertukar
                     dataGlobal = rawData.map(item => {
                         let nama = item.nama_siswa || item[0] || "";
                         let wali = item.nama_wali || item[1] || "";
-                        let kelas = item.kelas || item[2] || "";
+                        let kelasAsli = (item.kelas || item[2] || "").toString().trim().toUpperCase();
                         
-                        // Jika ternyata variabel wali menangkap data "1A" (karena beda urutan index)
-                        if(wali.length <= 3 && wali.match(/[1-6][A-I]/)) {
-                            let temp = kelas; // simpan nama ayah sementara
-                            kelas = wali;     // ubah kelas jadi "1A"
-                            wali = temp;      // ubah wali jadi nama ayah
+                        // Proteksi jika kolom Nama Wali dan Kelas tertukar posisinya
+                        if(wali.length <= 3 && wali.match(/[1-6][A-Z]/)) {
+                            let temp = kelasAsli;
+                            kelasAsli = wali;
+                            wali = temp;
                         }
-                        return { nama_siswa: nama, kelas: kelas, nama_wali: wali };
+
+                        // Memisahkan angka (Kelas/Tingkat) dan huruf (Rombel) dari "1A"
+                        let tingkat = kelasAsli.replace(/[^0-9]/g, '');
+                        let rombel = kelasAsli.replace(/[^A-Z]/g, '');
+
+                        return { nama_siswa: nama, kelas: kelasAsli, nama_wali: wali, tingkat: tingkat, rombel: rombel };
                     });
 
                     statusEl.innerHTML = `<span class="text-green-600 font-bold">Sukses! ${dataGlobal.length} data siswa berhasil ditarik.</span>`;
                     
-                    // Ambil daftar kelas yang unik
-                    kelasUnik = [...new Set(dataGlobal.map(item => item.kelas).filter(k => k !== ""))];
-                    kelasUnik.sort((a, b) => a.localeCompare(b, undefined, {numeric: true, sensitivity: 'base'}));
+                    let tingkatUnik = [...new Set(dataGlobal.map(item => item.tingkat).filter(t => t !== ""))];
+                    tingkatUnik.sort((a, b) => a - b);
                     
-                    // Masukkan ke Dropdown Kelas
-                    const filterKelas = document.getElementById('filter-kelas');
-                    filterKelas.innerHTML = '<option value="">-- Tampilkan Semua Kelas --</option>';
-                    kelasUnik.forEach(k => {
-                        filterKelas.innerHTML += `<option value="${k}">Kelas ${k}</option>`;
+                    const filterTingkat = document.getElementById('filter-tingkat');
+                    filterTingkat.innerHTML = '<option value="">-- Pilih Kelas --</option>';
+                    tingkatUnik.forEach(t => {
+                        filterTingkat.innerHTML += `<option value="${t}">Kelas ${t}</option>`;
                     });
                     
-                    filterKelas.disabled = false;
-                    filterKelas.classList.remove('bg-gray-50');
-                    
-                    // Panggil otomatis filter nama
-                    filterSiswa();
+                    filterTingkat.disabled = false;
+                    filterTingkat.classList.remove('bg-gray-50');
                     
                 } else {
                     statusEl.innerHTML = '<span class="text-red-600 font-bold">Spreadsheet kosong atau gagal dibaca.</span>';
@@ -335,30 +340,65 @@
             }
         }
 
-        // Fungsi 2: Filter Data Siswa
+        // Fungsi 2: Filter Rombel berdasarkan Kelas yang dipilih
+        function updateRombel() {
+            const tingkatDipilih = document.getElementById('filter-tingkat').value;
+            const filterRombel = document.getElementById('filter-rombel');
+            const pilihSiswa = document.getElementById('pilih-siswa');
+            
+            // Reset dropdown rombel dan siswa setiap ganti kelas
+            filterRombel.innerHTML = '<option value="">-- Pilih Rombel --</option>';
+            pilihSiswa.innerHTML = '<option value="">-- Pilih Rombel dulu --</option>';
+            filterRombel.disabled = true;
+            pilihSiswa.disabled = true;
+            filterRombel.classList.add('bg-gray-50');
+            pilihSiswa.classList.add('bg-gray-50');
+            
+            updateSurat(); // Hapus data di kertas
+            
+            if (tingkatDipilih !== "") {
+                // Cari rombel apa saja yang ada di kelas ini (misal: A, B, C)
+                let rombelTersedia = [...new Set(dataGlobal.filter(s => s.tingkat === tingkatDipilih).map(s => s.rombel).filter(r => r !== ""))];
+                rombelTersedia.sort();
+                
+                rombelTersedia.forEach(r => {
+                    filterRombel.innerHTML += `<option value="${r}">Rombel ${r}</option>`;
+                });
+                
+                filterRombel.disabled = false;
+                filterRombel.classList.remove('bg-gray-50');
+            }
+        }
+
+        // Fungsi 3: Filter Siswa berdasarkan Kelas & Rombel
         function filterSiswa() {
-            const kelasDipilih = document.getElementById('filter-kelas').value;
+            const tingkatDipilih = document.getElementById('filter-tingkat').value;
+            const rombelDipilih = document.getElementById('filter-rombel').value;
             const pilihSiswa = document.getElementById('pilih-siswa');
             
             pilihSiswa.innerHTML = '<option value="">-- Silakan Pilih Nama Siswa --</option>';
+            updateSurat(); // Hapus data di kertas
             
-            // Filter
-            const dataDisortir = kelasDipilih === "" 
-                ? dataGlobal 
-                : dataGlobal.filter(siswa => siswa.kelas === kelasDipilih);
-            
-            // Tambahkan ke dropdown siswa
-            dataDisortir.forEach(siswa => {
-                const originalIndex = dataGlobal.indexOf(siswa);
-                pilihSiswa.innerHTML += `<option value="${originalIndex}">${siswa.kelas} - ${siswa.nama_siswa} (Wali: ${siswa.nama_wali})</option>`;
-            });
-            
-            pilihSiswa.disabled = false;
-            pilihSiswa.classList.remove('bg-gray-50');
-            updateSurat();
+            if (tingkatDipilih !== "" && rombelDipilih !== "") {
+                const dataDisortir = dataGlobal.filter(siswa => siswa.tingkat === tingkatDipilih && siswa.rombel === rombelDipilih);
+                
+                // Mengurutkan nama siswa sesuai abjad A-Z
+                dataDisortir.sort((a, b) => a.nama_siswa.localeCompare(b.nama_siswa));
+
+                dataDisortir.forEach(siswa => {
+                    const originalIndex = dataGlobal.indexOf(siswa); // Tarik index asli
+                    pilihSiswa.innerHTML += `<option value="${originalIndex}">${siswa.nama_siswa}</option>`;
+                });
+                
+                pilihSiswa.disabled = false;
+                pilihSiswa.classList.remove('bg-gray-50');
+            } else {
+                pilihSiswa.disabled = true;
+                pilihSiswa.classList.add('bg-gray-50');
+            }
         }
 
-        // Fungsi 3: Update ke Lembar Surat
+        // Fungsi 4: Update ke Lembar Surat
         function updateSurat() {
             const idx = document.getElementById('pilih-siswa').value;
             const btnPrint = document.getElementById('btn-print');

@@ -23,6 +23,7 @@
                 width: 100% !important; 
                 max-width: none !important;
                 border: none !important;
+                min-height: auto !important; /* Mencegah munculnya halaman kosong */
             }
             .page-break { page-break-before: always; }
             @page { size: A4 portrait; margin: 10mm 15mm; }
@@ -184,7 +185,10 @@
             <div class="text-center w-1/2 relative z-10 flex flex-col items-center">
                 <p>Malang, 1 September 2026</p>
                 <p>Ketua Panitia,</p>
-                <div class="h-20 w-full mt-1 mb-1"></div>
+                <div class="h-20 w-full relative flex justify-center items-center mt-1 mb-1">
+                    <!-- LOGO TTD KETUA PANITIA (Ganti Link ini) -->
+                    <img src="https://raw.githubusercontent.com/username/repo/main/ttd-ketua.png" alt="TTD Ketua" class="absolute w-[130px] object-contain z-20 mix-blend-multiply" onerror="this.style.display='none'">
+                </div>
                 <p class="font-bold underline mb-0 leading-none">Abdullah, S.Pd., M.Pd.</p>
                 <p class="mt-1 leading-none">NIP. 196911212005011001</p>
             </div>

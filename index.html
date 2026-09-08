@@ -3,8 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Aplikasi Cetak Surat - MIN 1 Kota Malang</title>
-    <!-- Memuat Tailwind CSS -->
+    <title>Aplikasi Cetak Surat & Label - MIN 1 Kota Malang</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         @media print {
@@ -26,9 +25,16 @@
             }
             .page-break { page-break-before: always; }
             @page { size: A4; margin: 10mm 15mm; }
+            
+            /* Sembunyikan garis border pembantu label saat di-print */
+            .sticker-label-print { border: none !important; }
+            .template-hidden { display: none !important; }
+            
+            /* Pengaturan khusus untuk kertas label custom agar margin browser dinetralkan */
+            .sticker-print-page { margin: 0 !important; page-break-after: always; }
         }
         
-        /* Tampilan kertas di layar komputer */
+        /* Tampilan kertas HVS di layar komputer */
         .print-container {
             background: white; 
             max-width: 210mm; 
@@ -39,43 +45,55 @@
             border: 1px solid #ddd;
         }
 
-        .font-serif { 
-            font-family: 'Times New Roman', Times, serif !important; 
+        /* Tampilan preview label di layar */
+        .sticker-label-preview {
+            border: 1px dashed #cbd5e1;
+            background-color: #f8fafc;
         }
 
-        /* Menyembunyikan elemen yang tidak aktif */
+        .font-serif { font-family: 'Times New Roman', Times, serif !important; }
         .template-hidden { display: none !important; }
+
+        /* Custom Scrollbar untuk list siswa */
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: #f1f1f1; border-radius: 4px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #c1c1c1; border-radius: 4px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #a8a8a8; }
     </style>
 </head>
 <body class="bg-gray-200 p-4 text-gray-800" onload="tarikDataOtomatis()">
 
     <!-- BAGIAN KONTROL & TOMBOL (TIDAK IKUT TERCETAK) -->
-    <div class="no-print max-w-3xl mx-auto bg-white p-6 rounded-lg shadow-md mb-8 border-t-4 border-green-600">
-        <h2 class="text-2xl font-bold mb-4 text-center">Aplikasi Cetak Surat MIN 1 Kota Malang</h2>
+    <div class="no-print max-w-5xl mx-auto bg-white p-6 rounded-lg shadow-md mb-8 border-t-4 border-green-600">
+        <h2 class="text-2xl font-bold mb-4 text-center">Aplikasi Cetak Surat & Label MIN 1 Kota Malang</h2>
         
         <!-- Tab Navigasi Jenis Surat -->
-        <div class="flex flex-col md:flex-row border-b border-gray-200 mb-6 text-sm font-medium">
-            <button id="tab-penawaran" onclick="switchTab('penawaran')" class="flex-1 py-3 px-2 text-center border-b-2 border-green-600 text-green-600 bg-green-50 transition">
-                1. Penawaran (Wali Murid)
+        <div class="flex flex-wrap border-b border-gray-200 mb-6 text-sm font-bold">
+            <button id="tab-penawaran" onclick="switchTab('penawaran')" class="flex-1 py-3 px-2 text-center border-b-[3px] border-green-600 text-green-700 bg-green-50 transition">
+                1. Penawaran (Wali)
             </button>
-            <button id="tab-terimakasih" onclick="switchTab('terimakasih')" class="flex-1 py-3 px-2 text-center border-b-2 border-transparent text-gray-500 hover:text-gray-700 hover:bg-gray-50 transition">
-                2. Terima Kasih (Wali Murid)
+            <button id="tab-terimakasih" onclick="switchTab('terimakasih')" class="flex-1 py-3 px-2 text-center border-b-[3px] border-transparent text-gray-500 hover:text-gray-700 hover:bg-gray-50 transition">
+                2. Terima Kasih (Wali)
             </button>
-            <button id="tab-rekanan" onclick="switchTab('rekanan')" class="flex-1 py-3 px-2 text-center border-b-2 border-transparent text-gray-500 hover:text-gray-700 hover:bg-gray-50 transition">
-                3. Penawaran (Rekanan/Sponsor)
+            <button id="tab-rekanan" onclick="switchTab('rekanan')" class="flex-1 py-3 px-2 text-center border-b-[3px] border-transparent text-gray-500 hover:text-gray-700 hover:bg-gray-50 transition">
+                3. Penawaran (Rekanan)
+            </button>
+            <button id="tab-sticker" onclick="switchTab('sticker')" class="flex-1 py-3 px-2 text-center border-b-[3px] border-transparent text-gray-500 hover:text-gray-700 hover:bg-gray-50 transition flex items-center justify-center gap-1">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><line x1="3" y1="9" x2="21" y2="9"></line><line x1="9" y1="21" x2="9" y2="9"></line></svg>
+                4. Cetak Label Amplop
             </button>
         </div>
 
-        <!-- KONTROL UNTUK TAB 1 & 2 (DATA SPREADSHEET) -->
-        <div id="panel-otomatis" class="flex flex-col gap-4">
-            <div class="flex flex-col sm:flex-row items-center justify-between bg-blue-50 p-3 rounded border border-blue-100">
-                <span id="status-tarik" class="text-sm font-medium text-gray-600 mb-2 sm:mb-0">Status: Mengambil data...</span>
-                <button onclick="tarikDataSpreadsheet()" class="bg-blue-600 text-white font-bold py-1.5 px-4 rounded text-sm hover:bg-blue-700 transition">
-                    Sinkron Ulang Data
-                </button>
-            </div>
+        <!-- STATUS SINKRONISASI GLOBAL -->
+        <div class="flex flex-col sm:flex-row items-center justify-between bg-blue-50 p-3 rounded border border-blue-100 mb-4">
+            <span id="status-tarik" class="text-sm font-medium text-gray-600 mb-2 sm:mb-0">Status: Mengambil data...</span>
+            <button onclick="tarikDataSpreadsheet()" class="bg-blue-600 text-white font-bold py-1.5 px-4 rounded text-sm hover:bg-blue-700 transition">
+                Sinkron Ulang Data
+            </button>
+        </div>
 
-            <!-- Filter Sortir Kelas dan Rombel -->
+        <!-- KONTROL UNTUK TAB 1 & 2 (SURAT WALI MURID) -->
+        <div id="panel-otomatis" class="flex flex-col gap-4">
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                     <label class="font-bold text-sm text-gray-700">Pilih Jenjang Kelas:</label>
@@ -89,7 +107,6 @@
                         <option value="6">Kelas 6</option>
                     </select>
                 </div>
-
                 <div>
                     <label class="font-bold text-sm text-gray-700">Pilih Rombel:</label>
                     <select id="filter-rombel" onchange="filterSiswa()" class="border border-gray-300 p-2.5 rounded w-full bg-white mt-1" disabled>
@@ -97,8 +114,6 @@
                     </select>
                 </div>
             </div>
-
-            <!-- Pilih Nama Siswa -->
             <div class="flex flex-col gap-2">
                 <label class="font-bold text-sm text-gray-700">Pilih Nama Siswa:</label>
                 <select id="pilih-siswa" onchange="updateSurat()" class="border border-gray-300 p-3 rounded w-full bg-white font-medium" disabled>
@@ -116,10 +131,101 @@
             </div>
         </div>
 
-        <!-- TOMBOL CETAK -->
-        <button onclick="window.print()" id="btn-print" class="bg-green-600 text-white font-bold py-3 px-4 rounded hover:bg-green-700 transition mt-6 w-full opacity-50 cursor-not-allowed flex items-center justify-center gap-2" disabled>
+        <!-- KONTROL UNTUK TAB 4 (SETTING STICKER LABEL 103) -->
+        <div id="panel-sticker" class="template-hidden flex flex-col md:flex-row gap-6">
+            <!-- Kolom Kiri: Pilih Data Siswa -->
+            <div class="w-full md:w-1/3 bg-gray-50 border border-gray-200 rounded-lg p-4 flex flex-col max-h-[500px]">
+                <h3 class="font-bold text-gray-800 mb-3 border-b pb-2">1. Pilih Data Cetak</h3>
+                
+                <div class="mb-3">
+                    <label class="font-bold text-xs text-gray-700 block mb-1">Filter Rombel:</label>
+                    <select id="sticker-rombel" onchange="loadStickerStudents()" class="border border-gray-300 p-2 rounded w-full bg-white text-sm">
+                        <option value="">-- Pilih Rombel --</option>
+                    </select>
+                </div>
+
+                <div class="flex justify-between items-center mb-2">
+                    <span class="font-bold text-xs text-gray-700">Daftar Siswa:</span>
+                    <button onclick="toggleAllStickerStudents()" id="btn-toggle-siswa" class="text-xs bg-gray-200 hover:bg-gray-300 px-2 py-1 rounded">Pilih Semua</button>
+                </div>
+                
+                <div id="list-sticker-siswa" class="flex-1 overflow-y-auto custom-scrollbar border bg-white rounded p-2 space-y-1">
+                    <p class="text-xs text-gray-400 text-center py-4">Pilih rombel terlebih dahulu</p>
+                </div>
+            </div>
+
+            <!-- Kolom Tengah: Setting Ukuran Label -->
+            <div class="w-full md:w-1/3 bg-gray-50 border border-gray-200 rounded-lg p-4 max-h-[500px] overflow-y-auto custom-scrollbar">
+                <h3 class="font-bold text-gray-800 mb-3 border-b pb-2">2. Setting Ukuran (mm)</h3>
+                
+                <div class="grid grid-cols-2 gap-3 text-sm mb-4">
+                    <div class="col-span-2">
+                        <label class="font-bold text-xs text-gray-600">Layout Kertas (Lebar x Tinggi)</label>
+                        <div class="flex gap-2 mt-1">
+                            <input type="number" id="st-page-w" value="210" oninput="renderSticker()" class="border p-1.5 rounded w-full" title="Lebar Kertas">
+                            <input type="number" id="st-page-h" value="297" oninput="renderSticker()" class="border p-1.5 rounded w-full" title="Tinggi Kertas">
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="font-bold text-xs text-gray-600 block mb-1">Jml Kolom (Ke Kanan)</label>
+                        <input type="number" id="st-cols" value="3" oninput="renderSticker()" class="border p-1.5 rounded w-full bg-white">
+                    </div>
+                    <div>
+                        <label class="font-bold text-xs text-gray-600 block mb-1">Jml Baris (Ke Bawah)</label>
+                        <input type="number" id="st-rows" value="4" oninput="renderSticker()" class="border p-1.5 rounded w-full bg-white">
+                    </div>
+
+                    <div class="col-span-2">
+                        <label class="font-bold text-xs text-gray-600 block mb-1">Ukuran 1 Label (Lebar x Tinggi) mm</label>
+                        <div class="flex gap-2">
+                            <input type="number" id="st-lbl-w" value="64" oninput="renderSticker()" class="border p-1.5 rounded w-full" title="Lebar Label">
+                            <input type="number" id="st-lbl-h" value="32" oninput="renderSticker()" class="border p-1.5 rounded w-full" title="Tinggi Label">
+                        </div>
+                    </div>
+
+                    <div class="col-span-2">
+                        <label class="font-bold text-xs text-gray-600 block mb-1">Jarak Antar Label (Pitch) mm</label>
+                        <div class="flex gap-2">
+                            <input type="number" id="st-pitch-h" value="66" oninput="renderSticker()" class="border p-1.5 rounded w-full" title="Horizontal Pitch">
+                            <input type="number" id="st-pitch-v" value="34" oninput="renderSticker()" class="border p-1.5 rounded w-full" title="Vertical Pitch">
+                        </div>
+                        <p class="text-[10px] text-gray-400 mt-1 leading-tight">Pitch = Jarak dari ujung kiri label 1 ke ujung kiri label 2.</p>
+                    </div>
+
+                    <div>
+                        <label class="font-bold text-xs text-gray-600 block mb-1">Margin Kiri (mm)</label>
+                        <input type="number" id="st-margin-l" value="5" oninput="renderSticker()" class="border p-1.5 rounded w-full bg-white">
+                    </div>
+                    <div>
+                        <label class="font-bold text-xs text-gray-600 block mb-1">Margin Atas (mm)</label>
+                        <input type="number" id="st-margin-t" value="15" oninput="renderSticker()" class="border p-1.5 rounded w-full bg-white">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Kolom Kanan: Live Preview (Skala Kecil) -->
+            <div class="w-full md:w-1/3 border border-gray-300 rounded-lg p-2 bg-gray-300 flex flex-col max-h-[500px]">
+                <h3 class="font-bold text-gray-800 mb-2 text-sm text-center">Live Preview (Halaman 1)</h3>
+                <div class="flex-1 overflow-auto custom-scrollbar relative bg-gray-200 border-t border-gray-400 p-2 flex justify-center items-start">
+                    <!-- Pembungkus Skala (Zoom Out) -->
+                    <div style="transform: scale(0.35); transform-origin: top center;" class="shadow-xl">
+                        <!-- Kotak Kertas Preview -->
+                        <div id="preview-kertas" class="bg-white relative" style="width: 210mm; height: 297mm;">
+                            <!-- Label akan di-inject ke sini oleh JS -->
+                        </div>
+                    </div>
+                </div>
+                <div class="text-center mt-2">
+                    <span id="st-total-info" class="text-xs font-bold text-gray-600 bg-white px-2 py-1 rounded shadow-sm">0 Data Terpilih</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- TOMBOL CETAK GLOBAL -->
+        <button onclick="executePrint()" id="btn-print" class="bg-green-600 text-white font-bold py-3 px-4 rounded hover:bg-green-700 transition mt-6 w-full opacity-50 cursor-not-allowed flex items-center justify-center gap-2" disabled>
             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"></polyline><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><rect x="6" y="14" width="12" height="8"></rect></svg>
-            Cetak Dokumen PDF
+            <span id="teks-btn-print">Cetak Dokumen PDF</span>
         </button>
     </div>
 
@@ -134,7 +240,7 @@
                 <div class="text-center flex-1 px-2 text-black">
                     <h1 class="text-[34px] font-bold tracking-wide" style="line-height: 1.1; font-family: 'Times New Roman', Times, serif;">HUT KE-48</h1>
                     <h2 class="text-[15px] font-bold mt-1 tracking-wide" style="font-family: Arial, Helvetica, sans-serif;">MIN 1 KOTA MALANG</h2>
-                    <h3 class="text-[14px] font-bold mt-0" style="font-family: Arial, Helvetica, sans-serif;">TAHUN PELAJARAN 2026/2027</h3>
+                    <h3 class="text-[14px] font-bold mt-0" style="font-family: Arial, Helvetica, sans-serif;">TAHUN PELAJARAN 2025/2026</h3>
                     <p class="text-[12px] mt-0" style="font-family: Arial, Helvetica, sans-serif;">Jln. Bandung 7C, Telp.& Fax. (0341) 551176 – 565642 Malang</p>
                 </div>
                 <img src="https://raw.githubusercontent.com/Blackhawk0243/sponsorship48/main/logo-hut.png" alt="Logo HUT" class="w-32 h-auto object-contain shrink-0">
@@ -198,7 +304,7 @@
                 <div class="text-center flex-1 px-2 text-black">
                     <h1 class="text-[34px] font-bold tracking-wide" style="line-height: 1.1; font-family: 'Times New Roman', Times, serif;">HUT KE-48</h1>
                     <h2 class="text-[15px] font-bold mt-1 tracking-wide" style="font-family: Arial, Helvetica, sans-serif;">MIN 1 KOTA MALANG</h2>
-                    <h3 class="text-[14px] font-bold mt-0" style="font-family: Arial, Helvetica, sans-serif;">TAHUN PELAJARAN 2026/2027</h3>
+                    <h3 class="text-[14px] font-bold mt-0" style="font-family: Arial, Helvetica, sans-serif;">TAHUN PELAJARAN 2025/2026</h3>
                     <p class="text-[12px] mt-0" style="font-family: Arial, Helvetica, sans-serif;">Jln. Bandung 7C, Telp.& Fax. (0341) 551176 – 565642 Malang</p>
                 </div>
                 <img src="https://raw.githubusercontent.com/Blackhawk0243/sponsorship48/main/logo-hut.png" alt="Logo HUT" class="w-32 h-auto object-contain shrink-0">
@@ -249,7 +355,6 @@
         </div>
     </div>
 
-
     <!-- =========================================================================== -->
     <!-- TEMPLATE 2: SURAT UCAPAN TERIMA KASIH (1 HALAMAN) -->
     <!-- =========================================================================== -->
@@ -271,15 +376,15 @@
                 <tr><td class="w-24">Nomor</td><td class="w-3">:</td><td class="whitespace-nowrap">B-806/Mi.13.25.01/PP.00.4/09/2026</td></tr>
                 <tr><td>Hal</td><td>:</td><td>Ucapan Terimakasih</td></tr>
             </table>
-            <div class="w-1/4 text-right">
+            <div class="w-1/4 text-right whitespace-nowrap">
                 <p>Malang, 30 September 2026</p>
             </div>
         </div>
 
         <div class="text-[15px] mb-6 leading-relaxed">
             <p>Yth.</p>
-            <p class="font-bold mt-1">Bapak/Ibu <span id="tk-cetak-wali">[Nama wali murid]</span></p>
-            <p>(Orang Tua dari Ananda <span id="tk-cetak-siswa">[Nama siswa]</span> Kelas <span id="tk-cetak-kelas">[kelas]</span>)</p>
+            <p class="font-bold mt-1 uppercase">Bapak/Ibu <span id="tk-cetak-wali">[Nama wali murid]</span></p>
+            <p>(Orang Tua dari Ananda <span id="tk-cetak-siswa" class="uppercase">[Nama siswa]</span> Kelas <span id="tk-cetak-kelas">[kelas]</span>)</p>
             <p>Di Malang</p>
         </div>
 
@@ -318,7 +423,6 @@
         </div>
     </div>
 
-
     <!-- =========================================================================== -->
     <!-- TEMPLATE 3: SURAT PENAWARAN (REKANAN / MANUAL) - 2 HALAMAN -->
     <!-- =========================================================================== -->
@@ -330,7 +434,7 @@
                 <div class="text-center flex-1 px-2 text-black">
                     <h1 class="text-[34px] font-bold tracking-wide" style="line-height: 1.1; font-family: 'Times New Roman', Times, serif;">HUT KE-48</h1>
                     <h2 class="text-[15px] font-bold mt-1 tracking-wide" style="font-family: Arial, Helvetica, sans-serif;">MIN 1 KOTA MALANG</h2>
-                    <h3 class="text-[14px] font-bold mt-0" style="font-family: Arial, Helvetica, sans-serif;">TAHUN PELAJARAN 2026/2027</h3>
+                    <h3 class="text-[14px] font-bold mt-0" style="font-family: Arial, Helvetica, sans-serif;">TAHUN PELAJARAN 2025/2026</h3>
                     <p class="text-[12px] mt-0" style="font-family: Arial, Helvetica, sans-serif;">Jln. Bandung 7C, Telp.& Fax. (0341) 551176 – 565642 Malang</p>
                 </div>
                 <img src="https://raw.githubusercontent.com/Blackhawk0243/sponsorship48/main/logo-hut.png" alt="Logo HUT" class="w-32 h-auto object-contain shrink-0">
@@ -448,20 +552,30 @@
         </div>
     </div>
 
+    <!-- =========================================================================== -->
+    <!-- TEMPLATE 4: CETAK STICKER LABEL AMPLOP (MULTI HALAMAN) -->
+    <!-- =========================================================================== -->
+    <div id="template-sticker" class="font-serif text-black template-hidden bg-gray-200 py-4">
+        <!-- Tempat merender halaman-halaman label melalui JavaScript -->
+        <div id="print-area-sticker"></div>
+    </div>
+
 
     <!-- SCRIPT JAVASCRIPT LOGIKA WEB & SINKRONISASI OTOMATIS -->
     <script>
         const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbz8Ah8PwSvWESkiLhWe0v0iK_oyC2rBOUVARSXFSlFA97zQpDi1vpD2QfyaXZOaeTSKOw/exec"; 
+        const LOGO_MIN = "https://raw.githubusercontent.com/Blackhawk0243/sponsorship48/main/logo-min.png";
+        const LOGO_HUT = "https://raw.githubusercontent.com/Blackhawk0243/sponsorship48/main/logo-hut.png";
         
         let dataSiswaGlobal = [];
         let dataTerfilterRombel = [];
-        let templateAktif = 'penawaran'; // 'penawaran', 'terimakasih', atau 'rekanan'
+        let templateAktif = 'penawaran'; // 'penawaran', 'terimakasih', 'rekanan', 'sticker'
 
         // Fungsi berpindah tab menu surat
         function switchTab(tabId) {
             templateAktif = tabId;
             
-            const tabs = ['penawaran', 'terimakasih', 'rekanan'];
+            const tabs = ['penawaran', 'terimakasih', 'rekanan', 'sticker'];
             
             // Atur gaya Tab Button
             tabs.forEach(id => {
@@ -469,25 +583,36 @@
                 const tmpl = document.getElementById(`template-${id}`);
                 
                 if (id === tabId) {
-                    btn.classList.add('border-green-600', 'text-green-600', 'bg-green-50');
+                    btn.classList.add('border-green-600', 'text-green-700', 'bg-green-50');
                     btn.classList.remove('border-transparent', 'text-gray-500', 'hover:text-gray-700', 'hover:bg-gray-50');
                     tmpl.classList.remove('template-hidden');
                 } else {
-                    btn.classList.remove('border-green-600', 'text-green-600', 'bg-green-50');
+                    btn.classList.remove('border-green-600', 'text-green-700', 'bg-green-50');
                     btn.classList.add('border-transparent', 'text-gray-500', 'hover:text-gray-700', 'hover:bg-gray-50');
                     tmpl.classList.add('template-hidden');
                 }
             });
 
             // Tampilkan/Sembunyikan Panel Kontrol yang Sesuai
+            document.getElementById('panel-otomatis').classList.add('hidden');
+            document.getElementById('panel-manual').classList.add('template-hidden');
+            document.getElementById('panel-sticker').classList.add('template-hidden');
+
+            const btnPrint = document.getElementById('btn-print');
+            const teksBtnPrint = document.getElementById('teks-btn-print');
+
             if (tabId === 'rekanan') {
-                document.getElementById('panel-otomatis').classList.add('hidden');
                 document.getElementById('panel-manual').classList.remove('template-hidden');
-                updateSuratRekanan(); // Validasi tombol print untuk rekanan
+                teksBtnPrint.innerText = "Cetak Surat Penawaran (Rekanan)";
+                updateSuratRekanan();
+            } else if (tabId === 'sticker') {
+                document.getElementById('panel-sticker').classList.remove('template-hidden');
+                teksBtnPrint.innerText = "Cetak Stiker Label";
+                renderSticker();
             } else {
                 document.getElementById('panel-otomatis').classList.remove('hidden');
-                document.getElementById('panel-manual').classList.add('template-hidden');
-                updateSurat(); // Validasi tombol print untuk tab 1 & 2
+                teksBtnPrint.innerText = tabId === 'penawaran' ? "Cetak Surat Penawaran (Wali)" : "Cetak Ucapan Terima Kasih";
+                updateSurat();
             }
         }
 
@@ -530,6 +655,9 @@
 
                     selectKelas.disabled = false;
                     statusText.innerHTML = `<span class="text-green-600 font-bold">Sukses! ${dataSiswaGlobal.length} data ditarik.</span>`;
+                    
+                    // Populasikan daftar rombel untuk menu sticker juga
+                    populateStickerRombel();
                 } else {
                     statusText.innerHTML = '<span class="text-red-600 font-bold">Spreadsheet kosong.</span>';
                 }
@@ -602,7 +730,7 @@
 
         // Update Template 1 & 2 (Wali Murid)
         function updateSurat() {
-            if(templateAktif === 'rekanan') return; // Abaikan jika sedang di tab rekanan
+            if(templateAktif === 'rekanan' || templateAktif === 'sticker') return; 
 
             const index = document.getElementById('pilih-siswa').value;
             const btnPrint = document.getElementById('btn-print');
@@ -632,7 +760,7 @@
 
         // Update Template 3 (Rekanan Manual)
         function updateSuratRekanan() {
-            if(templateAktif !== 'rekanan') return; // Abaikan jika bukan di tab rekanan
+            if(templateAktif !== 'rekanan') return; 
             
             const inputPerusahaan = document.getElementById('input-perusahaan').value.trim();
             const btnPrint = document.getElementById('btn-print');
@@ -666,8 +794,205 @@
             document.getElementById('tk-cetak-siswa').innerText = "[Nama siswa]";
             document.getElementById('tk-cetak-kelas').innerText = "[kelas]";
         }
+
+        // =========================================================================
+        // LOGIKA CETAK STICKER LABEL
+        // =========================================================================
+        
+        // Populasikan daftar Rombel di Tab Sticker
+        function populateStickerRombel() {
+            const select = document.getElementById('sticker-rombel');
+            select.innerHTML = '<option value="">-- Pilih Rombel --</option>';
+            
+            const rombelSet = new Set();
+            dataSiswaGlobal.forEach(s => {
+                if (s.kelas) rombelSet.add(s.kelas.toUpperCase());
+            });
+
+            Array.from(rombelSet).sort().forEach(r => {
+                select.innerHTML += `<option value="${r}">${r}</option>`;
+            });
+        }
+
+        // Load Siswa ke dalam daftar checklist ketika rombel dipilih
+        function loadStickerStudents() {
+            const rombel = document.getElementById('sticker-rombel').value;
+            const container = document.getElementById('list-sticker-siswa');
+            container.innerHTML = '';
+
+            if(rombel === "") {
+                container.innerHTML = '<p class="text-xs text-gray-400 text-center py-4">Pilih rombel terlebih dahulu</p>';
+                renderSticker();
+                return;
+            }
+
+            const siswaDiRombel = dataSiswaGlobal.filter(s => s.kelas.toUpperCase() === rombel);
+            siswaDiRombel.sort((a, b) => a.nama_siswa.localeCompare(b.nama_siswa));
+
+            siswaDiRombel.forEach((siswa, index) => {
+                const label = document.createElement('label');
+                label.className = "flex items-start gap-2 p-1.5 hover:bg-gray-50 rounded cursor-pointer border-b border-gray-100 last:border-0";
+                
+                const safeNamaWali = siswa.nama_wali || '-';
+                
+                // Mengamankan data JSON dari karakter tanda kutip tunggal/ganda pada nama (misal: "Ma'ruf")
+                const encodedSiswa = encodeURIComponent(JSON.stringify(siswa));
+                
+                label.innerHTML = `
+                    <input type="checkbox" value="${encodedSiswa}" class="chk-siswa mt-1 cursor-pointer" onchange="renderSticker()" checked>
+                    <div class="text-xs leading-tight">
+                        <p class="font-bold text-gray-800">${siswa.nama_siswa}</p>
+                        <p class="text-gray-500">Wali: ${safeNamaWali}</p>
+                    </div>
+                `;
+                container.appendChild(label);
+            });
+
+            renderSticker();
+        }
+
+        // Tombol Pilih Semua / Batal Pilih Semua
+        let isAllSelected = true;
+        function toggleAllStickerStudents() {
+            isAllSelected = !isAllSelected;
+            const checkboxes = document.querySelectorAll('.chk-siswa');
+            checkboxes.forEach(chk => chk.checked = isAllSelected);
+            
+            const btn = document.getElementById('btn-toggle-siswa');
+            btn.innerText = isAllSelected ? "Hapus Semua" : "Pilih Semua";
+            
+            renderSticker();
+        }
+
+        // Menggambar UI Sticker berdasarkan konfigurasi (Preview & Print Template)
+        function renderSticker() {
+            if(templateAktif !== 'sticker') return;
+
+            // Ambil semua settingan MS Word Style
+            const config = {
+                pageW: parseFloat(document.getElementById('st-page-w').value) || 210,
+                pageH: parseFloat(document.getElementById('st-page-h').value) || 297,
+                cols: parseInt(document.getElementById('st-cols').value) || 3,
+                rows: parseInt(document.getElementById('st-rows').value) || 4,
+                lblW: parseFloat(document.getElementById('st-lbl-w').value) || 64,
+                lblH: parseFloat(document.getElementById('st-lbl-h').value) || 32,
+                pitchH: parseFloat(document.getElementById('st-pitch-h').value) || 66,
+                pitchV: parseFloat(document.getElementById('st-pitch-v').value) || 34,
+                mT: parseFloat(document.getElementById('st-margin-t').value) || 15,
+                mL: parseFloat(document.getElementById('st-margin-l').value) || 5,
+            };
+
+            // Kumpulkan siswa terpilih dan decode kembali datanya
+            const selectedStudents = [];
+            document.querySelectorAll('.chk-siswa:checked').forEach(chk => {
+                selectedStudents.push(JSON.parse(decodeURIComponent(chk.value)));
+            });
+
+            // Update UI Info
+            document.getElementById('st-total-info').innerText = `${selectedStudents.length} Data Terpilih`;
+            
+            const btnPrint = document.getElementById('btn-print');
+            if(selectedStudents.length > 0) {
+                btnPrint.disabled = false;
+                btnPrint.classList.remove('opacity-50', 'cursor-not-allowed');
+            } else {
+                btnPrint.disabled = true;
+                btnPrint.classList.add('opacity-50', 'cursor-not-allowed');
+            }
+
+            // --- 1. RENDER PREVIEW LAYAR KECIL (Hanya Kertas Pertama) ---
+            const previewKertas = document.getElementById('preview-kertas');
+            previewKertas.style.width = `${config.pageW}mm`;
+            previewKertas.style.height = `${config.pageH}mm`;
+            previewKertas.innerHTML = '';
+
+            const maxLabelsPerPage = config.cols * config.rows;
+            const limitPreview = Math.min(selectedStudents.length, maxLabelsPerPage);
+
+            for(let i=0; i < limitPreview; i++) {
+                const siswa = selectedStudents[i];
+                const colIndex = i % config.cols;
+                const rowIndex = Math.floor(i / config.cols);
+                
+                const leftPos = config.mL + (colIndex * config.pitchH);
+                const topPos = config.mT + (rowIndex * config.pitchV);
+
+                previewKertas.appendChild(createLabelElement(siswa, config, leftPos, topPos, true));
+            }
+
+            // --- 2. RENDER FULL UNTUK PRINT AKTUAL (Semua Kertas) ---
+            const printArea = document.getElementById('print-area-sticker');
+            printArea.innerHTML = '';
+
+            const totalPages = Math.ceil(selectedStudents.length / maxLabelsPerPage) || 1;
+
+            for(let p = 0; p < totalPages; p++) {
+                // Buat div kertas
+                const paperDiv = document.createElement('div');
+                paperDiv.className = "sticker-print-page bg-white relative mx-auto mb-8 shadow-md border";
+                paperDiv.style.width = `${config.pageW}mm`;
+                paperDiv.style.height = `${config.pageH}mm`;
+
+                // Isi label ke dalam kertas ini
+                const startIdx = p * maxLabelsPerPage;
+                const endIdx = Math.min(startIdx + maxLabelsPerPage, selectedStudents.length);
+
+                for(let i = startIdx; i < endIdx; i++) {
+                    const siswa = selectedStudents[i];
+                    // Index relatif dalam 1 kertas
+                    const localIdx = i - startIdx; 
+                    const colIndex = localIdx % config.cols;
+                    const rowIndex = Math.floor(localIdx / config.cols);
+                    
+                    const leftPos = config.mL + (colIndex * config.pitchH);
+                    const topPos = config.mT + (rowIndex * config.pitchV);
+
+                    paperDiv.appendChild(createLabelElement(siswa, config, leftPos, topPos, false));
+                }
+
+                printArea.appendChild(paperDiv);
+            }
+        }
+
+        // Helper untuk membuat kotak elemen label (div)
+        function createLabelElement(siswa, config, left, top, isPreview) {
+            const lbl = document.createElement('div');
+            
+            // style
+            lbl.style.position = 'absolute';
+            lbl.style.left = `${left}mm`;
+            lbl.style.top = `${top}mm`;
+            lbl.style.width = `${config.lblW}mm`;
+            lbl.style.height = `${config.lblH}mm`;
+            lbl.style.boxSizing = 'border-box';
+            
+            // class
+            lbl.className = `p-1 overflow-hidden bg-white text-black font-serif sticker-label-print ${isPreview ? 'sticker-label-preview' : ''}`;
+
+            const namaWali = siswa.nama_wali || '.........................';
+
+            lbl.innerHTML = `
+                <div class="flex justify-center items-center gap-2 mb-1 w-full">
+                    <img src="${LOGO_MIN}" class="h-4 w-auto object-contain">
+                    <img src="${LOGO_HUT}" class="h-4 w-auto object-contain">
+                </div>
+                <div class="text-[10px] leading-[1.2]">
+                    <p>Yth.</p>
+                    <p class="font-bold">Bapak/Ibu ${namaWali}</p>
+                    <p class="mt-1">Wali Murid dari:</p>
+                    <p class="font-bold uppercase">${siswa.nama_siswa} (Kelas ${siswa.kelas})</p>
+                </div>
+            `;
+            return lbl;
+        }
+
+        function executePrint() {
+            // Beri sedikit jeda agar DOM sempat me-render jika ada update, lalu cetak
+            setTimeout(() => {
+                window.print();
+            }, 100);
+        }
+
     </script>
 </body>
 </html>
-
-```

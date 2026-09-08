@@ -106,6 +106,10 @@
                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"></polyline><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><rect x="6" y="14" width="12" height="8"></rect></svg>
                 Cetak Dokumen PDF
             </button>
+
+            <!-- Panel debug: membantu melihat data mentah jika sinkronisasi bermasalah -->
+            <div id="debug-panel" class="hidden text-xs bg-gray-50 border border-gray-200 rounded p-3 mt-1 text-gray-600 max-h-40 overflow-auto"></div>
+            <button onclick="toggleDebug()" class="text-xs text-blue-600 underline self-start">Tampilkan/Sembunyikan data mentah (debug)</button>
         </div>
     </div>
 
@@ -313,6 +317,7 @@
         let dataSiswaGlobal = [];
         let dataTerfilterRombel = [];
         let templateAktif = 'penawaran'; // 'penawaran' atau 'terimakasih'
+        let dataMentahTerakhir = [];
 
         // Fungsi berpindah tab menu surat
         function switchTab(tabId) {
@@ -344,6 +349,64 @@
             }
         }
 
+        function toggleDebug() {
+            const panel = document.getElementById('debug-panel');
+            panel.classList.toggle('hidden');
+            if (!panel.classList.contains('hidden')) {
+                panel.innerHTML = '<strong>Contoh 3 baris data hasil olahan:</strong><br>' +
+                    JSON.stringify(dataSiswaGlobal.slice(0, 3), null, 2).replace(/\\n/g, '<br>') +
+                    '<br><br><strong>Contoh 1 baris data mentah dari spreadsheet:</strong><br>' +
+                    JSON.stringify(dataMentahTerakhir.slice(0, 1), null, 2).replace(/\\n/g, '<br>');
+            }
+        }
+
+        // Cari nilai field di objek 'item' berdasarkan beberapa kemungkinan nama kolom,
+        // tanpa peduli huruf besar/kecil, spasi, atau underscore.
+        function cariField(item, ...kemungkinanNama) {
+            const keys = Object.keys(item || {});
+            for (const nama of kemungkinanNama) {
+                const target = nama.toLowerCase().replace(/[\s_]/g, '');
+                const found = keys.find(k => k.toLowerCase().replace(/[\s_]/g, '') === target);
+                if (found !== undefined) {
+                    const val = item[found];
+                    if (val !== undefined && val !== null && val.toString().trim() !== '') {
+                        return val.toString().trim();
+                    }
+                }
+            }
+            return '';
+        }
+
+        // Menguraikan kelas & rombel dari berbagai kemungkinan format:
+        // "1A", "1 A", "1-A", "Kelas 1A", atau dari kolom kelas & rombel yang terpisah.
+        function uraikanKelasRombel(kelasRaw, rombelRaw) {
+            let tingkat = '';
+            let rombel = '';
+
+            let bersih = (kelasRaw || '').toString().toUpperCase();
+            bersih = bersih.replace(/KELAS/g, '').trim();
+            bersih = bersih.replace(/[\s\-_.]+/g, ''); // buang spasi/strip/underscore/titik
+
+            const match = bersih.match(/^(\d{1,2})([A-Z]*)$/);
+            if (match) {
+                tingkat = match[1];
+                rombel = match[2];
+            } else {
+                // fallback: ambil semua digit di depan sebagai tingkat
+                const digitMatch = bersih.match(/\d+/);
+                if (digitMatch) tingkat = digitMatch[0];
+                const hurufMatch = bersih.match(/[A-Z]+/);
+                if (hurufMatch) rombel = hurufMatch[0];
+            }
+
+            // Jika rombel belum ketemu dari kolom kelas, coba ambil dari kolom rombel terpisah
+            if (!rombel && rombelRaw) {
+                rombel = rombelRaw.toString().toUpperCase().replace(/[\s\-_.]+/g, '');
+            }
+
+            return { tingkat, rombel, combined: tingkat + rombel };
+        }
+
         // Sinkronisasi otomatis saat web pertama dibuka (onload)
         async function tarikDataOtomatis() {
             await tarikDataSpreadsheet();
@@ -360,22 +423,32 @@
                 if (!response.ok) throw new Error('Gagal terhubung ke server');
                 
                 const rawData = await response.json();
+                dataMentahTerakhir = rawData;
                 
                 if (rawData && rawData.length > 0) {
                     dataSiswaGlobal = rawData.map(item => {
-                        let nama = item.nama_siswa || item.NAMA || "";
-                        let wali = item.nama_wali || item.Ayah || item.Wali || "";
-                        let kelasRaw = (item.kelas || item.KELAS || "").toString().trim();
-                        
+                        const nama = cariField(item, 'nama_siswa', 'nama siswa', 'nama', 'siswa');
+                        const wali = cariField(item, 'nama_wali', 'nama wali', 'wali', 'ayah', 'orang tua', 'ortu', 'orangtua');
+                        const kelasRaw = cariField(item, 'kelas', 'jenjang', 'jenjang kelas');
+                        const rombelRaw = cariField(item, 'rombel', 'rombongan belajar');
+
+                        const { combined } = uraikanKelasRombel(kelasRaw, rombelRaw);
+
                         return {
-                            nama_siswa: nama.toString().trim(),
-                            nama_wali: wali.toString().trim(),
-                            kelas: kelasRaw
+                            nama_siswa: nama,
+                            nama_wali: wali,
+                            kelas: combined
                         };
                     }).filter(s => s.nama_siswa !== "");
 
+                    const tanpaKelas = dataSiswaGlobal.filter(s => s.kelas === '').length;
+
                     selectKelas.disabled = false;
-                    statusText.innerHTML = `<span class="text-green-600 font-bold">Sukses! ${dataSiswaGlobal.length} data siswa tersinkron otomatis.</span>`;
+                    if (tanpaKelas > 0) {
+                        statusText.innerHTML = `<span class="text-yellow-600 font-bold">Sukses sebagian: ${dataSiswaGlobal.length} siswa tersinkron, namun ${tanpaKelas} data tidak terbaca kolom kelasnya. Klik "Tampilkan data mentah" di bawah untuk memeriksa format kolom kelas/rombel di spreadsheet Anda.</span>`;
+                    } else {
+                        statusText.innerHTML = `<span class="text-green-600 font-bold">Sukses! ${dataSiswaGlobal.length} data siswa tersinkron otomatis.</span>`;
+                    }
                 } else {
                     statusText.innerHTML = '<span class="text-red-600 font-bold">Data Spreadsheet kosong.</span>';
                 }
@@ -396,12 +469,11 @@
             selectSiswa.disabled = true;
             
             if (tingkat !== "") {
-                // Ambil semua rombel unik yang cocok dengan tingkat (misal angka pertama kelas adalah tingkat)
+                // Ambil semua rombel unik yang cocok dengan tingkat (misal "1A" -> tingkat "1", huruf "A")
                 const rombelSet = new Set();
                 dataSiswaGlobal.forEach(s => {
-                    if (s.kelas.startsWith(tingkat)) {
-                        // Ambil huruf rombel di belakang angka (contoh: "1A" -> "A")
-                        const huruf = s.kelas.substring(1).toUpperCase();
+                    if (s.kelas && s.kelas.startsWith(tingkat)) {
+                        const huruf = s.kelas.substring(tingkat.length).toUpperCase();
                         if (huruf) rombelSet.add(huruf);
                     }
                 });
@@ -413,7 +485,7 @@
                     });
                     selectRombel.disabled = false;
                 } else {
-                    selectRombel.innerHTML = '<option value="">-- Tidak ada rombel ditemukan --</option>';
+                    selectRombel.innerHTML = '<option value="">-- Tidak ada rombel ditemukan (cek format kolom kelas) --</option>';
                     selectRombel.disabled = true;
                 }
             } else {

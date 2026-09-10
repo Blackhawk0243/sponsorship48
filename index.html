@@ -26,10 +26,19 @@
                 border: none !important;
                 min-height: auto !important;
             }
+
+            .print-container-amplop {
+                box-shadow: none !important;
+                margin: 0 !important;
+                border: none !important;
+                width: 100% !important;
+                height: 100% !important;
+            }
+
             .page-break { page-break-before: always; }
         }
         
-        /* Tampilan kertas di layar komputer untuk dokumen biasa */
+        /* Tampilan kertas di layar komputer untuk dokumen biasa A4 */
         .print-container {
             background: white; 
             max-width: 210mm; 
@@ -40,6 +49,18 @@
             border: 1px solid #ddd;
         }
 
+        /* Tampilan kertas Amplop di layar komputer */
+        .print-container-amplop {
+            background: white; 
+            margin: 20px auto; 
+            padding: 10mm 15mm; 
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1); 
+            border: 1px solid #ddd;
+            overflow: hidden;
+            box-sizing: border-box;
+            position: relative;
+        }
+
         .font-serif { font-family: 'Times New Roman', Times, serif !important; }
         .template-hidden { display: none !important; }
 
@@ -47,28 +68,23 @@
         .kertas-stiker {
             background-color: white;
             box-shadow: 0 4px 10px rgba(0,0,0,0.2);
-            border: 1px solid black;
             margin: 0 auto 20px auto;
             position: relative;
             overflow: hidden;
         }
         @media print {
-            #area-cetak-stiker { padding: 0 !important; background-color: transparent !important; }
-            #wadah-halaman-stiker { display: block !important; gap: 0 !important; margin: 0 !important; }
             .kertas-stiker {
                 box-shadow: none !important;
-                border: none !important;
                 margin: 0 !important;
-                page-break-inside: avoid;
                 page-break-after: always; /* Pemisah kertas stiker */
             }
             /* PERBAIKAN BUG HALAMAN KOSONG TERAKHIR */
             .kertas-stiker:last-child {
-                page-break-after: auto !important; 
+                page-break-after: auto; 
             }
         }
     </style>
-    <!-- ID ini akan diisi script secara dinamis untuk mengatur ukuran kertas print stiker -->
+    <!-- ID ini akan diisi script secara dinamis untuk mengatur ukuran kertas print -->
     <style id="dynamic-print-style"></style>
 </head>
 <body class="bg-gray-200 p-4 text-gray-800" onload="tarikDataOtomatis()">
@@ -94,9 +110,15 @@
             <button id="tab-stiker-rekanan" onclick="switchTab('stiker-rekanan')" class="flex-1 py-3 px-2 text-center border-b-2 border-transparent text-gray-500 hover:text-gray-700 hover:bg-gray-50 transition">
                 5. Stiker 103 (Rekanan)
             </button>
+            <button id="tab-amplop" onclick="switchTab('amplop')" class="flex-1 py-3 px-2 text-center border-b-2 border-transparent text-purple-600 hover:bg-purple-50 transition">
+                6. Amplop (Wali Murid)
+            </button>
+            <button id="tab-amplop-rekanan" onclick="switchTab('amplop-rekanan')" class="flex-1 py-3 px-2 text-center border-b-2 border-transparent text-purple-600 hover:bg-purple-50 transition">
+                7. Amplop (Rekanan)
+            </button>
         </div>
 
-        <!-- KONTROL UNTUK TAB 1 & 2 (DATA SPREADSHEET) -->
+        <!-- KONTROL UNTUK TAB 1, 2, 6 (DATA SPREADSHEET) -->
         <div id="panel-otomatis" class="flex flex-col gap-4">
             <div class="flex flex-col sm:flex-row items-center justify-between bg-blue-50 p-3 rounded border border-blue-100">
                 <span id="status-tarik" class="text-sm font-medium text-gray-600 mb-2 sm:mb-0">Status: Mengambil data...</span>
@@ -127,20 +149,46 @@
                     <option value="">-- Pilih kelas dan rombel terlebih dahulu --</option>
                 </select>
             </div>
+            
+            <!-- Tombol Cetak Dokumen A4 (Disembunyikan saat tab amplop aktif) -->
             <button onclick="cetakDokumenA4()" id="btn-print-dokumen" class="bg-green-600 text-white font-bold py-3 px-4 rounded hover:bg-green-700 transition mt-2 w-full opacity-50 cursor-not-allowed flex items-center justify-center gap-2" disabled>
                 Cetak Dokumen PDF
             </button>
         </div>
 
-        <!-- KONTROL UNTUK TAB 3 (INPUT MANUAL REKANAN) -->
+        <!-- KONTROL UNTUK TAB 3 & 7 (INPUT MANUAL REKANAN) -->
         <div id="panel-manual" class="flex flex-col gap-4 template-hidden">
             <div class="bg-yellow-50 p-4 rounded border border-yellow-200">
                 <p class="text-sm font-bold text-yellow-800 mb-2">Input Manual Rekanan</p>
                 <label class="font-bold text-sm text-gray-700 block mb-1">Nama Perusahaan / Instansi / Donatur:</label>
                 <input type="text" id="input-perusahaan" oninput="updateSuratRekanan()" placeholder="Contoh: Dian Print" class="border border-gray-400 p-3 rounded w-full bg-white font-medium text-lg">
             </div>
+            
+            <!-- Tombol Cetak Dokumen A4 Rekanan (Disembunyikan saat tab amplop aktif) -->
             <button onclick="cetakDokumenA4()" id="btn-print-rekanan" class="bg-green-600 text-white font-bold py-3 px-4 rounded hover:bg-green-700 transition mt-2 w-full opacity-50 cursor-not-allowed flex items-center justify-center gap-2" disabled>
                 Cetak Dokumen PDF
+            </button>
+        </div>
+
+        <!-- KONTROL PENGATURAN UKURAN AMPLOP (TAB 6 & 7) -->
+        <div id="panel-amplop-layout" class="flex flex-col gap-4 template-hidden mt-2">
+            <div class="bg-purple-50 p-4 rounded border border-purple-200">
+                <p class="font-bold text-sm text-purple-900 mb-3 border-b border-purple-200 pb-1">Pengaturan Ukuran Amplop (mm)</p>
+                <div class="flex gap-4 text-sm mb-4">
+                    <div class="flex-1">
+                        <label class="block text-xs text-purple-700 font-bold mb-1">Lebar Kertas (Width)</label>
+                        <input type="number" id="env-w" value="230" class="border border-purple-300 p-2 w-full rounded outline-none focus:ring-2 focus:ring-purple-400" onchange="updatePreviewAmplop()">
+                    </div>
+                    <div class="flex-1">
+                        <label class="block text-xs text-purple-700 font-bold mb-1">Tinggi Kertas (Height)</label>
+                        <input type="number" id="env-h" value="110" class="border border-purple-300 p-2 w-full rounded outline-none focus:ring-2 focus:ring-purple-400" onchange="updatePreviewAmplop()">
+                    </div>
+                </div>
+                <p class="text-xs text-purple-600 italic">* Default 230x110 mm adalah ukuran standar amplop putih panjang (DL).</p>
+            </div>
+            
+            <button onclick="cetakAmplop()" id="btn-print-amplop" class="bg-purple-600 text-white font-bold py-3 px-4 rounded hover:bg-purple-700 transition w-full opacity-50 cursor-not-allowed flex items-center justify-center gap-2" disabled>
+                Cetak PDF Amplop
             </button>
         </div>
 
@@ -195,7 +243,6 @@
 
         <!-- PENGATURAN LAYOUT STIKER & TOMBOL CETAK (SHARED TABS 4 & 5) -->
         <div id="panel-stiker-layout" class="flex flex-col gap-4 template-hidden mt-2">
-            <!-- Setting MS Word Style Layout 103 -->
             <div class="bg-gray-50 p-4 rounded border border-gray-300">
                 <p class="font-bold text-sm text-gray-800 mb-3 border-b pb-1">Pengaturan Layout Kertas (Ukuran Label 103 / mm)</p>
                 <div class="grid grid-cols-2 md:grid-cols-5 gap-3 text-sm">
@@ -224,7 +271,7 @@
 
     </div>
 
-    <!-- AREA DOKUMEN BIASA (MENU 1, 2, 3) -->
+    <!-- AREA DOKUMEN A4 & AMPLOP (MENU 1, 2, 3, 6, 7) -->
     <div id="area-dokumen-a4">
         <!-- TEMPLATE 1: SURAT PENAWARAN (WALI MURID) -->
         <div id="template-penawaran" class="font-serif text-black">
@@ -363,7 +410,7 @@
                     <tr><td>Hal</td><td>:</td><td>Ucapan Terimakasih</td></tr>
                 </table>
                 <div class="whitespace-nowrap text-right">
-                    <p>Malang,.... September 2026</p>
+                    <p>Malang,....September 2026</p>
                 </div>
             </div>
 
@@ -392,7 +439,7 @@
                     <p class="text-xs">NIP. 197410161997032002</p>
                 </div>
                 <div class="text-center w-1/2 relative">
-                    <p class="mb-5">&nbsp;</p> <!-- Spasi pengimbang teks 'Mengetahui' di kiri -->
+                    <p class="mb-5">&nbsp;</p> 
                     <p>Ketua Pelaksana</p>
                     <div class="h-24 flex items-center justify-center relative my-1">
                         <img src="https://raw.githubusercontent.com/Blackhawk0243/sponsorship48/main/ttd-ketua.png" class="absolute w-28 object-contain z-10 mix-blend-multiply" onerror="this.style.display='none'">
@@ -517,6 +564,49 @@
                 </div>
             </div>
         </div>
+
+        <!-- TEMPLATE 6: AMPLOP WALI MURID -->
+        <div id="template-amplop" class="print-container-amplop font-serif text-black template-hidden" style="width: 230mm; height: 110mm;">
+            <div class="flex justify-between items-center border-b-[4px] border-black pb-1 mb-[2px]">
+                <img src="https://raw.githubusercontent.com/Blackhawk0243/sponsorship48/main/logo-min.png" class="w-20 h-auto object-contain shrink-0">
+                <div class="text-center flex-1 px-2 text-black">
+                    <h1 class="text-[28px] font-bold tracking-wide" style="line-height: 1.1;">HUT KE-48</h1>
+                    <h2 class="text-[13px] font-bold mt-1 tracking-wide" style="font-family: Arial, sans-serif;">MIN 1 KOTA MALANG</h2>
+                    <h3 class="text-[12px] font-bold mt-0" style="font-family: Arial, sans-serif;">TAHUN PELAJARAN 2026/2027</h3>
+                    <p class="text-[10px] mt-0" style="font-family: Arial, sans-serif;">Jln. Bandung 7C, Telp.& Fax. (0341) 551176 – 565642 Malang</p>
+                </div>
+                <img src="https://raw.githubusercontent.com/Blackhawk0243/sponsorship48/main/logo-hut.png" class="w-28 h-auto object-contain shrink-0">
+            </div>
+            <div class="border-b-[1px] border-black mb-5"></div>
+
+            <div class="mt-8 ml-16 text-[15px] leading-relaxed">
+                <p>Kepada Yth:</p>
+                <p class="font-bold mt-1">Bapak/Ibu <span id="amp-cetak-wali">[Nama wali murid]</span></p>
+                <p>Wali murid dari Ananda <span id="amp-cetak-siswa" class="font-bold">[Nama siswa]</span> Kelas <span id="amp-cetak-kelas" class="font-bold">[kelas]</span></p>
+                <p class="font-bold mt-2">di Tempat</p>
+            </div>
+        </div>
+
+        <!-- TEMPLATE 7: AMPLOP REKANAN -->
+        <div id="template-amplop-rekanan" class="print-container-amplop font-serif text-black template-hidden" style="width: 230mm; height: 110mm;">
+            <div class="flex justify-between items-center border-b-[4px] border-black pb-1 mb-[2px]">
+                <img src="https://raw.githubusercontent.com/Blackhawk0243/sponsorship48/main/logo-min.png" class="w-20 h-auto object-contain shrink-0">
+                <div class="text-center flex-1 px-2 text-black">
+                    <h1 class="text-[28px] font-bold tracking-wide" style="line-height: 1.1;">HUT KE-48</h1>
+                    <h2 class="text-[13px] font-bold mt-1 tracking-wide" style="font-family: Arial, sans-serif;">MIN 1 KOTA MALANG</h2>
+                    <h3 class="text-[12px] font-bold mt-0" style="font-family: Arial, sans-serif;">TAHUN PELAJARAN 2026/2027</h3>
+                    <p class="text-[10px] mt-0" style="font-family: Arial, sans-serif;">Jln. Bandung 7C, Telp.& Fax. (0341) 551176 – 565642 Malang</p>
+                </div>
+                <img src="https://raw.githubusercontent.com/Blackhawk0243/sponsorship48/main/logo-hut.png" class="w-28 h-auto object-contain shrink-0">
+            </div>
+            <div class="border-b-[1px] border-black mb-5"></div>
+
+            <div class="mt-8 ml-16 text-[15px] leading-relaxed">
+                <p>Kepada Yth:</p>
+                <p class="font-bold mt-1">Bapak/Ibu Pimpinan <span id="amp-rk-cetak-perusahaan">[Nama Perusahaan]</span></p>
+                <p class="font-bold mt-4">di Tempat</p>
+            </div>
+        </div>
     </div>
 
     <!-- AREA CETAK STIKER 103 -->
@@ -548,50 +638,75 @@
 
         function switchTab(tabId) {
             templateAktif = tabId;
-            const tabs = ['penawaran', 'terimakasih', 'rekanan', 'stiker', 'stiker-rekanan'];
+            const tabs = ['penawaran', 'terimakasih', 'rekanan', 'stiker', 'stiker-rekanan', 'amplop', 'amplop-rekanan'];
             
             tabs.forEach(id => {
                 const btn = document.getElementById(`tab-${id}`);
                 const tmpl = document.getElementById(`template-${id}`);
+                
                 if (id === tabId) {
-                    btn.classList.add('border-green-600', 'text-green-600', 'bg-green-50');
+                    if (id.includes('amplop')) {
+                        btn.classList.add('border-purple-600', 'text-purple-600', 'bg-purple-50');
+                    } else {
+                        btn.classList.add('border-green-600', 'text-green-600', 'bg-green-50');
+                    }
                     btn.classList.remove('border-transparent', 'text-gray-500');
                     if(tmpl) tmpl.classList.remove('template-hidden');
                 } else {
-                    btn.classList.remove('border-green-600', 'text-green-600', 'bg-green-50');
+                    btn.classList.remove('border-green-600', 'text-green-600', 'bg-green-50', 'border-purple-600', 'text-purple-600', 'bg-purple-50');
                     btn.classList.add('border-transparent', 'text-gray-500');
                     if(tmpl) tmpl.classList.add('template-hidden');
                 }
             });
 
+            // Sembunyikan Semua Panel Kontrol
             document.getElementById('panel-otomatis').classList.add('hidden');
             document.getElementById('panel-manual').classList.add('template-hidden');
             document.getElementById('panel-stiker').classList.add('template-hidden');
             document.getElementById('panel-stiker-rekanan').classList.add('template-hidden');
             document.getElementById('panel-stiker-layout').classList.add('template-hidden');
+            document.getElementById('panel-amplop-layout').classList.add('template-hidden');
+            
             document.getElementById('area-dokumen-a4').classList.add('template-hidden');
             document.getElementById('area-cetak-stiker').classList.add('template-hidden');
+            
+            // Sembunyikan Semua Tombol A4
+            document.getElementById('btn-print-dokumen').classList.add('hidden');
+            document.getElementById('btn-print-rekanan').classList.add('hidden');
 
-            if (tabId === 'rekanan') {
+            // Tampilkan Sesuai Tab Aktif
+            if (tabId === 'penawaran' || tabId === 'terimakasih') {
+                document.getElementById('panel-otomatis').classList.remove('hidden');
+                document.getElementById('area-dokumen-a4').classList.remove('template-hidden');
+                document.getElementById('btn-print-dokumen').classList.remove('hidden');
+                updateSurat();
+            } else if (tabId === 'rekanan') {
                 document.getElementById('panel-manual').classList.remove('template-hidden');
                 document.getElementById('area-dokumen-a4').classList.remove('template-hidden');
+                document.getElementById('btn-print-rekanan').classList.remove('hidden');
                 updateSuratRekanan();
             } else if (tabId === 'stiker') {
                 document.getElementById('panel-stiker').classList.remove('template-hidden');
                 document.getElementById('panel-stiker-layout').classList.remove('template-hidden');
                 document.getElementById('area-cetak-stiker').classList.remove('template-hidden');
                 loadDaftarStiker();
-                updatePreviewStiker();
+                updatePreviewStikerRouter();
             } else if (tabId === 'stiker-rekanan') {
                 document.getElementById('panel-stiker-rekanan').classList.remove('template-hidden');
                 document.getElementById('panel-stiker-layout').classList.remove('template-hidden');
                 document.getElementById('area-cetak-stiker').classList.remove('template-hidden');
                 renderDaftarStikerRekanan();
-                updatePreviewStikerRekanan();
-            } else {
+                updatePreviewStikerRouter();
+            } else if (tabId === 'amplop') {
                 document.getElementById('panel-otomatis').classList.remove('hidden');
+                document.getElementById('panel-amplop-layout').classList.remove('template-hidden');
                 document.getElementById('area-dokumen-a4').classList.remove('template-hidden');
                 updateSurat();
+            } else if (tabId === 'amplop-rekanan') {
+                document.getElementById('panel-manual').classList.remove('template-hidden');
+                document.getElementById('panel-amplop-layout').classList.remove('template-hidden');
+                document.getElementById('area-dokumen-a4').classList.remove('template-hidden');
+                updateSuratRekanan();
             }
         }
 
@@ -613,12 +728,10 @@
                         let waliRaw = (item.nama_wali || item.Ayah || item.Wali || "").toString().trim();
                         let kelasRaw = (item.kelas || item.KELAS || "").toString().trim();
                         
-                        // Auto-heal pertukaran kolom spreadsheet
                         if (/^[1-6][A-I]$/i.test(waliRaw) && !/^[1-6][A-I]$/i.test(kelasRaw)) {
                             let temp = kelasRaw; kelasRaw = waliRaw; waliRaw = temp;
                         }
 
-                        // Rapikan (Title Case untuk nama, Upper Case murni untuk kelas agar Rombel jalan)
                         let namaBersih = toTitleCase(namaRaw);
                         let waliBersih = toTitleCase(waliRaw);
                         let kelasBersih = kelasRaw.toUpperCase().replace(/\s+/g, ''); 
@@ -683,9 +796,13 @@
         function updateSurat() {
             const index = document.getElementById('pilih-siswa').value;
             const btnPrint = document.getElementById('btn-print-dokumen');
+            const btnPrintAmp = document.getElementById('btn-print-amplop');
+            
             if (index !== "") {
                 const siswa = dataTerfilterRombel[index];
                 const namaWali = siswa.nama_wali || "[Nama wali murid]";
+                
+                // Surat A4
                 document.getElementById('cetak-wali').innerText = namaWali;
                 document.getElementById('cetak-siswa').innerText = siswa.nama_siswa;
                 document.getElementById('cetak-kelas').innerText = siswa.kelas;
@@ -694,29 +811,49 @@
                 document.getElementById('tk-cetak-wali').innerText = namaWali;
                 document.getElementById('tk-cetak-siswa').innerText = siswa.nama_siswa;
                 document.getElementById('tk-cetak-kelas').innerText = siswa.kelas;
+                
+                // Amplop
+                document.getElementById('amp-cetak-wali').innerText = namaWali;
+                document.getElementById('amp-cetak-siswa').innerText = siswa.nama_siswa;
+                document.getElementById('amp-cetak-kelas').innerText = siswa.kelas;
+
                 btnPrint.disabled = false; btnPrint.classList.remove('opacity-50', 'cursor-not-allowed');
+                btnPrintAmp.disabled = false; btnPrintAmp.classList.remove('opacity-50', 'cursor-not-allowed');
             } else { resetSurat(); }
         }
 
         function updateSuratRekanan() {
             const inputPerusahaan = document.getElementById('input-perusahaan').value.trim();
             const btnPrint = document.getElementById('btn-print-rekanan');
+            const btnPrintAmp = document.getElementById('btn-print-amplop');
             const namaPerusahaan = inputPerusahaan || "[Nama Perusahaan]";
+            
+            // Surat A4
             document.getElementById('rk-cetak-perusahaan').innerText = namaPerusahaan;
             document.getElementById('rk-cetak-ba').innerText = namaPerusahaan;
             
+            // Amplop
+            document.getElementById('amp-rk-cetak-perusahaan').innerText = namaPerusahaan;
+            
             if (inputPerusahaan !== "") {
                 btnPrint.disabled = false; btnPrint.classList.remove('opacity-50', 'cursor-not-allowed');
+                btnPrintAmp.disabled = false; btnPrintAmp.classList.remove('opacity-50', 'cursor-not-allowed');
             } else {
                 btnPrint.disabled = true; btnPrint.classList.add('opacity-50', 'cursor-not-allowed');
+                btnPrintAmp.disabled = true; btnPrintAmp.classList.add('opacity-50', 'cursor-not-allowed');
             }
         }
 
         function resetSurat() {
             const btnPrint = document.getElementById('btn-print-dokumen');
+            const btnPrintAmp = document.getElementById('btn-print-amplop');
             btnPrint.disabled = true; btnPrint.classList.add('opacity-50', 'cursor-not-allowed');
+            btnPrintAmp.disabled = true; btnPrintAmp.classList.add('opacity-50', 'cursor-not-allowed');
         }
 
+        /* ==========================================
+           FUNGSI CETAK DOKUMEN A4
+        ========================================== */
         function cetakDokumenA4() {
             let docName = "Surat";
             let targetName = "";
@@ -733,15 +870,48 @@
             }
 
             const originalTitle = document.title;
-            // Ubah title document agar nama file PDF otomatis menyesuaikan
             document.title = `${docName}_${targetName.replace(/\s+/g, '_')}`;
 
-            document.getElementById('area-cetak-stiker').classList.add('template-hidden');
-            document.getElementById('area-dokumen-a4').classList.remove('template-hidden');
             document.getElementById('dynamic-print-style').innerHTML = `@page { size: A4; margin: 10mm 15mm; }`;
             window.print();
 
-            // Kembalikan title document seperti semula
+            setTimeout(() => { document.title = originalTitle; }, 1000);
+        }
+
+        /* ==========================================
+           FUNGSI CETAK AMPLOP
+        ========================================== */
+        function updatePreviewAmplop() {
+            const pw = document.getElementById('env-w').value;
+            const ph = document.getElementById('env-h').value;
+            document.getElementById('template-amplop').style.width = `${pw}mm`;
+            document.getElementById('template-amplop').style.height = `${ph}mm`;
+            document.getElementById('template-amplop-rekanan').style.width = `${pw}mm`;
+            document.getElementById('template-amplop-rekanan').style.height = `${ph}mm`;
+        }
+
+        function cetakAmplop() {
+            let docName = "Amplop";
+            let targetName = "";
+            
+            if (templateAktif === 'amplop') {
+                docName = "Amplop_WaliMurid";
+                targetName = document.getElementById('amp-cetak-siswa').innerText || "Siswa";
+            } else if (templateAktif === 'amplop-rekanan') {
+                docName = "Amplop_Rekanan";
+                targetName = document.getElementById('amp-rk-cetak-perusahaan').innerText || "Perusahaan";
+            }
+
+            const originalTitle = document.title;
+            document.title = `${docName}_${targetName.replace(/\s+/g, '_')}`;
+
+            const pw = document.getElementById('env-w').value;
+            const ph = document.getElementById('env-h').value;
+
+            document.getElementById('dynamic-print-style').innerHTML = `@page { size: ${pw}mm ${ph}mm; margin: 0; }`;
+            
+            window.print();
+
             setTimeout(() => { document.title = originalTitle; }, 1000);
         }
 
@@ -778,7 +948,6 @@
                 return matchKelas && matchNama;
             });
 
-            // OPTIMASI ANTI-LAG: Menggunakan string buffer agar render super cepat
             let htmlBuffer = '';
             dataRender.forEach(s => {
                 const checked = daftarSiswaStikerDipilih.has(s.id) ? 'checked' : '';
@@ -790,7 +959,7 @@
                 `;
             });
             
-            container.innerHTML = htmlBuffer; // Render sekaligus 1x
+            container.innerHTML = htmlBuffer; 
             updateLabelCount();
         }
 
@@ -837,10 +1006,8 @@
 
             const totalHalaman = Math.ceil(barisanSiswa.length / stikerPerHalaman);
             let indexSiswa = 0;
-            // UPDATE: User wants borders to ALWAYS show for manual cutting
             const borderStyle = "border: 1px solid black;";
 
-            // Hitung skala font dan elemen stiker secara proporsional
             const scaleX = lw / 64;
             const scaleY = lh / 32;
             const scale = Math.min(scaleX, scaleY);
@@ -850,7 +1017,6 @@
             const paddingTB = 2 * scale;
             const paddingLR = 3 * scale;
 
-            // OPTIMASI ANTI-LAG PREVIEW: Susun kertas HTML dalam memory terlebih dahulu
             let allPagesHTML = '';
 
             for (let hal = 0; hal < totalHalaman; hal++) {
@@ -883,10 +1049,10 @@
                     }
                 }
                 kertasHTML += `</div>`;
-                allPagesHTML += kertasHTML; // Tambahkan kertas ke memory
+                allPagesHTML += kertasHTML; 
             }
             
-            wadah.innerHTML = allPagesHTML; // Munculkan ke layar sekaligus 1x
+            wadah.innerHTML = allPagesHTML; 
         }
 
         function cetakPDFStiker() {
@@ -1016,10 +1182,8 @@
 
             const totalHalaman = Math.ceil(barisanRekanan.length / stikerPerHalaman);
             let indexRekanan = 0;
-            // UPDATE: User wants borders to ALWAYS show for manual cutting
             const borderStyle = "border: 1px solid black;";
 
-            // Hitung skala font dan elemen stiker secara proporsional
             const scaleX = lw / 64;
             const scaleY = lh / 32;
             const scale = Math.min(scaleX, scaleY);

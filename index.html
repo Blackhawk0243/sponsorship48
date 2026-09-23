@@ -119,6 +119,9 @@
             <button id="tab-amplop-rekanan" onclick="switchTab('amplop-rekanan')" class="flex-1 py-3 px-2 text-center border-b-2 border-transparent text-purple-600 hover:bg-purple-50 transition">
                 8. Amplop (Rekanan)
             </button>
+            <button id="tab-stiker-umum" onclick="switchTab('stiker-umum')" class="flex-1 py-3 px-2 text-center border-b-2 border-transparent text-gray-500 hover:text-gray-700 hover:bg-gray-50 transition">
+                9. Stiker 103 (Umum)
+            </button>
         </div>
 
         <!-- KONTROL UNTUK TAB 1, 2, 6 (DATA SPREADSHEET) -->
@@ -226,9 +229,9 @@
         <!-- KONTROL UNTUK TAB 5 (STIKER LABEL REKANAN) -->
         <div id="panel-stiker-rekanan" class="flex flex-col gap-4 template-hidden">
             <div class="bg-yellow-50 p-4 rounded border border-yellow-200">
-                <label class="font-bold text-sm text-gray-700 block mb-1">Tambah Nama Perusahaan / Instansi / Donatur:</label>
-                <div class="flex gap-2">
-                    <input type="text" id="input-stiker-perusahaan" placeholder="Contoh: Dian Print" class="border border-gray-400 p-2 rounded w-full bg-white text-sm" onkeypress="if(event.key === 'Enter') tambahStikerRekanan()">
+                <label class="font-bold text-sm text-gray-700 block mb-1">Tambah Daftar Perusahaan (Manual):</label>
+                <div class="flex flex-col md:flex-row gap-2">
+                    <input type="text" id="input-stiker-nama-rek" placeholder="Nama Perusahaan (Misal: Dian Print)" class="border border-gray-400 p-2 rounded w-full bg-white text-sm" onkeypress="if(event.key === 'Enter') tambahStikerRekanan()">
                     <button onclick="tambahStikerRekanan()" class="bg-blue-600 text-white px-4 py-2 rounded text-sm font-bold hover:bg-blue-700 whitespace-nowrap">Tambah ke Daftar</button>
                 </div>
                 
@@ -240,6 +243,28 @@
                 </div>
                 <div id="daftar-rekanan-stiker" class="bg-white border border-t-0 border-gray-300 max-h-48 overflow-y-auto p-2 text-sm rounded-b">
                     <div class="p-2 text-gray-500 text-center italic">Belum ada daftar perusahaan. Silakan tambah di atas.</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- KONTROL UNTUK TAB 9 (STIKER LABEL UMUM) -->
+        <div id="panel-stiker-umum" class="flex flex-col gap-4 template-hidden">
+            <div class="bg-indigo-50 p-4 rounded border border-indigo-200">
+                <label class="font-bold text-sm text-gray-700 block mb-1">Tambah Daftar Penerima Umum (Manual):</label>
+                <div class="flex flex-col md:flex-row gap-2">
+                    <input type="text" id="input-stiker-nama-umum" placeholder="Nama (Misal: Bpk. Budi)" class="border border-gray-400 p-2 rounded w-full bg-white text-sm">
+                    <input type="text" id="input-stiker-jabatan-umum" placeholder="Jabatan (Misal: Kepala Desa)" class="border border-gray-400 p-2 rounded w-full bg-white text-sm" onkeypress="if(event.key === 'Enter') tambahStikerUmum()">
+                    <button onclick="tambahStikerUmum()" class="bg-blue-600 text-white px-4 py-2 rounded text-sm font-bold hover:bg-blue-700 whitespace-nowrap">Tambah ke Daftar</button>
+                </div>
+                
+                <div class="flex justify-between text-xs font-bold bg-gray-200 p-2 rounded-t mt-4">
+                    <label class="flex items-center gap-2 cursor-pointer">
+                        <input type="checkbox" id="chk-all-stiker-umum" onchange="toggleAllStikerUmum()" checked> Pilih Semua
+                    </label>
+                    <span id="stiker-umum-count">0 Terpilih</span>
+                </div>
+                <div id="daftar-umum-stiker" class="bg-white border border-t-0 border-gray-300 max-h-48 overflow-y-auto p-2 text-sm rounded-b">
+                    <div class="p-2 text-gray-500 text-center italic">Belum ada daftar penerima umum. Silakan tambah di atas.</div>
                 </div>
             </div>
         </div>
@@ -588,7 +613,7 @@
                     <tr><td>Hal</td><td>:</td><td>Ucapan Terimakasih</td></tr>
                 </table>
                 <div class="whitespace-nowrap text-right">
-                    <p>Malang,.... September 2026</p>
+                    <p>Malang, 30 September 2026</p>
                 </div>
             </div>
 
@@ -692,6 +717,10 @@
         let daftarRekananStiker = [];
         let daftarRekananStikerDipilih = new Set();
 
+        // State Stiker Umum
+        let daftarUmumStiker = [];
+        let daftarUmumStikerDipilih = new Set();
+
         // Fungsi merapikan penulisan nama (Huruf besar di awal tiap kata)
         function toTitleCase(str) {
             if(!str) return "";
@@ -700,7 +729,7 @@
 
         function switchTab(tabId) {
             templateAktif = tabId;
-            const tabs = ['penawaran', 'terimakasih', 'rekanan', 'terimakasih-rekanan', 'stiker', 'stiker-rekanan', 'amplop', 'amplop-rekanan'];
+            const tabs = ['penawaran', 'terimakasih', 'rekanan', 'terimakasih-rekanan', 'stiker', 'stiker-rekanan', 'amplop', 'amplop-rekanan', 'stiker-umum'];
             
             tabs.forEach(id => {
                 const btn = document.getElementById(`tab-${id}`);
@@ -726,6 +755,7 @@
             document.getElementById('panel-manual').classList.add('template-hidden');
             document.getElementById('panel-stiker').classList.add('template-hidden');
             document.getElementById('panel-stiker-rekanan').classList.add('template-hidden');
+            document.getElementById('panel-stiker-umum').classList.add('template-hidden');
             document.getElementById('panel-stiker-layout').classList.add('template-hidden');
             document.getElementById('panel-amplop-layout').classList.add('template-hidden');
             
@@ -758,6 +788,12 @@
                 document.getElementById('panel-stiker-layout').classList.remove('template-hidden');
                 document.getElementById('area-cetak-stiker').classList.remove('template-hidden');
                 renderDaftarStikerRekanan();
+                updatePreviewStikerRouter();
+            } else if (tabId === 'stiker-umum') {
+                document.getElementById('panel-stiker-umum').classList.remove('template-hidden');
+                document.getElementById('panel-stiker-layout').classList.remove('template-hidden');
+                document.getElementById('area-cetak-stiker').classList.remove('template-hidden');
+                renderDaftarStikerUmum();
                 updatePreviewStikerRouter();
             } else if (tabId === 'amplop') {
                 document.getElementById('panel-otomatis').classList.remove('hidden');
@@ -989,6 +1025,8 @@
                 updatePreviewStiker(isPreview);
             } else if (templateAktif === 'stiker-rekanan') {
                 updatePreviewStikerRekanan(isPreview);
+            } else if (templateAktif === 'stiker-umum') {
+                updatePreviewStikerUmum(isPreview);
             }
         }
 
@@ -997,6 +1035,8 @@
                 cetakPDFStiker();
             } else if (templateAktif === 'stiker-rekanan') {
                 cetakPDFStikerRekanan();
+            } else if (templateAktif === 'stiker-umum') {
+                cetakPDFStikerUmum();
             }
         }
 
@@ -1161,13 +1201,14 @@
            LOGIKA CETAK STIKER REKANAN
         ========================================== */
         function tambahStikerRekanan() {
-            const input = document.getElementById('input-stiker-perusahaan');
-            const nama = input.value.trim();
+            const inputNama = document.getElementById('input-stiker-nama-rek');
+            const nama = inputNama.value.trim();
             if(nama) {
                 const id = 'rek_' + Date.now();
                 daftarRekananStiker.push({ id, nama });
                 daftarRekananStikerDipilih.add(id);
-                input.value = '';
+                inputNama.value = '';
+                inputNama.focus();
                 renderDaftarStikerRekanan();
                 updatePreviewStikerRekanan();
             }
@@ -1243,7 +1284,7 @@
             let barisanRekanan = Array.from(daftarRekananStikerDipilih).map(id => daftarRekananStiker.find(r => r.id === id));
             
             if(barisanRekanan.length === 0 && isPreview) {
-                barisanRekanan = [{nama: "Contoh Nama Perusahaan / Instansi"}];
+                barisanRekanan = [{nama: "Contoh Nama", jabatan: "Contoh Jabatan"}];
             }
 
             const totalHalaman = Math.ceil(barisanRekanan.length / stikerPerHalaman);
@@ -1271,6 +1312,7 @@
                         
                         const left = ml + (c * hp);
                         const top = mt + (r * vp);
+                        const teksJabatan = rec.jabatan ? `${rec.jabatan}<br>` : '';
 
                         kertasHTML += `
                             <div style="position: absolute; left: ${left}mm; top: ${top}mm; width: ${lw}mm; height: ${lh}mm; ${borderStyle} padding: ${paddingTB}mm ${paddingLR}mm; box-sizing: border-box; overflow: hidden; background: transparent;">
@@ -1328,6 +1370,186 @@
             setTimeout(() => { 
                 document.title = originalTitle;
                 updatePreviewStikerRekanan(true); 
+            }, 1000); 
+        }
+
+        /* ==========================================
+           LOGIKA CETAK STIKER UMUM (NO. 9)
+        ========================================== */
+        function tambahStikerUmum() {
+            const inputNama = document.getElementById('input-stiker-nama-umum');
+            const inputJabatan = document.getElementById('input-stiker-jabatan-umum');
+            const nama = inputNama.value.trim();
+            const jabatan = inputJabatan.value.trim();
+            if(nama) {
+                const id = 'umum_' + Date.now();
+                daftarUmumStiker.push({ id, nama, jabatan });
+                daftarUmumStikerDipilih.add(id);
+                inputNama.value = '';
+                inputJabatan.value = '';
+                inputNama.focus();
+                renderDaftarStikerUmum();
+                updatePreviewStikerUmum();
+            }
+        }
+
+        function hapusStikerUmum(id) {
+            daftarUmumStiker = daftarUmumStiker.filter(r => r.id !== id);
+            daftarUmumStikerDipilih.delete(id);
+            renderDaftarStikerUmum();
+            updatePreviewStikerUmum();
+        }
+
+        function toggleStikerUmumItem(checkbox) {
+            if(checkbox.checked) daftarUmumStikerDipilih.add(checkbox.value);
+            else daftarUmumStikerDipilih.delete(checkbox.value);
+            updateLabelUmumCount();
+            updatePreviewStikerUmum();
+        }
+
+        function toggleAllStikerUmum() {
+            const isChecked = document.getElementById('chk-all-stiker-umum').checked;
+            document.querySelectorAll('.chk-stiker-umum').forEach(chk => {
+                chk.checked = isChecked;
+                if(isChecked) daftarUmumStikerDipilih.add(chk.value);
+                else daftarUmumStikerDipilih.delete(chk.value);
+            });
+            updateLabelUmumCount();
+            updatePreviewStikerUmum();
+        }
+
+        function updateLabelUmumCount() {
+            document.getElementById('stiker-umum-count').innerText = `${daftarUmumStikerDipilih.size} Terpilih`;
+        }
+
+        function renderDaftarStikerUmum() {
+            const container = document.getElementById('daftar-umum-stiker');
+            if (daftarUmumStiker.length === 0) {
+                container.innerHTML = '<div class="p-2 text-gray-500 text-center italic">Belum ada daftar penerima umum. Silakan tambah di atas.</div>';
+            } else {
+                let html = '';
+                daftarUmumStiker.forEach(r => {
+                    const checked = daftarUmumStikerDipilih.has(r.id) ? 'checked' : '';
+                    const teksJabatan = r.jabatan ? ` - <span class="text-gray-500">${r.jabatan}</span>` : '';
+                    html += `
+                        <div class="flex items-center justify-between p-1 hover:bg-gray-100 border-b">
+                            <label class="flex items-center gap-2 cursor-pointer flex-1">
+                                <input type="checkbox" class="chk-stiker-umum" value="${r.id}" ${checked} onchange="toggleStikerUmumItem(this)">
+                                <span><strong>${r.nama}</strong>${teksJabatan}</span>
+                            </label>
+                            <button onclick="hapusStikerUmum('${r.id}')" class="text-red-500 hover:text-red-700 text-xs px-2 font-bold">Hapus</button>
+                        </div>
+                    `;
+                });
+                container.innerHTML = html;
+            }
+            updateLabelUmumCount();
+        }
+
+        function updatePreviewStikerUmum(isPreview = true) {
+            const wadah = document.getElementById('wadah-halaman-stiker');
+            
+            const pw = parseFloat(document.getElementById('s-pw').value);
+            const ph = parseFloat(document.getElementById('s-ph').value);
+            const ml = parseFloat(document.getElementById('s-ml').value);
+            const mt = parseFloat(document.getElementById('s-mt').value);
+            const lw = parseFloat(document.getElementById('s-lw').value);
+            const lh = parseFloat(document.getElementById('s-lh').value);
+            const hp = parseFloat(document.getElementById('s-hp').value);
+            const vp = parseFloat(document.getElementById('s-vp').value);
+            const cols = parseInt(document.getElementById('s-col').value);
+            const rows = parseInt(document.getElementById('s-row').value);
+
+            const stikerPerHalaman = cols * rows;
+            let barisanUmum = Array.from(daftarUmumStikerDipilih).map(id => daftarUmumStiker.find(r => r.id === id));
+            
+            if(barisanUmum.length === 0 && isPreview) {
+                barisanUmum = [{nama: "Contoh Nama", jabatan: "Contoh Jabatan"}];
+            }
+
+            const totalHalaman = Math.ceil(barisanUmum.length / stikerPerHalaman);
+            let indexUmum = 0;
+            const borderStyle = "border: 1px solid black;";
+
+            const scaleX = lw / 64;
+            const scaleY = lh / 32;
+            const scale = Math.min(scaleX, scaleY);
+            const fontSize = 8 * scale;
+            const logoHeight = 6 * scale;
+            const mbLogo = 2 * scale;
+            const paddingTB = 2 * scale;
+            const paddingLR = 3 * scale;
+
+            let allPagesHTML = '';
+
+            for (let hal = 0; hal < totalHalaman; hal++) {
+                let kertasHTML = `<div class="kertas-stiker" style="width: ${pw}mm; height: ${ph}mm;">`;
+                
+                for (let r = 0; r < rows; r++) {
+                    for (let c = 0; c < cols; c++) {
+                        if (indexUmum >= barisanUmum.length) break;
+                        const rec = barisanUmum[indexUmum];
+                        
+                        const left = ml + (c * hp);
+                        const top = mt + (r * vp);
+                        const teksJabatan = rec.jabatan ? `${rec.jabatan}<br>` : '';
+
+                        kertasHTML += `
+                            <div style="position: absolute; left: ${left}mm; top: ${top}mm; width: ${lw}mm; height: ${lh}mm; ${borderStyle} padding: ${paddingTB}mm ${paddingLR}mm; box-sizing: border-box; overflow: hidden; background: transparent;">
+                                <div style="text-align: center; margin-bottom: ${mbLogo}mm; height: ${logoHeight}mm;">
+                                    <img src="https://raw.githubusercontent.com/Blackhawk0243/sponsorship48/main/logo-min.png" style="height: 100%; display: inline-block; margin-right: 4px;">
+                                    <img src="https://raw.githubusercontent.com/Blackhawk0243/sponsorship48/main/logo-hut.png" style="height: 100%; display: inline-block;">
+                                </div>
+                                <div style="font-size: ${fontSize}pt; line-height: 1.3; text-align: center; color: black; font-family: 'Times New Roman', Times, serif;">
+                                    Kepada Yth.<br>
+                                    <strong>${rec.nama}</strong><br>
+                                    ${teksJabatan}
+                                    di Tempat
+                                </div>
+                            </div>
+                        `;
+                        indexUmum++;
+                    }
+                }
+                kertasHTML += `</div>`;
+                allPagesHTML += kertasHTML; 
+            }
+            
+            wadah.innerHTML = allPagesHTML; 
+        }
+
+        function cetakPDFStikerUmum() {
+            if(daftarUmumStikerDipilih.size === 0) {
+                const btn = document.getElementById('btn-print-stiker-shared');
+                const textAwal = btn.innerHTML;
+                btn.innerHTML = "Pilih Daftar Dulu!";
+                btn.classList.add('bg-red-600', 'hover:bg-red-700');
+                btn.classList.remove('bg-green-600', 'hover:bg-green-700');
+                setTimeout(() => {
+                    btn.innerHTML = textAwal;
+                    btn.classList.remove('bg-red-600', 'hover:bg-red-700');
+                    btn.classList.add('bg-green-600', 'hover:bg-green-700');
+                }, 2000);
+                return;
+            }
+            
+            const originalTitle = document.title;
+            document.title = `Stiker_Label_103_Umum`;
+
+            const pw = document.getElementById('s-pw').value;
+            const ph = document.getElementById('s-ph').value;
+            document.getElementById('dynamic-print-style').innerHTML = `@page { size: ${pw}mm ${ph}mm; margin: 0; }`;
+
+            document.getElementById('area-dokumen-a4').classList.add('template-hidden');
+            document.getElementById('area-cetak-stiker').classList.remove('template-hidden');
+            
+            updatePreviewStikerUmum(false); 
+            
+            window.print();
+            
+            setTimeout(() => { 
+                document.title = originalTitle;
+                updatePreviewStikerUmum(true); 
             }, 1000); 
         }
     </script>

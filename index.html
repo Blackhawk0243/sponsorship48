@@ -122,6 +122,9 @@
             <button id="tab-stiker-umum" onclick="switchTab('stiker-umum')" class="flex-1 py-3 px-2 text-center border-b-2 border-transparent text-gray-500 hover:text-gray-700 hover:bg-gray-50 transition">
                 9. Stiker 103 (Umum)
             </button>
+            <button id="tab-nomor" onclick="switchTab('nomor')" class="flex-1 py-3 px-2 text-center border-b-2 border-transparent text-indigo-600 hover:bg-indigo-50 transition">
+                10. Cetak Nomor Hadiah
+            </button>
         </div>
 
         <!-- KONTROL UNTUK TAB 1, 2, 6 (DATA SPREADSHEET) -->
@@ -297,6 +300,37 @@
             </div>
         </div>
 
+        <!-- KONTROL UNTUK TAB 10 (NOMOR HADIAH) -->
+        <div id="panel-nomor" class="flex flex-col gap-4 template-hidden">
+            <div class="bg-indigo-50 p-4 rounded border border-indigo-200">
+                <p class="text-sm font-bold text-indigo-800 mb-2">Antrean Cetak Nomor Hadiah (Kertas Letter / 4 per Halaman)</p>
+                <p class="text-xs text-indigo-600 mb-4">Sistem antrean ini mencegah pemborosan kertas. Anda dapat mencampur berbagai nomor sekaligus. Web akan otomatis memadatkannya menjadi 4 kotak per halaman.</p>
+                
+                <div class="flex flex-col md:flex-row gap-2 mb-4">
+                    <input type="text" id="input-nomor-teks" placeholder="Nomor (Misal: 30 atau A-01)" class="border border-gray-400 p-2 rounded flex-1 bg-white text-sm" onkeypress="if(event.key === 'Enter') document.getElementById('input-nomor-qty').focus()">
+                    <div class="flex items-center gap-2">
+                        <span class="text-sm font-bold text-gray-600">Jml Cetak:</span>
+                        <input type="number" id="input-nomor-qty" value="1" min="1" class="border border-gray-400 p-2 rounded w-20 bg-white text-sm" onkeypress="if(event.key === 'Enter') tambahNomor()">
+                    </div>
+                    <button onclick="tambahNomor()" class="bg-indigo-600 text-white px-4 py-2 rounded text-sm font-bold hover:bg-indigo-700 whitespace-nowrap">Tambahkan</button>
+                </div>
+                
+                <div class="flex justify-between text-xs font-bold bg-gray-200 p-2 rounded-t mt-2">
+                    <span>Daftar Antrean Cetak</span>
+                    <span id="nomor-total-count">Total: 0 Nomor</span>
+                </div>
+                <div id="daftar-antrean-nomor" class="bg-white border border-t-0 border-gray-300 max-h-48 overflow-y-auto p-2 text-sm rounded-b">
+                    <div class="p-2 text-gray-500 text-center italic">Antrean kosong. Tambahkan nomor di atas.</div>
+                </div>
+                <div class="mt-4 flex gap-4">
+                    <button onclick="kosongkanNomor()" class="bg-red-500 text-white font-bold py-3 px-4 rounded hover:bg-red-600 transition text-sm">Clear Antrean</button>
+                    <button onclick="cetakPDFNomor()" id="btn-print-nomor" class="bg-green-600 text-white font-bold py-3 px-4 rounded hover:bg-green-700 transition w-full text-sm flex items-center justify-center gap-2">
+                        Cetak PDF Nomor Hadiah
+                    </button>
+                </div>
+            </div>
+        </div>
+
     </div>
 
     <!-- AREA DOKUMEN A4 & AMPLOP (MENU 1, 2, 3, 6, 7) -->
@@ -438,7 +472,7 @@
                     <tr><td>Hal</td><td>:</td><td>Ucapan Terimakasih</td></tr>
                 </table>
                 <div class="whitespace-nowrap text-right">
-                    <p>Malang,.... September 2026</p>
+                    <p>Malang, 30 September 2026</p>
                 </div>
             </div>
 
@@ -703,6 +737,13 @@
         </div>
     </div>
 
+    <!-- AREA CETAK NOMOR HADIAH -->
+    <div id="area-cetak-nomor" class="template-hidden bg-gray-300 p-4">
+        <div id="wadah-halaman-nomor" class="flex flex-col items-center gap-8">
+            <!-- Halaman nomor akan muncul disini -->
+        </div>
+    </div>
+
     <script>
         const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbz8Ah8PwSvWESkiLhWe0v0iK_oyC2rBOUVARSXFSlFA97zQpDi1vpD2QfyaXZOaeTSKOw/exec"; 
         
@@ -721,6 +762,9 @@
         let daftarUmumStiker = [];
         let daftarUmumStikerDipilih = new Set();
 
+        // State Nomor Hadiah
+        let daftarNomorHadiah = [];
+
         // Fungsi merapikan penulisan nama (Huruf besar di awal tiap kata)
         function toTitleCase(str) {
             if(!str) return "";
@@ -729,7 +773,7 @@
 
         function switchTab(tabId) {
             templateAktif = tabId;
-            const tabs = ['penawaran', 'terimakasih', 'rekanan', 'terimakasih-rekanan', 'stiker', 'stiker-rekanan', 'amplop', 'amplop-rekanan', 'stiker-umum'];
+            const tabs = ['penawaran', 'terimakasih', 'rekanan', 'terimakasih-rekanan', 'stiker', 'stiker-rekanan', 'amplop', 'amplop-rekanan', 'stiker-umum', 'nomor'];
             
             tabs.forEach(id => {
                 const btn = document.getElementById(`tab-${id}`);
@@ -738,13 +782,15 @@
                 if (id === tabId) {
                     if (id.includes('amplop')) {
                         btn.classList.add('border-purple-600', 'text-purple-600', 'bg-purple-50');
+                    } else if (id === 'stiker-umum' || id === 'nomor') {
+                        btn.classList.add('border-indigo-600', 'text-indigo-600', 'bg-indigo-50');
                     } else {
                         btn.classList.add('border-green-600', 'text-green-600', 'bg-green-50');
                     }
                     btn.classList.remove('border-transparent', 'text-gray-500');
                     if(tmpl) tmpl.classList.remove('template-hidden');
                 } else {
-                    btn.classList.remove('border-green-600', 'text-green-600', 'bg-green-50', 'border-purple-600', 'text-purple-600', 'bg-purple-50');
+                    btn.classList.remove('border-green-600', 'text-green-600', 'bg-green-50', 'border-purple-600', 'text-purple-600', 'bg-purple-50', 'border-indigo-600', 'text-indigo-600', 'bg-indigo-50');
                     btn.classList.add('border-transparent', 'text-gray-500');
                     if(tmpl) tmpl.classList.add('template-hidden');
                 }
@@ -758,9 +804,11 @@
             document.getElementById('panel-stiker-umum').classList.add('template-hidden');
             document.getElementById('panel-stiker-layout').classList.add('template-hidden');
             document.getElementById('panel-amplop-layout').classList.add('template-hidden');
+            document.getElementById('panel-nomor').classList.add('template-hidden');
             
             document.getElementById('area-dokumen-a4').classList.add('template-hidden');
             document.getElementById('area-cetak-stiker').classList.add('template-hidden');
+            document.getElementById('area-cetak-nomor').classList.add('template-hidden');
             
             // Sembunyikan Semua Tombol A4
             document.getElementById('btn-print-dokumen').classList.add('hidden');
@@ -805,6 +853,10 @@
                 document.getElementById('panel-amplop-layout').classList.remove('template-hidden');
                 document.getElementById('area-dokumen-a4').classList.remove('template-hidden');
                 updateSuratRekanan();
+            } else if (tabId === 'nomor') {
+                document.getElementById('panel-nomor').classList.remove('template-hidden');
+                document.getElementById('area-cetak-nomor').classList.remove('template-hidden');
+                renderDaftarNomor();
             }
         }
 
@@ -1550,6 +1602,127 @@
             setTimeout(() => { 
                 document.title = originalTitle;
                 updatePreviewStikerUmum(true); 
+            }, 1000); 
+        }
+
+        /* ==========================================
+           LOGIKA CETAK NOMOR HADIAH (NO. 10)
+        ========================================== */
+        function tambahNomor() {
+            const teks = document.getElementById('input-nomor-teks').value.trim();
+            const qty = parseInt(document.getElementById('input-nomor-qty').value);
+            if(teks && qty > 0) {
+                const id = 'nomor_' + Date.now();
+                daftarNomorHadiah.push({ id, teks, qty });
+                document.getElementById('input-nomor-teks').value = '';
+                document.getElementById('input-nomor-qty').value = '1';
+                document.getElementById('input-nomor-teks').focus();
+                renderDaftarNomor();
+            }
+        }
+
+        function hapusNomor(id) {
+            daftarNomorHadiah = daftarNomorHadiah.filter(n => n.id !== id);
+            renderDaftarNomor();
+        }
+
+        function kosongkanNomor() {
+            daftarNomorHadiah = [];
+            renderDaftarNomor();
+        }
+
+        function renderDaftarNomor() {
+            const container = document.getElementById('daftar-antrean-nomor');
+            let total = 0;
+            if (daftarNomorHadiah.length === 0) {
+                container.innerHTML = '<div class="p-2 text-gray-500 text-center italic">Antrean kosong. Tambahkan nomor di atas.</div>';
+            } else {
+                let html = '';
+                daftarNomorHadiah.forEach(n => {
+                    total += n.qty;
+                    html += `
+                        <div class="flex items-center justify-between p-1 hover:bg-gray-100 border-b">
+                            <span><strong>${n.teks}</strong> (Cetak ${n.qty} lembar)</span>
+                            <button onclick="hapusNomor('${n.id}')" class="text-red-500 hover:text-red-700 text-xs px-2 font-bold">Hapus</button>
+                        </div>
+                    `;
+                });
+                container.innerHTML = html;
+            }
+            document.getElementById('nomor-total-count').innerText = `Total: ${total} Nomor`;
+            updatePreviewNomor();
+        }
+
+        function updatePreviewNomor() {
+            const wadah = document.getElementById('wadah-halaman-nomor');
+            
+            // Pecah (flatten) antrean qty menjadi satuan list
+            let flattened = [];
+            daftarNomorHadiah.forEach(n => {
+                for(let i=0; i<n.qty; i++) flattened.push(n.teks);
+            });
+
+            if(flattened.length === 0) {
+                wadah.innerHTML = `
+                    <div class="bg-white border-2 border-dashed border-gray-400 text-gray-400 flex items-center justify-center" style="width: 279.4mm; height: 215.9mm;">
+                        <p class="text-xl font-bold">Preview Kertas akan muncul disini</p>
+                    </div>
+                `;
+                return;
+            }
+
+            const chunk = 4; // 1 kertas Letter muat 4
+            const pages = Math.ceil(flattened.length / chunk);
+            let htmlPages = '';
+
+            for(let i=0; i<pages; i++) {
+                const items = flattened.slice(i*chunk, (i+1)*chunk);
+                
+                let cardsHtml = '';
+                items.forEach(num => {
+                    cardsHtml += `
+                        <div style="background-image: url('https://raw.githubusercontent.com/Blackhawk0243/sponsorship48/main/nomor%20hadiah.png'); background-size: 100% 100%; background-position: center; background-repeat: no-repeat; border-radius: 8px; display: flex; justify-content: center; align-items: center; overflow: hidden; border: 1px dashed #ccc;">
+                            <div style="font-size: 140px; font-weight: 900; font-family: 'Arial', sans-serif; color: #111; text-align: center; line-height: 1; padding-top: 15px;">
+                                ${num}
+                            </div>
+                        </div>
+                    `;
+                });
+
+                // Kertas Letter Landscape Grid 2x2
+                htmlPages += `
+                    <div class="print-kertas-nomor bg-white" style="width: 279.4mm; height: 215.9mm; padding: 10mm; display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr; gap: 5mm; box-shadow: 0 4px 6px rgba(0,0,0,0.1); margin-bottom: 20px;">
+                        ${cardsHtml}
+                    </div>
+                `;
+            }
+            wadah.innerHTML = htmlPages;
+        }
+
+        function cetakPDFNomor() {
+            if(daftarNomorHadiah.length === 0) {
+                alert("Antrean masih kosong! Tambahkan nomor terlebih dahulu.");
+                return;
+            }
+            
+            const originalTitle = document.title;
+            document.title = `Cetak_Nomor_Hadiah`;
+
+            document.getElementById('dynamic-print-style').innerHTML = `
+                @page { size: letter landscape; margin: 0; }
+                @media print {
+                    #area-cetak-nomor { padding: 0 !important; background-color: transparent !important; }
+                    #wadah-halaman-nomor { gap: 0 !important; margin: 0 !important; display: block !important; }
+                    .print-kertas-nomor { box-shadow: none !important; margin: 0 !important; page-break-inside: avoid; page-break-after: always; }
+                    .print-kertas-nomor:last-child { page-break-after: auto !important; }
+                    .print-kertas-nomor > div { border: none !important; } /* Sembunyikan garis border pembantu saat diprint */
+                }
+            `;
+
+            window.print();
+            
+            setTimeout(() => { 
+                document.title = originalTitle; 
             }, 1000); 
         }
     </script>

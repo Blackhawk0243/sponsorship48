@@ -472,7 +472,7 @@
                     <tr><td>Hal</td><td>:</td><td>Ucapan Terimakasih</td></tr>
                 </table>
                 <div class="whitespace-nowrap text-right">
-                    <p>Malang,.... September 2026</p>
+                    <p>Malang, 30 September 2026</p>
                 </div>
             </div>
 
@@ -647,7 +647,7 @@
                     <tr><td>Hal</td><td>:</td><td>Ucapan Terimakasih</td></tr>
                 </table>
                 <div class="whitespace-nowrap text-right">
-                    <p>Malang,.... September 2026</p>
+                    <p>Malang, 30 September 2026</p>
                 </div>
             </div>
 
@@ -1689,9 +1689,9 @@
                     `;
                 });
 
-                // Kertas Letter Landscape Grid 2x2
+                // Kertas Letter Landscape Grid 2x2 (Tanpa Padding agar FULL 1 Kertas)
                 htmlPages += `
-                    <div class="print-kertas-nomor bg-white" style="width: 279.4mm; height: 215.9mm; padding: 10mm; display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr; gap: 0; box-shadow: 0 4px 6px rgba(0,0,0,0.1); margin-bottom: 20px; box-sizing: border-box;">
+                    <div class="print-kertas-nomor bg-white" style="width: 279.4mm; height: 215.9mm; padding: 0; display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr; gap: 0; box-shadow: 0 4px 6px rgba(0,0,0,0.1); margin-bottom: 20px; box-sizing: border-box;">
                         ${cardsHtml}
                     </div>
                 `;
@@ -1708,15 +1708,25 @@
             const originalTitle = document.title;
             document.title = `Cetak_Nomor_Hadiah`;
 
+            // Memaksa browser print di ukuran eksak Letter Landscape (11 x 8.5 inci) tanpa margin sedikitpun
             document.getElementById('dynamic-print-style').innerHTML = `
-                @page { size: letter landscape; margin: 0; }
+                @page { size: 279.4mm 215.9mm; margin: 0; }
                 @media print {
-                    #area-cetak-nomor { padding: 0 !important; background-color: transparent !important; }
-                    #wadah-halaman-nomor { gap: 0 !important; margin: 0 !important; display: block !important; }
-                    .print-kertas-nomor { box-shadow: none !important; margin: 0 !important; page-break-inside: avoid; page-break-after: always; }
+                    html, body { margin: 0 !important; padding: 0 !important; width: 100% !important; height: 100% !important; }
+                    #area-cetak-nomor { padding: 0 !important; margin: 0 !important; background-color: transparent !important; }
+                    #wadah-halaman-nomor { gap: 0 !important; margin: 0 !important; display: block !important; width: 100% !important; }
+                    .print-kertas-nomor { 
+                        width: 279.4mm !important; 
+                        height: 215.9mm !important; 
+                        box-shadow: none !important; 
+                        margin: 0 !important; 
+                        padding: 0 !important; 
+                        page-break-inside: avoid; 
+                        page-break-after: always; 
+                    }
                     .print-kertas-nomor:last-child { page-break-after: auto !important; }
                     /* Menampilkan garis border hitam pekat saat diprint */
-                    .print-kertas-nomor > div { border: 1px solid black !important; } 
+                    .print-kertas-nomor > div { border: 1px solid black !important; box-sizing: border-box !important; } 
                 }
             `;
 

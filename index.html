@@ -1680,19 +1680,22 @@
                 
                 let cardsHtml = '';
                 items.forEach(num => {
+                    // Ukuran kartu di-lock mutlak 163mm x 105.5mm
                     cardsHtml += `
-                        <div style="background-image: url('https://raw.githubusercontent.com/Blackhawk0243/sponsorship48/main/nomor%20hadiah.png'); background-size: 100% 100%; background-position: center; background-repeat: no-repeat; display: flex; justify-content: center; align-items: center; overflow: hidden; border: 1px solid black; box-sizing: border-box;">
-                            <div style="font-size: 300px; font-weight: 900; font-family: 'Arial', sans-serif; color: #111; text-align: center; line-height: 1; padding-top: 15px;">
+                        <div style="background-image: url('https://raw.githubusercontent.com/Blackhawk0243/sponsorship48/main/nomor%20hadiah.png'); background-size: 100% 100%; background-position: center; background-repeat: no-repeat; display: flex; justify-content: center; align-items: center; overflow: hidden; border: 1px solid black; box-sizing: border-box; width: 163mm; height: 105.5mm;">
+                            <div style="font-size: 330px; font-weight: 900; font-family: 'Arial', sans-serif; color: #111; text-align: center; line-height: 1; padding-top: 15px;">
                                 ${num}
                             </div>
                         </div>
                     `;
                 });
 
-                // Kertas ukuran F4 Folio (330x215mm) Landscape Grid 2x2 (Dengan Padding / Jarak Tepi 2mm)
+                // Kertas 330x215. Kotak dalam 326x211 posisinya di-Center sehingga Margin Kiri-Kanan Atas-Bawah menjadi persis 2mm tak terganggu
                 htmlPages += `
-                    <div class="print-kertas-nomor bg-white" style="width: 330mm; height: 215mm; padding: 2mm; display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr; gap: 0; box-shadow: 0 4px 6px rgba(0,0,0,0.1); margin-bottom: 20px; box-sizing: border-box;">
-                        ${cardsHtml}
+                    <div class="print-kertas-nomor bg-white flex items-center justify-center mx-auto" style="width: 330mm; height: 215mm; box-shadow: 0 4px 6px rgba(0,0,0,0.1); margin-bottom: 20px; box-sizing: border-box;">
+                        <div style="width: 326mm; height: 211mm; display: grid; grid-template-columns: 163mm 163mm; grid-template-rows: 105.5mm 105.5mm; gap: 0; box-sizing: border-box;">
+                            ${cardsHtml}
+                        </div>
                     </div>
                 `;
             }
@@ -1708,7 +1711,7 @@
             const originalTitle = document.title;
             document.title = `Cetak_Nomor_Hadiah`;
 
-            // Memaksa browser print di ukuran eksak F4 Folio (330x215 mm) dengan margin aman 2mm
+            // Style print tanpa padding. Margin didapat dari kalkulasi flex box absolut di atas
             document.getElementById('dynamic-print-style').innerHTML = `
                 @page { size: 330mm 215mm; margin: 0; }
                 @media print {
@@ -1720,14 +1723,16 @@
                         height: 215mm !important; 
                         box-shadow: none !important; 
                         margin: 0 !important; 
-                        padding: 2mm !important; /* Margin aman dari tepi kertas printer */
+                        padding: 0 !important;
                         page-break-inside: avoid; 
                         page-break-after: always; 
                         box-sizing: border-box !important;
+                        display: flex !important;
+                        align-items: center !important;
+                        justify-content: center !important;
                     }
                     .print-kertas-nomor:last-child { page-break-after: auto !important; }
-                    /* Menampilkan garis border hitam pekat saat diprint */
-                    .print-kertas-nomor > div { border: 1px solid black !important; box-sizing: border-box !important; } 
+                    .print-kertas-nomor > div > div { border: 1px solid black !important; box-sizing: border-box !important; } 
                 }
             `;
 

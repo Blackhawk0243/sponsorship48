@@ -472,7 +472,7 @@
                     <tr><td>Hal</td><td>:</td><td>Ucapan Terimakasih</td></tr>
                 </table>
                 <div class="whitespace-nowrap text-right">
-                    <p>Malang,.... September 2026</p>
+                    <p>Malang, 30 September 2026</p>
                 </div>
             </div>
 
@@ -647,7 +647,7 @@
                     <tr><td>Hal</td><td>:</td><td>Ucapan Terimakasih</td></tr>
                 </table>
                 <div class="whitespace-nowrap text-right">
-                    <p>Malang,.... September 2026</p>
+                    <p>Malang, 30 September 2026</p>
                 </div>
             </div>
 
@@ -1682,14 +1682,14 @@
                 items.forEach(num => {
                     cardsHtml += `
                         <div style="background-image: url('https://raw.githubusercontent.com/Blackhawk0243/sponsorship48/main/nomor%20hadiah.png'); background-size: 100% 100%; background-position: center; background-repeat: no-repeat; display: flex; justify-content: center; align-items: center; overflow: hidden; border: 1px solid black; box-sizing: border-box;">
-                            <div style="font-size: 140px; font-weight: 900; font-family: 'Arial', sans-serif; color: #111; text-align: center; line-height: 1; padding-top: 15px;">
+                            <div style="font-size: 250px; font-weight: 900; font-family: 'Arial', sans-serif; color: #111; text-align: center; line-height: 1; padding-top: 15px;">
                                 ${num}
                             </div>
                         </div>
                     `;
                 });
 
-                // Kertas ukuran 330x215mm Landscape Grid 2x2 (Dengan Padding / Jarak Tepi 2mm)
+                // Kertas ukuran F4 Folio (330x215mm) Landscape Grid 2x2 (Dengan Padding / Jarak Tepi 2mm)
                 htmlPages += `
                     <div class="print-kertas-nomor bg-white" style="width: 330mm; height: 215mm; padding: 2mm; display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr; gap: 0; box-shadow: 0 4px 6px rgba(0,0,0,0.1); margin-bottom: 20px; box-sizing: border-box;">
                         ${cardsHtml}
@@ -1708,7 +1708,7 @@
             const originalTitle = document.title;
             document.title = `Cetak_Nomor_Hadiah`;
 
-            // Memaksa browser print di ukuran eksak 330x215 mm dengan margin aman di dalam kontainer
+            // Memaksa browser print di ukuran eksak F4 Folio (330x215 mm) dengan margin aman 2mm
             document.getElementById('dynamic-print-style').innerHTML = `
                 @page { size: 330mm 215mm; margin: 0; }
                 @media print {

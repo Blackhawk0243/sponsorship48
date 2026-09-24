@@ -1681,7 +1681,7 @@
                 let cardsHtml = '';
                 items.forEach(num => {
                     cardsHtml += `
-                        <div style="background-image: url('https://raw.githubusercontent.com/Blackhawk0243/sponsorship48/main/nomor%20hadiah.png'); background-size: 100% 100%; background-position: center; background-repeat: no-repeat; border-radius: 8px; display: flex; justify-content: center; align-items: center; overflow: hidden; border: 1px dashed #ccc;">
+                        <div style="background-image: url('https://raw.githubusercontent.com/Blackhawk0243/sponsorship48/main/nomor%20hadiah.png'); background-size: 100% 100%; background-position: center; background-repeat: no-repeat; display: flex; justify-content: center; align-items: center; overflow: hidden; border: 1px solid black; box-sizing: border-box;">
                             <div style="font-size: 140px; font-weight: 900; font-family: 'Arial', sans-serif; color: #111; text-align: center; line-height: 1; padding-top: 15px;">
                                 ${num}
                             </div>
@@ -1691,7 +1691,7 @@
 
                 // Kertas Letter Landscape Grid 2x2
                 htmlPages += `
-                    <div class="print-kertas-nomor bg-white" style="width: 279.4mm; height: 215.9mm; padding: 10mm; display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr; gap: 5mm; box-shadow: 0 4px 6px rgba(0,0,0,0.1); margin-bottom: 20px;">
+                    <div class="print-kertas-nomor bg-white" style="width: 279.4mm; height: 215.9mm; padding: 10mm; display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr; gap: 0; box-shadow: 0 4px 6px rgba(0,0,0,0.1); margin-bottom: 20px; box-sizing: border-box;">
                         ${cardsHtml}
                     </div>
                 `;
@@ -1715,7 +1715,8 @@
                     #wadah-halaman-nomor { gap: 0 !important; margin: 0 !important; display: block !important; }
                     .print-kertas-nomor { box-shadow: none !important; margin: 0 !important; page-break-inside: avoid; page-break-after: always; }
                     .print-kertas-nomor:last-child { page-break-after: auto !important; }
-                    .print-kertas-nomor > div { border: none !important; } /* Sembunyikan garis border pembantu saat diprint */
+                    /* Menampilkan garis border hitam pekat saat diprint */
+                    .print-kertas-nomor > div { border: 1px solid black !important; } 
                 }
             `;
 

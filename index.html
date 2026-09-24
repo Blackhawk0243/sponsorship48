@@ -1689,9 +1689,9 @@
                     `;
                 });
 
-                // Kertas ukuran 330x215mm Landscape Grid 2x2 (Dengan Padding / Jarak Tepi 15mm)
+                // Kertas ukuran 330x215mm Landscape Grid 2x2 (Dengan Padding / Jarak Tepi 2mm)
                 htmlPages += `
-                    <div class="print-kertas-nomor bg-white" style="width: 330mm; height: 215mm; padding: 15mm; display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr; gap: 0; box-shadow: 0 4px 6px rgba(0,0,0,0.1); margin-bottom: 20px; box-sizing: border-box;">
+                    <div class="print-kertas-nomor bg-white" style="width: 330mm; height: 215mm; padding: 2mm; display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr; gap: 0; box-shadow: 0 4px 6px rgba(0,0,0,0.1); margin-bottom: 20px; box-sizing: border-box;">
                         ${cardsHtml}
                     </div>
                 `;
@@ -1720,7 +1720,7 @@
                         height: 215mm !important; 
                         box-shadow: none !important; 
                         margin: 0 !important; 
-                        padding: 15mm !important; /* Margin aman dari tepi kertas printer */
+                        padding: 2mm !important; /* Margin aman dari tepi kertas printer */
                         page-break-inside: avoid; 
                         page-break-after: always; 
                         box-sizing: border-box !important;

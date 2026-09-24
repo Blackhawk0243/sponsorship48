@@ -1664,14 +1664,14 @@
 
             if(flattened.length === 0) {
                 wadah.innerHTML = `
-                    <div class="bg-white border-2 border-dashed border-gray-400 text-gray-400 flex items-center justify-center" style="width: 279.4mm; height: 215.9mm;">
+                    <div class="bg-white border-2 border-dashed border-gray-400 text-gray-400 flex items-center justify-center" style="width: 330mm; height: 215mm;">
                         <p class="text-xl font-bold">Preview Kertas akan muncul disini</p>
                     </div>
                 `;
                 return;
             }
 
-            const chunk = 4; // 1 kertas Letter muat 4
+            const chunk = 4; // 1 kertas muat 4
             const pages = Math.ceil(flattened.length / chunk);
             let htmlPages = '';
 
@@ -1689,9 +1689,9 @@
                     `;
                 });
 
-                // Kertas Letter Landscape Grid 2x2 (Tanpa Padding agar FULL 1 Kertas)
+                // Kertas ukuran 330x215mm Landscape Grid 2x2 (Dengan Padding / Jarak Tepi 15mm)
                 htmlPages += `
-                    <div class="print-kertas-nomor bg-white" style="width: 279.4mm; height: 215.9mm; padding: 0; display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr; gap: 0; box-shadow: 0 4px 6px rgba(0,0,0,0.1); margin-bottom: 20px; box-sizing: border-box;">
+                    <div class="print-kertas-nomor bg-white" style="width: 330mm; height: 215mm; padding: 15mm; display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr; gap: 0; box-shadow: 0 4px 6px rgba(0,0,0,0.1); margin-bottom: 20px; box-sizing: border-box;">
                         ${cardsHtml}
                     </div>
                 `;
@@ -1708,21 +1708,22 @@
             const originalTitle = document.title;
             document.title = `Cetak_Nomor_Hadiah`;
 
-            // Memaksa browser print di ukuran eksak Letter Landscape (11 x 8.5 inci) tanpa margin sedikitpun
+            // Memaksa browser print di ukuran eksak 330x215 mm dengan margin aman di dalam kontainer
             document.getElementById('dynamic-print-style').innerHTML = `
-                @page { size: 279.4mm 215.9mm; margin: 0; }
+                @page { size: 330mm 215mm; margin: 0; }
                 @media print {
                     html, body { margin: 0 !important; padding: 0 !important; width: 100% !important; height: 100% !important; }
                     #area-cetak-nomor { padding: 0 !important; margin: 0 !important; background-color: transparent !important; }
                     #wadah-halaman-nomor { gap: 0 !important; margin: 0 !important; display: block !important; width: 100% !important; }
                     .print-kertas-nomor { 
-                        width: 279.4mm !important; 
-                        height: 215.9mm !important; 
+                        width: 330mm !important; 
+                        height: 215mm !important; 
                         box-shadow: none !important; 
                         margin: 0 !important; 
-                        padding: 0 !important; 
+                        padding: 15mm !important; /* Margin aman dari tepi kertas printer */
                         page-break-inside: avoid; 
                         page-break-after: always; 
+                        box-sizing: border-box !important;
                     }
                     .print-kertas-nomor:last-child { page-break-after: auto !important; }
                     /* Menampilkan garis border hitam pekat saat diprint */

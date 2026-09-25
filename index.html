@@ -1871,9 +1871,9 @@
             let htmlMassal = '';
             
             hadiahUtama.forEach((item, index) => {
-                const isLast = index === hadiahUtama.length - 1;
-                // page-break agar tiap hadiah ganti halaman baru di printer (kecuali yang terakhir)
-                const pageBreakClass = isLast ? '' : 'page-break';
+                // PERBAIKAN: page-break tidak diterapkan pada index 0 (halaman pertama), 
+                // tapi diterapkan untuk halaman kedua dan seterusnya agar selalu pindah kertas baru.
+                const pageBreakClass = index === 0 ? '' : 'page-break';
                 
                 htmlMassal += `
                 <div class="print-container ${pageBreakClass}">

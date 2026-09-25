@@ -76,9 +76,8 @@
             .kertas-stiker {
                 box-shadow: none !important;
                 margin: 0 !important;
-                page-break-after: always; /* Pemisah kertas stiker */
+                page-break-after: always;
             }
-            /* PERBAIKAN BUG HALAMAN KOSONG TERAKHIR */
             .kertas-stiker:last-child {
                 page-break-after: auto; 
             }
@@ -162,7 +161,6 @@
                 </select>
             </div>
             
-            <!-- Tombol Cetak Dokumen A4 (Disembunyikan saat tab amplop aktif) -->
             <button onclick="cetakDokumenA4()" id="btn-print-dokumen" class="bg-green-600 text-white font-bold py-3 px-4 rounded hover:bg-green-700 transition mt-2 w-full opacity-50 cursor-not-allowed flex items-center justify-center gap-2" disabled>
                 Cetak Dokumen PDF
             </button>
@@ -176,13 +174,12 @@
                 <input type="text" id="input-perusahaan" oninput="updateSuratRekanan()" placeholder="Contoh: Dian Print" class="border border-gray-400 p-3 rounded w-full bg-white font-medium text-lg">
             </div>
             
-            <!-- Tombol Cetak Dokumen A4 Rekanan (Disembunyikan saat tab amplop aktif) -->
             <button onclick="cetakDokumenA4()" id="btn-print-rekanan" class="bg-green-600 text-white font-bold py-3 px-4 rounded hover:bg-green-700 transition mt-2 w-full opacity-50 cursor-not-allowed flex items-center justify-center gap-2" disabled>
                 Cetak Dokumen PDF
             </button>
         </div>
 
-        <!-- KONTROL PENGATURAN UKURAN AMPLOP (TAB 6 & 7) -->
+        <!-- KONTROL PENGATURAN UKURAN AMPLOP (TAB 7 & 8) -->
         <div id="panel-amplop-layout" class="flex flex-col gap-4 template-hidden mt-2">
             <div class="bg-purple-50 p-4 rounded border border-purple-200">
                 <p class="font-bold text-sm text-purple-900 mb-3 border-b border-purple-200 pb-1">Pengaturan Ukuran Amplop (mm)</p>
@@ -204,7 +201,7 @@
             </button>
         </div>
 
-        <!-- KONTROL UNTUK TAB 4 (STIKER LABEL WALI MURID) -->
+        <!-- KONTROL UNTUK TAB 5 (STIKER LABEL WALI MURID) -->
         <div id="panel-stiker" class="flex flex-col gap-4 template-hidden">
             <div class="bg-blue-50 p-4 rounded border border-blue-200">
                 <div class="flex justify-between items-end mb-2">
@@ -232,7 +229,7 @@
             </div>
         </div>
 
-        <!-- KONTROL UNTUK TAB 5 (STIKER LABEL REKANAN) -->
+        <!-- KONTROL UNTUK TAB 6 (STIKER LABEL REKANAN) -->
         <div id="panel-stiker-rekanan" class="flex flex-col gap-4 template-hidden">
             <div class="bg-yellow-50 p-4 rounded border border-yellow-200">
                 <label class="font-bold text-sm text-gray-700 block mb-1">Tambah Daftar Perusahaan (Manual):</label>
@@ -275,7 +272,7 @@
             </div>
         </div>
 
-        <!-- PENGATURAN LAYOUT STIKER & TOMBOL CETAK (SHARED TABS 4 & 5) -->
+        <!-- PENGATURAN LAYOUT STIKER & TOMBOL CETAK (SHARED TABS 5, 6, 9) -->
         <div id="panel-stiker-layout" class="flex flex-col gap-4 template-hidden mt-2">
             <div class="bg-gray-50 p-4 rounded border border-gray-300">
                 <p class="font-bold text-sm text-gray-800 mb-3 border-b pb-1">Pengaturan Layout Kertas (Ukuran Label 103 / mm)</p>
@@ -306,7 +303,7 @@
         <!-- KONTROL UNTUK TAB 10 (NOMOR HADIAH) -->
         <div id="panel-nomor" class="flex flex-col gap-4 template-hidden">
             <div class="bg-indigo-50 p-4 rounded border border-indigo-200">
-                <p class="text-sm font-bold text-indigo-800 mb-2">Antrean Cetak Nomor Hadiah (Kertas Letter / 4 per Halaman)</p>
+                <p class="text-sm font-bold text-indigo-800 mb-2">Antrean Cetak Nomor Hadiah (Kertas F4 Folio / 4 per Halaman)</p>
                 <p class="text-xs text-indigo-600 mb-4">Sistem antrean ini mencegah pemborosan kertas. Anda dapat mencampur berbagai nomor sekaligus. Web akan otomatis memadatkannya menjadi 4 kotak per halaman.</p>
                 
                 <div class="flex flex-col md:flex-row gap-2 mb-4">
@@ -337,7 +334,7 @@
         <!-- KONTROL UNTUK TAB 11 (BA HADIAH) -->
         <div id="panel-ba-hadiah" class="flex flex-col gap-4 template-hidden">
             <div class="bg-teal-50 p-4 rounded border border-teal-200">
-                <p class="text-sm font-bold text-teal-800 mb-4">Input Data Penerima Hadiah</p>
+                <p class="text-sm font-bold text-teal-800 mb-4">Input Data Penerima Hadiah (Live Preview)</p>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
                     <div><label class="font-bold text-xs text-gray-700">Barang Hadiah:</label><input type="text" id="in-ba-hadiah" oninput="updateBAHadiah()" placeholder="Misal: MESIN CUCI TOSHIBA" class="border p-2.5 rounded w-full bg-white text-sm"></div>
                     <div><label class="font-bold text-xs text-gray-700">Nama Pemenang:</label><input type="text" id="in-ba-nama" oninput="updateBAHadiah()" placeholder="Sesuai KTP" class="border p-2.5 rounded w-full bg-white text-sm"></div>
@@ -354,21 +351,21 @@
 
     </div>
 
-    <!-- AREA DOKUMEN A4 & AMPLOP (MENU 1, 2, 3, 6, 7) -->
+    <!-- AREA DOKUMEN A4 & AMPLOP (MENU 1, 2, 3, 4, 7, 8, 11) -->
     <div id="area-dokumen-a4">
         <!-- TEMPLATE 1: SURAT PENAWARAN (WALI MURID) -->
         <div id="template-penawaran" class="font-serif text-black">
             <!-- Halaman 1 -->
             <div class="print-container">
                 <div class="flex justify-between items-center border-b-[4px] border-black pb-1 mb-[2px]">
-                    <img src="https://raw.githubusercontent.com/Blackhawk0243/sponsorship48/main/logo-min.png" class="w-24 h-auto object-contain shrink-0">
+                    <img src="https://raw.githubusercontent.com/Blackhawk0243/sponsorship48/main/logo-min.png" class="w-24 h-auto object-contain shrink-0" onerror="this.src='https://placehold.co/100x100?text=LOGO'">
                     <div class="text-center flex-1 px-2 text-black">
                         <h1 class="text-[34px] font-bold tracking-wide" style="line-height: 1.1;">HUT KE-48</h1>
                         <h2 class="text-[15px] font-bold mt-1 tracking-wide" style="font-family: Arial, sans-serif;">MIN 1 KOTA MALANG</h2>
                         <h3 class="text-[14px] font-bold mt-0" style="font-family: Arial, sans-serif;">TAHUN PELAJARAN 2026/2027</h3>
                         <p class="text-[12px] mt-0" style="font-family: Arial, sans-serif;">Jln. Bandung 7C, Telp.& Fax. (0341) 551176 – 565642 Malang</p>
                     </div>
-                    <img src="https://raw.githubusercontent.com/Blackhawk0243/sponsorship48/main/logo-hut.png" class="w-32 h-auto object-contain shrink-0">
+                    <img src="https://raw.githubusercontent.com/Blackhawk0243/sponsorship48/main/logo-hut.png" class="w-32 h-auto object-contain shrink-0" onerror="this.src='https://placehold.co/120x100?text=HUT'">
                 </div>
                 <div class="border-b-[1px] border-black mb-5"></div>
 
@@ -402,7 +399,7 @@
                             <p>Mengetahui,</p>
                             <p>Kepala Madrasah,</p>
                             <div class="h-20 flex items-center justify-center relative my-1">
-                                <img src="https://raw.githubusercontent.com/Blackhawk0243/sponsorship48/main/ttd-kepala.png" class="absolute w-36 object-contain z-10 mix-blend-multiply">
+                                <img src="https://raw.githubusercontent.com/Blackhawk0243/sponsorship48/main/ttd-kepala.png" class="absolute w-36 object-contain z-10 mix-blend-multiply" onerror="this.style.display='none'">
                             </div>
                             <p class="font-bold underline mb-0">Hj. Siti Aisah, S.Ag., M.Pd</p>
                             <p class="text-xs">NIP. 197410161997032002</p>
@@ -424,14 +421,14 @@
             <!-- Halaman 2 Berita Acara -->
             <div class="print-container page-break">
                 <div class="flex justify-between items-center border-b-[4px] border-black pb-1 mb-[2px]">
-                    <img src="https://raw.githubusercontent.com/Blackhawk0243/sponsorship48/main/logo-min.png" class="w-24 h-auto object-contain shrink-0">
+                    <img src="https://raw.githubusercontent.com/Blackhawk0243/sponsorship48/main/logo-min.png" class="w-24 h-auto object-contain shrink-0" onerror="this.src='https://placehold.co/100x100?text=LOGO'">
                     <div class="text-center flex-1 px-2 text-black">
                         <h1 class="text-[34px] font-bold tracking-wide" style="line-height: 1.1;">HUT KE-48</h1>
                         <h2 class="text-[15px] font-bold mt-1 tracking-wide" style="font-family: Arial, sans-serif;">MIN 1 KOTA MALANG</h2>
                         <h3 class="text-[14px] font-bold mt-0" style="font-family: Arial, sans-serif;">TAHUN PELAJARAN 2026/2027</h3>
                         <p class="text-[12px] mt-0" style="font-family: Arial, sans-serif;">Jln. Bandung 7C, Telp.& Fax. (0341) 551176 – 565642 Malang</p>
                     </div>
-                    <img src="https://raw.githubusercontent.com/Blackhawk0243/sponsorship48/main/logo-hut.png" class="w-32 h-auto object-contain shrink-0">
+                    <img src="https://raw.githubusercontent.com/Blackhawk0243/sponsorship48/main/logo-hut.png" class="w-32 h-auto object-contain shrink-0" onerror="this.src='https://placehold.co/120x100?text=HUT'">
                 </div>
                 <div class="border-b-[1px] border-black mb-6"></div>
 
@@ -476,14 +473,14 @@
         <!-- TEMPLATE 2: SURAT UCAPAN TERIMA KASIH (1 HALAMAN) -->
         <div id="template-terimakasih" class="print-container font-serif text-black template-hidden">
             <div class="flex justify-between items-center border-b-[4px] border-black pb-1 mb-[2px]">
-                <img src="https://raw.githubusercontent.com/Blackhawk0243/sponsorship48/main/logo-min.png" class="w-24 h-auto object-contain shrink-0">
+                <img src="https://raw.githubusercontent.com/Blackhawk0243/sponsorship48/main/logo-min.png" class="w-24 h-auto object-contain shrink-0" onerror="this.src='https://placehold.co/100x100?text=LOGO'">
                 <div class="text-center flex-1 px-2 text-black">
                     <h1 class="text-[34px] font-bold tracking-wide" style="line-height: 1.1;">HUT KE-48</h1>
                     <h2 class="text-[15px] font-bold mt-1 tracking-wide" style="font-family: Arial, sans-serif;">MIN 1 KOTA MALANG</h2>
                     <h3 class="text-[14px] font-bold mt-0" style="font-family: Arial, sans-serif;">TAHUN PELAJARAN 2026/2027</h3>
                     <p class="text-[12px] mt-0" style="font-family: Arial, sans-serif;">Jln. Bandung 7C, Telp.& Fax. (0341) 551176 – 565642 Malang</p>
                 </div>
-                <img src="https://raw.githubusercontent.com/Blackhawk0243/sponsorship48/main/logo-hut.png" class="w-32 h-auto object-contain shrink-0">
+                <img src="https://raw.githubusercontent.com/Blackhawk0243/sponsorship48/main/logo-hut.png" class="w-32 h-auto object-contain shrink-0" onerror="this.src='https://placehold.co/120x100?text=HUT'">
             </div>
             <div class="border-b-[1px] border-black mb-6"></div>
 
@@ -516,7 +513,7 @@
                     <p>Mengetahui</p>
                     <p>Kepala Madrasah,</p>
                     <div class="h-24 flex items-center justify-center relative my-1">
-                        <img src="https://raw.githubusercontent.com/Blackhawk0243/sponsorship48/main/ttd-kepala.png" class="absolute w-36 object-contain z-10 mix-blend-multiply">
+                        <img src="https://raw.githubusercontent.com/Blackhawk0243/sponsorship48/main/ttd-kepala.png" class="absolute w-36 object-contain z-10 mix-blend-multiply" onerror="this.style.display='none'">
                     </div>
                     <p class="font-bold underline mb-0">Hj. Siti Aisah, S.Ag., M.Pd</p>
                     <p class="text-xs">NIP. 197410161997032002</p>
@@ -538,14 +535,14 @@
             <!-- Halaman 1 Rekanan -->
             <div class="print-container">
                 <div class="flex justify-between items-center border-b-[4px] border-black pb-1 mb-[2px]">
-                    <img src="https://raw.githubusercontent.com/Blackhawk0243/sponsorship48/main/logo-min.png" class="w-24 h-auto object-contain shrink-0">
+                    <img src="https://raw.githubusercontent.com/Blackhawk0243/sponsorship48/main/logo-min.png" class="w-24 h-auto object-contain shrink-0" onerror="this.src='https://placehold.co/100x100?text=LOGO'">
                     <div class="text-center flex-1 px-2 text-black">
                         <h1 class="text-[34px] font-bold tracking-wide" style="line-height: 1.1;">HUT KE-48</h1>
                         <h2 class="text-[15px] font-bold mt-1 tracking-wide" style="font-family: Arial, sans-serif;">MIN 1 KOTA MALANG</h2>
                         <h3 class="text-[14px] font-bold mt-0" style="font-family: Arial, sans-serif;">TAHUN PELAJARAN 2026/2027</h3>
                         <p class="text-[12px] mt-0" style="font-family: Arial, sans-serif;">Jln. Bandung 7C, Telp.& Fax. (0341) 551176 – 565642 Malang</p>
                     </div>
-                    <img src="https://raw.githubusercontent.com/Blackhawk0243/sponsorship48/main/logo-hut.png" class="w-32 h-auto object-contain shrink-0">
+                    <img src="https://raw.githubusercontent.com/Blackhawk0243/sponsorship48/main/logo-hut.png" class="w-32 h-auto object-contain shrink-0" onerror="this.src='https://placehold.co/120x100?text=HUT'">
                 </div>
                 <div class="border-b-[1px] border-black mb-5"></div>
 
@@ -578,7 +575,7 @@
                             <p>Mengetahui,</p>
                             <p>Kepala Madrasah,</p>
                             <div class="h-20 flex items-center justify-center relative my-1">
-                                <img src="https://raw.githubusercontent.com/Blackhawk0243/sponsorship48/main/ttd-kepala.png" class="absolute w-36 object-contain z-10 mix-blend-multiply">
+                                <img src="https://raw.githubusercontent.com/Blackhawk0243/sponsorship48/main/ttd-kepala.png" class="absolute w-36 object-contain z-10 mix-blend-multiply" onerror="this.style.display='none'">
                             </div>
                             <p class="font-bold underline mb-0">Hj. Siti Aisah, S.Ag., M.Pd</p>
                             <p class="text-xs">NIP. 197410161997032002</p>
@@ -599,14 +596,14 @@
             <!-- Halaman 2 Rekanan (Berita Acara) -->
             <div class="print-container page-break">
                 <div class="flex justify-between items-center border-b-[4px] border-black pb-1 mb-[2px]">
-                    <img src="https://raw.githubusercontent.com/Blackhawk0243/sponsorship48/main/logo-min.png" class="w-24 h-auto object-contain shrink-0">
+                    <img src="https://raw.githubusercontent.com/Blackhawk0243/sponsorship48/main/logo-min.png" class="w-24 h-auto object-contain shrink-0" onerror="this.src='https://placehold.co/100x100?text=LOGO'">
                     <div class="text-center flex-1 px-2 text-black">
                         <h1 class="text-[34px] font-bold tracking-wide" style="line-height: 1.1;">HUT KE-48</h1>
                         <h2 class="text-[15px] font-bold mt-1 tracking-wide" style="font-family: Arial, sans-serif;">MIN 1 KOTA MALANG</h2>
                         <h3 class="text-[14px] font-bold mt-0" style="font-family: Arial, sans-serif;">TAHUN PELAJARAN 2026/2027</h3>
                         <p class="text-[12px] mt-0" style="font-family: Arial, sans-serif;">Jln. Bandung 7C, Telp.& Fax. (0341) 551176 – 565642 Malang</p>
                     </div>
-                    <img src="https://raw.githubusercontent.com/Blackhawk0243/sponsorship48/main/logo-hut.png" class="w-32 h-auto object-contain shrink-0">
+                    <img src="https://raw.githubusercontent.com/Blackhawk0243/sponsorship48/main/logo-hut.png" class="w-32 h-auto object-contain shrink-0" onerror="this.src='https://placehold.co/120x100?text=HUT'">
                 </div>
                 <div class="border-b-[1px] border-black mb-6"></div>
 
@@ -651,14 +648,14 @@
         <!-- TEMPLATE 4: SURAT UCAPAN TERIMA KASIH REKANAN (1 HALAMAN) -->
         <div id="template-terimakasih-rekanan" class="print-container font-serif text-black template-hidden">
             <div class="flex justify-between items-center border-b-[4px] border-black pb-1 mb-[2px]">
-                <img src="https://raw.githubusercontent.com/Blackhawk0243/sponsorship48/main/logo-min.png" class="w-24 h-auto object-contain shrink-0">
+                <img src="https://raw.githubusercontent.com/Blackhawk0243/sponsorship48/main/logo-min.png" class="w-24 h-auto object-contain shrink-0" onerror="this.src='https://placehold.co/100x100?text=LOGO'">
                 <div class="text-center flex-1 px-2 text-black">
                     <h1 class="text-[34px] font-bold tracking-wide" style="line-height: 1.1;">HUT KE-48</h1>
                     <h2 class="text-[15px] font-bold mt-1 tracking-wide" style="font-family: Arial, sans-serif;">MIN 1 KOTA MALANG</h2>
                     <h3 class="text-[14px] font-bold mt-0" style="font-family: Arial, sans-serif;">TAHUN PELAJARAN 2026/2027</h3>
                     <p class="text-[12px] mt-0" style="font-family: Arial, sans-serif;">Jln. Bandung 7C, Telp.& Fax. (0341) 551176 – 565642 Malang</p>
                 </div>
-                <img src="https://raw.githubusercontent.com/Blackhawk0243/sponsorship48/main/logo-hut.png" class="w-32 h-auto object-contain shrink-0">
+                <img src="https://raw.githubusercontent.com/Blackhawk0243/sponsorship48/main/logo-hut.png" class="w-32 h-auto object-contain shrink-0" onerror="this.src='https://placehold.co/120x100?text=HUT'">
             </div>
             <div class="border-b-[1px] border-black mb-6"></div>
 
@@ -690,7 +687,7 @@
                     <p>Mengetahui</p>
                     <p>Kepala Madrasah,</p>
                     <div class="h-24 flex items-center justify-center relative my-1">
-                        <img src="https://raw.githubusercontent.com/Blackhawk0243/sponsorship48/main/ttd-kepala.png" class="absolute w-36 object-contain z-10 mix-blend-multiply">
+                        <img src="https://raw.githubusercontent.com/Blackhawk0243/sponsorship48/main/ttd-kepala.png" class="absolute w-36 object-contain z-10 mix-blend-multiply" onerror="this.style.display='none'">
                     </div>
                     <p class="font-bold underline mb-0">Hj. Siti Aisah, S.Ag., M.Pd</p>
                     <p class="text-xs">NIP. 197410161997032002</p>
@@ -707,17 +704,17 @@
             </div>
         </div>
 
-        <!-- TEMPLATE 6: AMPLOP WALI MURID -->
+        <!-- TEMPLATE 7: AMPLOP WALI MURID -->
         <div id="template-amplop" class="print-container-amplop font-serif text-black template-hidden" style="width: 230mm; height: 110mm;">
             <div class="flex justify-between items-center border-b-[4px] border-black pb-1 mb-[2px]">
-                <img src="https://raw.githubusercontent.com/Blackhawk0243/sponsorship48/main/logo-min.png" class="w-20 h-auto object-contain shrink-0">
+                <img src="https://raw.githubusercontent.com/Blackhawk0243/sponsorship48/main/logo-min.png" class="w-20 h-auto object-contain shrink-0" onerror="this.src='https://placehold.co/100x100?text=LOGO'">
                 <div class="text-center flex-1 px-2 text-black">
                     <h1 class="text-[28px] font-bold tracking-wide" style="line-height: 1.1;">HUT KE-48</h1>
                     <h2 class="text-[13px] font-bold mt-1 tracking-wide" style="font-family: Arial, sans-serif;">MIN 1 KOTA MALANG</h2>
                     <h3 class="text-[12px] font-bold mt-0" style="font-family: Arial, sans-serif;">TAHUN PELAJARAN 2026/2027</h3>
                     <p class="text-[10px] mt-0" style="font-family: Arial, sans-serif;">Jln. Bandung 7C, Telp.& Fax. (0341) 551176 – 565642 Malang</p>
                 </div>
-                <img src="https://raw.githubusercontent.com/Blackhawk0243/sponsorship48/main/logo-hut.png" class="w-28 h-auto object-contain shrink-0">
+                <img src="https://raw.githubusercontent.com/Blackhawk0243/sponsorship48/main/logo-hut.png" class="w-28 h-auto object-contain shrink-0" onerror="this.src='https://placehold.co/120x100?text=HUT'">
             </div>
             <div class="border-b-[1px] border-black mb-5"></div>
 
@@ -729,17 +726,17 @@
             </div>
         </div>
 
-        <!-- TEMPLATE 7: AMPLOP REKANAN -->
+        <!-- TEMPLATE 8: AMPLOP REKANAN -->
         <div id="template-amplop-rekanan" class="print-container-amplop font-serif text-black template-hidden" style="width: 230mm; height: 110mm;">
             <div class="flex justify-between items-center border-b-[4px] border-black pb-1 mb-[2px]">
-                <img src="https://raw.githubusercontent.com/Blackhawk0243/sponsorship48/main/logo-min.png" class="w-20 h-auto object-contain shrink-0">
+                <img src="https://raw.githubusercontent.com/Blackhawk0243/sponsorship48/main/logo-min.png" class="w-20 h-auto object-contain shrink-0" onerror="this.src='https://placehold.co/100x100?text=LOGO'">
                 <div class="text-center flex-1 px-2 text-black">
                     <h1 class="text-[28px] font-bold tracking-wide" style="line-height: 1.1;">HUT KE-48</h1>
                     <h2 class="text-[13px] font-bold mt-1 tracking-wide" style="font-family: Arial, sans-serif;">MIN 1 KOTA MALANG</h2>
                     <h3 class="text-[12px] font-bold mt-0" style="font-family: Arial, sans-serif;">TAHUN PELAJARAN 2026/2027</h3>
                     <p class="text-[10px] mt-0" style="font-family: Arial, sans-serif;">Jln. Bandung 7C, Telp.& Fax. (0341) 551176 – 565642 Malang</p>
                 </div>
-                <img src="https://raw.githubusercontent.com/Blackhawk0243/sponsorship48/main/logo-hut.png" class="w-28 h-auto object-contain shrink-0">
+                <img src="https://raw.githubusercontent.com/Blackhawk0243/sponsorship48/main/logo-hut.png" class="w-28 h-auto object-contain shrink-0" onerror="this.src='https://placehold.co/120x100?text=HUT'">
             </div>
             <div class="border-b-[1px] border-black mb-5"></div>
 
@@ -751,17 +748,17 @@
         </div>
 
         <!-- TEMPLATE 11: BERITA ACARA PENYERAHAN HADIAH -->
-        <div id="template-ba-hadiah" class="print-container font-serif text-black template-hidden">
+        <div id="template-bahadiah" class="print-container font-serif text-black template-hidden">
             <!-- Kop Surat Sesuai Penawaran -->
             <div class="flex justify-between items-center border-b-[4px] border-black pb-1 mb-[2px]">
-                <img src="https://raw.githubusercontent.com/Blackhawk0243/sponsorship48/main/logo-min.png" class="w-24 h-auto object-contain shrink-0">
+                <img src="https://raw.githubusercontent.com/Blackhawk0243/sponsorship48/main/logo-min.png" class="w-24 h-auto object-contain shrink-0" onerror="this.src='https://placehold.co/100x100?text=LOGO'">
                 <div class="text-center flex-1 px-2 text-black">
                     <h1 class="text-[34px] font-bold tracking-wide" style="line-height: 1.1;">HUT KE-48</h1>
                     <h2 class="text-[15px] font-bold mt-1 tracking-wide" style="font-family: Arial, sans-serif;">MIN 1 KOTA MALANG</h2>
                     <h3 class="text-[14px] font-bold mt-0" style="font-family: Arial, sans-serif;">TAHUN PELAJARAN 2026/2027</h3>
                     <p class="text-[12px] mt-0" style="font-family: Arial, sans-serif;">Jln. Bandung 7C, Telp.& Fax. (0341) 551176 – 565642 Malang</p>
                 </div>
-                <img src="https://raw.githubusercontent.com/Blackhawk0243/sponsorship48/main/logo-hut.png" class="w-32 h-auto object-contain shrink-0">
+                <img src="https://raw.githubusercontent.com/Blackhawk0243/sponsorship48/main/logo-hut.png" class="w-32 h-auto object-contain shrink-0" onerror="this.src='https://placehold.co/120x100?text=HUT'">
             </div>
             <div class="border-b-[1px] border-black mb-10"></div>
 
@@ -772,15 +769,15 @@
             <div class="text-[15px] text-justify leading-relaxed space-y-4 px-4">
                 <p>Yang bertanda tangan di bawah ini, Ketua Panitia HUT ke-48 MIN 1 Kota Malang, pada hari ini Minggu, 27 September 2026 akan menyerahkan hadiah undian jalan sehat berupa :</p>
                 
-                <p class="text-center font-bold text-xl uppercase my-6" id="out-ba-hadiah">......................................................</p>
+                <p class="text-center font-bold text-2xl uppercase my-6" id="out-ba-hadiah">......................................................</p>
                 
-                <p>kepada</p>
+                <p class="text-center">kepada</p>
                 
                 <table class="w-full ml-4 mb-6">
-                    <tr class="h-9"><td class="w-48 align-bottom pb-1">Nama</td><td class="w-4 align-bottom pb-1">:</td><td class="align-bottom pb-1 font-bold" id="out-ba-nama">......................................................</td></tr>
-                    <tr class="h-9"><td class="align-bottom pb-1">NIK</td><td class="align-bottom pb-1">:</td><td class="align-bottom pb-1" id="out-ba-nik">......................................................</td></tr>
-                    <tr class="h-9"><td class="align-bottom pb-1">HP</td><td class="align-bottom pb-1">:</td><td class="align-bottom pb-1" id="out-ba-hp">......................................................</td></tr>
-                    <tr class="h-9"><td class="align-top">Alamat sesuai KTP</td><td class="align-top">:</td><td class="align-top" id="out-ba-alamat">......................................................</td></tr>
+                    <tr class="h-9"><td class="w-48 align-bottom pb-1">Nama</td><td class="w-4 align-bottom pb-1">:</td><td class="align-bottom pb-1 font-bold" id="out-ba-nama">____________________________________________</td></tr>
+                    <tr class="h-9"><td class="align-bottom pb-1">NIK</td><td class="align-bottom pb-1">:</td><td class="align-bottom pb-1" id="out-ba-nik">____________________________________________</td></tr>
+                    <tr class="h-9"><td class="align-bottom pb-1">HP</td><td class="align-bottom pb-1">:</td><td class="align-bottom pb-1" id="out-ba-hp">____________________________________________</td></tr>
+                    <tr class="h-9"><td class="align-top">Alamat sesuai KTP</td><td class="align-top">:</td><td class="align-top" id="out-ba-alamat">_____________________________________________</td></tr>
                 </table>
 
                 <p>Barang dalam kondisi baru dan tersegel dengan baik dan bersedia menyelesaikan administrasinya*. Kerusakan yang terjadi setelah barang diserahkan menjadi tanggung jawab penerima.</p>
@@ -807,7 +804,7 @@
 
             <div class="mt-16 text-[13px] border-t border-gray-400 pt-2 px-4 leading-relaxed">
                 <p>*Pajak hadiah 15%, sebesar <span class="font-bold" id="out-ba-pajak">.........................</span> bisa dibayarkan secara cash atau transfer ke rekening panitia:</p>
-                <p class="font-bold mt-1">BRI: 0051 0124 6255 507 atas nama: Bu Novida Indrawati</p>
+                <p class="font-bold mt-1">BRI: 0051 0124 6266 508 atas nama: Siti Aliyah</p>
             </div>
         </div>
     </div>
@@ -815,14 +812,14 @@
     <!-- AREA CETAK STIKER 103 -->
     <div id="area-cetak-stiker" class="template-hidden bg-gray-300 p-4 font-serif">
         <div id="wadah-halaman-stiker" class="flex flex-col items-center gap-8">
-            <!-- Halaman stiker hasil render MS Word Style akan muncul disini -->
+            <!-- Halaman stiker hasil render JS akan muncul disini -->
         </div>
     </div>
 
-    <!-- AREA CETAK NOMOR HADIAH -->
+    <!-- AREA CETAK NOMOR HADIAH (NO. 10) -->
     <div id="area-cetak-nomor" class="template-hidden bg-gray-300 p-4">
         <div id="wadah-halaman-nomor" class="flex flex-col items-center gap-8">
-            <!-- Halaman nomor akan muncul disini -->
+            <!-- Halaman nomor hadiah akan dirender disini -->
         </div>
     </div>
 
@@ -1091,9 +1088,6 @@
             btnPrintAmp.disabled = true; btnPrintAmp.classList.add('opacity-50', 'cursor-not-allowed');
         }
 
-        /* ==========================================
-           FUNGSI CETAK DOKUMEN A4
-        ========================================== */
         function cetakDokumenA4() {
             let docName = "Surat";
             let targetName = "";
@@ -1124,9 +1118,6 @@
             setTimeout(() => { document.title = originalTitle; }, 1000);
         }
 
-        /* ==========================================
-           LOGIKA BA HADIAH (NO 11)
-        ========================================== */
         function updateBAHadiah() {
             const hdh = document.getElementById('in-ba-hadiah').value.trim();
             const nm = document.getElementById('in-ba-nama').value.trim();
@@ -1136,24 +1127,21 @@
             const pjk = document.getElementById('in-ba-pajak').value.trim();
 
             document.getElementById('out-ba-hadiah').innerText = hdh || "......................................................";
-            document.getElementById('out-ba-nama').innerText = nm || "......................................................";
-            document.getElementById('out-ba-nik').innerText = nik || "......................................................";
-            document.getElementById('out-ba-hp').innerText = hp || "......................................................";
-            document.getElementById('out-ba-alamat').innerText = almt || "......................................................";
+            document.getElementById('out-ba-nama').innerText = nm || "____________________________________________";
+            document.getElementById('out-ba-nik').innerText = nik || "____________________________________________";
+            document.getElementById('out-ba-hp').innerText = hp || "____________________________________________";
+            document.getElementById('out-ba-alamat').innerText = almt || "_____________________________________________";
             document.getElementById('out-ba-sign-nama').innerText = nm || "__________________________";
             document.getElementById('out-ba-pajak').innerText = pjk || ".........................";
 
             const btnPrint = document.getElementById('btn-print-bahadiah');
-            if (hdh && nm) {
+            if (hdh || nm || nik || hp || almt) {
                 btnPrint.disabled = false; btnPrint.classList.remove('opacity-50', 'cursor-not-allowed');
             } else {
                 btnPrint.disabled = true; btnPrint.classList.add('opacity-50', 'cursor-not-allowed');
             }
         }
 
-        /* ==========================================
-           FUNGSI CETAK AMPLOP
-        ========================================== */
         function updatePreviewAmplop() {
             const pw = document.getElementById('env-w').value;
             const ph = document.getElementById('env-h').value;
@@ -1188,9 +1176,6 @@
             setTimeout(() => { document.title = originalTitle; }, 1000);
         }
 
-        /* ==========================================
-           ROUTER FUNGSI PREVIEW & CETAK STIKER 
-        ========================================== */
         function updatePreviewStikerRouter(isPreview = true) {
             if(templateAktif === 'stiker') {
                 updatePreviewStiker(isPreview);
@@ -1211,9 +1196,6 @@
             }
         }
 
-        /* ==========================================
-           LOGIKA CETAK STIKER WALI MURID
-        ========================================== */
         function loadDaftarStiker() {
             const filterKelas = document.getElementById('stiker-filter-kelas').value;
             const keyword = document.getElementById('stiker-search').value.toLowerCase();
@@ -1311,8 +1293,8 @@
                         kertasHTML += `
                             <div style="position: absolute; left: ${left}mm; top: ${top}mm; width: ${lw}mm; height: ${lh}mm; ${borderStyle} padding: ${paddingTB}mm ${paddingLR}mm; box-sizing: border-box; overflow: hidden; background: transparent;">
                                 <div style="text-align: center; margin-bottom: ${mbLogo}mm; height: ${logoHeight}mm;">
-                                    <img src="https://raw.githubusercontent.com/Blackhawk0243/sponsorship48/main/logo-min.png" style="height: 100%; display: inline-block; margin-right: 4px;">
-                                    <img src="https://raw.githubusercontent.com/Blackhawk0243/sponsorship48/main/logo-hut.png" style="height: 100%; display: inline-block;">
+                                    <img src="https://raw.githubusercontent.com/Blackhawk0243/sponsorship48/main/logo-min.png" style="height: 100%; display: inline-block; margin-right: 4px;" onerror="this.style.display='none'">
+                                    <img src="https://raw.githubusercontent.com/Blackhawk0243/sponsorship48/main/logo-hut.png" style="height: 100%; display: inline-block;" onerror="this.style.display='none'">
                                 </div>
                                 <div style="font-size: ${fontSize}pt; line-height: 1.3; text-align: left; color: black; font-family: 'Times New Roman', Times, serif;">
                                     Kepada Yth.<br>
@@ -1368,9 +1350,6 @@
             }, 1000); 
         }
 
-        /* ==========================================
-           LOGIKA CETAK STIKER REKANAN
-        ========================================== */
         function tambahStikerRekanan() {
             const inputNama = document.getElementById('input-stiker-nama-rek');
             const nama = inputNama.value.trim();
@@ -1455,7 +1434,7 @@
             let barisanRekanan = Array.from(daftarRekananStikerDipilih).map(id => daftarRekananStiker.find(r => r.id === id));
             
             if(barisanRekanan.length === 0 && isPreview) {
-                barisanRekanan = [{nama: "Contoh Nama", jabatan: "Contoh Jabatan"}];
+                barisanRekanan = [{nama: "Contoh Nama Perusahaan"}];
             }
 
             const totalHalaman = Math.ceil(barisanRekanan.length / stikerPerHalaman);
@@ -1483,13 +1462,12 @@
                         
                         const left = ml + (c * hp);
                         const top = mt + (r * vp);
-                        const teksJabatan = rec.jabatan ? `${rec.jabatan}<br>` : '';
 
                         kertasHTML += `
                             <div style="position: absolute; left: ${left}mm; top: ${top}mm; width: ${lw}mm; height: ${lh}mm; ${borderStyle} padding: ${paddingTB}mm ${paddingLR}mm; box-sizing: border-box; overflow: hidden; background: transparent;">
                                 <div style="text-align: center; margin-bottom: ${mbLogo}mm; height: ${logoHeight}mm;">
-                                    <img src="https://raw.githubusercontent.com/Blackhawk0243/sponsorship48/main/logo-min.png" style="height: 100%; display: inline-block; margin-right: 4px;">
-                                    <img src="https://raw.githubusercontent.com/Blackhawk0243/sponsorship48/main/logo-hut.png" style="height: 100%; display: inline-block;">
+                                    <img src="https://raw.githubusercontent.com/Blackhawk0243/sponsorship48/main/logo-min.png" style="height: 100%; display: inline-block; margin-right: 4px;" onerror="this.style.display='none'">
+                                    <img src="https://raw.githubusercontent.com/Blackhawk0243/sponsorship48/main/logo-hut.png" style="height: 100%; display: inline-block;" onerror="this.style.display='none'">
                                 </div>
                                 <div style="font-size: ${fontSize}pt; line-height: 1.3; text-align: left; color: black; font-family: 'Times New Roman', Times, serif;">
                                     Kepada Yth.<br>
@@ -1544,9 +1522,6 @@
             }, 1000); 
         }
 
-        /* ==========================================
-           LOGIKA CETAK STIKER UMUM (NO. 9)
-        ========================================== */
         function tambahStikerUmum() {
             const inputNama = document.getElementById('input-stiker-nama-umum');
             const inputJabatan = document.getElementById('input-stiker-jabatan-umum');
@@ -1668,8 +1643,8 @@
                         kertasHTML += `
                             <div style="position: absolute; left: ${left}mm; top: ${top}mm; width: ${lw}mm; height: ${lh}mm; ${borderStyle} padding: ${paddingTB}mm ${paddingLR}mm; box-sizing: border-box; overflow: hidden; background: transparent;">
                                 <div style="text-align: center; margin-bottom: ${mbLogo}mm; height: ${logoHeight}mm;">
-                                    <img src="https://raw.githubusercontent.com/Blackhawk0243/sponsorship48/main/logo-min.png" style="height: 100%; display: inline-block; margin-right: 4px;">
-                                    <img src="https://raw.githubusercontent.com/Blackhawk0243/sponsorship48/main/logo-hut.png" style="height: 100%; display: inline-block;">
+                                    <img src="https://raw.githubusercontent.com/Blackhawk0243/sponsorship48/main/logo-min.png" style="height: 100%; display: inline-block; margin-right: 4px;" onerror="this.style.display='none'">
+                                    <img src="https://raw.githubusercontent.com/Blackhawk0243/sponsorship48/main/logo-hut.png" style="height: 100%; display: inline-block;" onerror="this.style.display='none'">
                                 </div>
                                 <div style="font-size: ${fontSize}pt; line-height: 1.3; text-align: center; color: black; font-family: 'Times New Roman', Times, serif;">
                                     Kepada Yth.<br>
@@ -1724,9 +1699,6 @@
             }, 1000); 
         }
 
-        /* ==========================================
-           LOGIKA CETAK NOMOR HADIAH (NO. 10)
-        ========================================== */
         function tambahNomor() {
             const teks = document.getElementById('input-nomor-teks').value.trim();
             const qty = parseInt(document.getElementById('input-nomor-qty').value);
@@ -1784,7 +1756,7 @@
             if(flattened.length === 0) {
                 wadah.innerHTML = `
                     <div class="bg-white border-2 border-dashed border-gray-400 text-gray-400 flex items-center justify-center" style="width: 330mm; height: 215mm;">
-                        <p class="text-xl font-bold">Preview Kertas akan muncul disini</p>
+                        <p class="text-xl font-bold">Preview Kertas F4 akan muncul disini</p>
                     </div>
                 `;
                 return;
@@ -1799,9 +1771,11 @@
                 
                 let cardsHtml = '';
                 items.forEach(num => {
-                    // Ukuran kartu di-lock mutlak 163mm x 105.5mm
+                    // Ukuran kartu 1/4 kertas dari area cetak dalam. 
+                    // Luas kertas = 330 x 215. Sisa margin 2mm di setiap sisi. Area cetak = 326 x 211
+                    // 1 Kartu = 163mm x 105.5mm mutlak
                     cardsHtml += `
-                        <div style="background-image: url('https://raw.githubusercontent.com/Blackhawk0243/sponsorship48/main/nomor%20hadiah.png'); background-size: 100% 100%; background-position: center; background-repeat: no-repeat; display: flex; justify-content: center; align-items: center; overflow: hidden; border: 1px solid black; box-sizing: border-box; width: 163mm; height: 105.5mm;">
+                        <div style="background-image: url('https://raw.githubusercontent.com/Blackhawk0243/sponsorship48/main/nomor%20hadiah.png'); background-size: 100% 100%; background-position: center; background-repeat: no-repeat; display: flex; justify-content: center; align-items: center; overflow: hidden; border: 1px solid black; box-sizing: border-box; width: 163mm; height: 105.5mm; background-color: white;">
                             <div style="font-size: 250px; font-weight: 900; font-family: 'Arial', sans-serif; color: #111; text-align: center; line-height: 1; padding-top: 15px;">
                                 ${num}
                             </div>
@@ -1809,10 +1783,10 @@
                     `;
                 });
 
-                // Kertas 330x215. Kotak dalam 326x211 posisinya di-Center sehingga Margin Kiri-Kanan Atas-Bawah menjadi persis 2mm tak terganggu
+                // Kotak luar pembungkus 1 kertas penuh (330x215)
                 htmlPages += `
-                    <div class="print-kertas-nomor bg-white flex items-center justify-center mx-auto" style="width: 330mm; height: 215mm; box-shadow: 0 4px 6px rgba(0,0,0,0.1); margin-bottom: 20px; box-sizing: border-box;">
-                        <div style="width: 326mm; height: 211mm; display: grid; grid-template-columns: 163mm 163mm; grid-template-rows: 105.5mm 105.5mm; gap: 0; box-sizing: border-box;">
+                    <div class="print-kertas-nomor flex items-center justify-center mx-auto" style="width: 330mm; height: 215mm; margin-bottom: 20px; box-sizing: border-box; background: white;">
+                        <div style="width: 326mm; height: 211mm; display: grid; grid-template-columns: 163mm 163mm; grid-template-rows: 105.5mm 105.5mm; gap: 0; box-sizing: border-box; border: 1px solid black; background: white;">
                             ${cardsHtml}
                         </div>
                     </div>
@@ -1823,18 +1797,28 @@
 
         function cetakPDFNomor() {
             if(daftarNomorHadiah.length === 0) {
-                alert("Antrean masih kosong! Tambahkan nomor terlebih dahulu.");
+                const btn = document.getElementById('btn-print-nomor');
+                const textAwal = btn.innerHTML;
+                btn.innerHTML = "Antrean Kosong!";
+                btn.classList.add('bg-red-600', 'hover:bg-red-700');
+                btn.classList.remove('bg-green-600', 'hover:bg-green-700');
+                setTimeout(() => {
+                    btn.innerHTML = textAwal;
+                    btn.classList.remove('bg-red-600', 'hover:bg-red-700');
+                    btn.classList.add('bg-green-600', 'hover:bg-green-700');
+                }, 2000);
                 return;
             }
             
             const originalTitle = document.title;
             document.title = `Cetak_Nomor_Hadiah`;
 
-            // Style print tanpa padding. Margin didapat dari kalkulasi flex box absolut di atas
+            // Setup cetak mutlak milimeter. F4/Folio adalah 330x215 mm. 
+            // Margin di-Nol-kan karena margin 2mm di-handle dari grid HTML
             document.getElementById('dynamic-print-style').innerHTML = `
                 @page { size: 330mm 215mm; margin: 0; }
                 @media print {
-                    html, body { margin: 0 !important; padding: 0 !important; width: 100% !important; height: 100% !important; }
+                    html, body { margin: 0 !important; padding: 0 !important; width: 100% !important; height: 100% !important; background: white !important; }
                     #area-cetak-nomor { padding: 0 !important; margin: 0 !important; background-color: transparent !important; }
                     #wadah-halaman-nomor { gap: 0 !important; margin: 0 !important; display: block !important; width: 100% !important; }
                     .print-kertas-nomor { 
@@ -1849,9 +1833,9 @@
                         display: flex !important;
                         align-items: center !important;
                         justify-content: center !important;
+                        background: white !important;
                     }
                     .print-kertas-nomor:last-child { page-break-after: auto !important; }
-                    .print-kertas-nomor > div > div { border: 1px solid black !important; box-sizing: border-box !important; } 
                 }
             `;
 

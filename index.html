@@ -344,9 +344,15 @@
                     <div class="md:col-span-2"><label class="font-bold text-xs text-gray-700">Nominal Pajak 15% (Opsional/Bisa kosong):</label><input type="text" id="in-ba-pajak" oninput="updateBAHadiah()" placeholder="Misal: Rp 450.000" class="border p-2.5 rounded w-full bg-white text-sm"></div>
                 </div>
             </div>
-            <button onclick="cetakDokumenA4()" id="btn-print-bahadiah" class="bg-green-600 text-white font-bold py-3 px-4 rounded hover:bg-green-700 transition mt-2 w-full opacity-50 cursor-not-allowed flex items-center justify-center gap-2" disabled>
-                Cetak Dokumen PDF
-            </button>
+            
+            <div class="flex flex-col md:flex-row gap-3 mt-2">
+                <button onclick="cetakMassalBA()" class="bg-yellow-500 text-white font-bold py-3 px-4 rounded hover:bg-yellow-600 transition w-full md:w-1/2 flex items-center justify-center gap-2">
+                    Cetak Massal (8 Hadiah Utama)
+                </button>
+                <button onclick="cetakDokumenA4()" id="btn-print-bahadiah" class="bg-green-600 text-white font-bold py-3 px-4 rounded hover:bg-green-700 transition w-full md:w-1/2 opacity-50 cursor-not-allowed flex items-center justify-center gap-2" disabled>
+                    Cetak Dokumen Single
+                </button>
+            </div>
         </div>
 
     </div>
@@ -807,6 +813,9 @@
                 <p class="font-bold mt-1">BRI: 0051 0124 6266 508 atas nama: Siti Aliyah</p>
             </div>
         </div>
+
+        <!-- TEMPLATE MASAL BA HADIAH (Dibuat otomatis oleh JS saat klik Cetak Massal) -->
+        <div id="template-bahadiah-massal" class="template-hidden font-serif text-black"></div>
     </div>
 
     <!-- AREA CETAK STIKER 103 -->
@@ -1844,6 +1853,113 @@
             setTimeout(() => { 
                 document.title = originalTitle; 
             }, 1000); 
+        }
+
+        function cetakMassalBA() {
+            // Daftar 8 hadiah utama beserta perhitungan pajaknya (15%)
+            const hadiahUtama = [
+                { barang: "SEPEDA LISTRIK", pajak: "Rp 900.000" },
+                { barang: "TV LG NANO SMART 55 INCH", pajak: "Rp 1.050.000" },
+                { barang: "KULKAS 2 PINTU LG", pajak: "Rp 900.000" },
+                { barang: "TV SAMSUNG 32 INCH", pajak: "Rp 435.000" },
+                { barang: "MESIN CUCI POLYTRON", pajak: "Rp 405.000" },
+                { barang: "MESIN CUCI SAMSUNG", pajak: "Rp 675.000" },
+                { barang: "KULKAS POLYTRON", pajak: "Rp 480.000" },
+                { barang: "MESIN CUCI MIDEA", pajak: "Rp 225.000" }
+            ];
+
+            let htmlMassal = '';
+            
+            hadiahUtama.forEach((item, index) => {
+                const isLast = index === hadiahUtama.length - 1;
+                // page-break agar tiap hadiah ganti halaman baru di printer (kecuali yang terakhir)
+                const pageBreakClass = isLast ? '' : 'page-break';
+                
+                htmlMassal += `
+                <div class="print-container ${pageBreakClass}">
+                    <div class="flex justify-between items-center border-b-[4px] border-black pb-1 mb-[2px]">
+                        <img src="https://raw.githubusercontent.com/Blackhawk0243/sponsorship48/main/logo-min.png" class="w-24 h-auto object-contain shrink-0" onerror="this.src='https://placehold.co/100x100?text=LOGO'">
+                        <div class="text-center flex-1 px-2 text-black">
+                            <h1 class="text-[34px] font-bold tracking-wide" style="line-height: 1.1;">HUT KE-48</h1>
+                            <h2 class="text-[15px] font-bold mt-1 tracking-wide" style="font-family: Arial, sans-serif;">MIN 1 KOTA MALANG</h2>
+                            <h3 class="text-[14px] font-bold mt-0" style="font-family: Arial, sans-serif;">TAHUN PELAJARAN 2026/2027</h3>
+                            <p class="text-[12px] mt-0" style="font-family: Arial, sans-serif;">Jln. Bandung 7C, Telp.& Fax. (0341) 551176 – 565642 Malang</p>
+                        </div>
+                        <img src="https://raw.githubusercontent.com/Blackhawk0243/sponsorship48/main/logo-hut.png" class="w-32 h-auto object-contain shrink-0" onerror="this.src='https://placehold.co/120x100?text=HUT'">
+                    </div>
+                    <div class="border-b-[1px] border-black mb-10"></div>
+
+                    <div class="text-center mb-8">
+                        <h3 class="font-bold text-[18px] underline tracking-wide">BERITA ACARA PENYERAHAN HADIAH</h3>
+                    </div>
+
+                    <div class="text-[15px] text-justify leading-relaxed space-y-4 px-4">
+                        <p>Yang bertanda tangan di bawah ini, Ketua Panitia HUT ke-48 MIN 1 Kota Malang, pada hari ini Minggu, 27 September 2026 akan menyerahkan hadiah undian jalan sehat berupa :</p>
+                        
+                        <p class="text-center font-bold text-2xl uppercase my-6">${item.barang}</p>
+                        
+                        <p class="text-center">kepada</p>
+                        
+                        <table class="w-full ml-4 mb-6">
+                            <tr class="h-9"><td class="w-48 align-bottom pb-1">Nama</td><td class="w-4 align-bottom pb-1">:</td><td class="align-bottom pb-1 font-bold">____________________________________________</td></tr>
+                            <tr class="h-9"><td class="align-bottom pb-1">NIK</td><td class="align-bottom pb-1">:</td><td class="align-bottom pb-1">____________________________________________</td></tr>
+                            <tr class="h-9"><td class="align-bottom pb-1">HP</td><td class="align-bottom pb-1">:</td><td class="align-bottom pb-1">____________________________________________</td></tr>
+                            <tr class="h-9"><td class="align-top">Alamat sesuai KTP</td><td class="align-top">:</td><td class="align-top">_____________________________________________</td></tr>
+                        </table>
+
+                        <p>Barang dalam kondisi baru dan tersegel dengan baik dan bersedia menyelesaikan administrasinya*. Kerusakan yang terjadi setelah barang diserahkan menjadi tanggung jawab penerima.</p>
+                        
+                        <p class="mt-4">Demikian berita acara ini dibuat untuk menjadi pedoman bagi panitia dan penerima hadiah.</p>
+                    </div>
+
+                    <div class="text-[15px] relative mt-16 px-4">
+                        <div class="flex justify-between">
+                            <div class="text-center relative w-1/2">
+                                <p class="mb-24">Yang menerima,</p>
+                                <p class="font-bold underline mb-0 whitespace-nowrap">__________________________</p>
+                            </div>
+                            <div class="text-center w-1/2 relative">
+                                <p>Ketua,</p>
+                                <div class="h-24 flex items-center justify-center relative my-1">
+                                    <img src="https://raw.githubusercontent.com/Blackhawk0243/sponsorship48/main/ttd-ketua.png" class="absolute w-28 object-contain z-10 mix-blend-multiply" onerror="this.style.display='none'">
+                                </div>
+                                <p class="font-bold underline mb-0">Abdullah, S.Pd., M.Pd.</p>
+                                <p class="text-xs">NIP. 196911212005011001</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mt-16 text-[13px] border-t border-gray-400 pt-2 px-4 leading-relaxed">
+                        <p>*Pajak hadiah 15%, sebesar <span class="font-bold">${item.pajak}</span> bisa dibayarkan secara cash atau transfer ke rekening panitia:</p>
+                        <p class="font-bold mt-1">BRI: 0051 0124 6266 508 atas nama: Siti Aliyah</p>
+                    </div>
+                </div>
+                `;
+            });
+
+            const templateMassal = document.getElementById('template-bahadiah-massal');
+            const templateSingle = document.getElementById('template-bahadiah');
+            
+            // Masukkan data html 8 hadiah ke dalam kotak khusus pencetakan massal
+            templateMassal.innerHTML = htmlMassal;
+            
+            // Sembunyikan form satuan, tampilkan form massal sebelum masuk layar print
+            templateSingle.classList.add('template-hidden');
+            templateMassal.classList.remove('template-hidden');
+
+            const originalTitle = document.title;
+            document.title = "Cetak_Massal_BA_Hadiah_Utama";
+            document.getElementById('dynamic-print-style').innerHTML = `@page { size: A4; margin: 10mm 15mm; }`;
+            
+            // Eksekusi print
+            window.print();
+
+            // Kembalikan ke state tampilan awal saat layar print ditutup
+            setTimeout(() => { 
+                document.title = originalTitle; 
+                templateMassal.classList.add('template-hidden');
+                templateSingle.classList.remove('template-hidden');
+            }, 1000);
         }
     </script>
 </body>
